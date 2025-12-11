@@ -8,18 +8,26 @@ Esta guía te ayudará a desplegar el proyecto Laravel + React + Vite en Hosting
 - Acceso SSH habilitado
 - PHP 8.1+ instalado en el servidor
 - Composer instalado en el servidor
-- Node.js 20.x disponible (para el build)
+- **NO necesitas Node.js ni npm en el servidor** (ya tenemos el build compilado en `public/build/`)
 
 ## 🚀 Pasos de Despliegue
 
-### 1. Preparar el Proyecto Localmente
+### 1. Preparar el Proyecto Localmente (YA HECHO)
 
+El build de producción **ya está generado** en:
+```
+public/build/
+  ├── manifest.json
+  └── assets/
+      ├── app-CEbkmmR2.css    (Estilos compilados)
+      ├── app-FDfDlcst.js     (JavaScript compilado)
+      └── app-l0sNRNKZ.js     (Dependencias)
+```
+
+**Si necesitas regenerar el build:**
 ```bash
-# Generar build de producción
-cd /home/elizabeth/costaricatrippackages
+# SOLO en tu máquina local, NO en Hostinger
 npm run build
-
-# Esto genera los archivos en public/build/
 ```
 
 ### 2. Conectar por SSH a Hostinger
