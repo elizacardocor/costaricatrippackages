@@ -14,7 +14,7 @@ class ContactConfirmation extends Mailable
     use Queueable, SerializesModels;
 
     public $name;
-    public $message;
+    public $userMessage;
     public $email;
 
     /**
@@ -24,7 +24,7 @@ class ContactConfirmation extends Mailable
     {
         $this->name = $name;
         $this->email = $email;
-        $this->message = $message;
+        $this->userMessage = $message;
     }
 
     /**
@@ -47,7 +47,7 @@ class ContactConfirmation extends Mailable
             view: 'emails.contact-confirmation',
             with: [
                 'name' => $this->name,
-                'message' => $this->message,
+                'userMessage' => $this->userMessage,
             ]
         );
     }

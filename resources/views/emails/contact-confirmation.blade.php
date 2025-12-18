@@ -93,7 +93,7 @@
 
             <div class="message">
                 <p><strong>Tu mensaje:</strong></p>
-                <p style="margin-top: 10px; color: #666;">{{ $message }}</p>
+                <p style="margin-top: 10px; color: #666;">{{ $userMessage }}</p>
             </div>
 
             <p>Nos responderemos en el menor tiempo posible, generalmente dentro de 24 horas. Si tu consulta es urgente, también puedes contactarnos directamente:</p>
