@@ -17,7 +17,7 @@ class ContactAdmin extends Mailable
     public $email;
     public $phone;
     public $subject;
-    public $message;
+    public $userMessage;
 
     /**
      * Create a new message instance.
@@ -28,7 +28,7 @@ class ContactAdmin extends Mailable
         $this->email = $email;
         $this->phone = $phone;
         $this->subject = $subject;
-        $this->message = $message;
+        $this->userMessage = $message;
     }
 
     /**
@@ -54,7 +54,7 @@ class ContactAdmin extends Mailable
                 'email' => $this->email,
                 'phone' => $this->phone,
                 'subject' => $this->subject,
-                'message' => $this->message,
+                'userMessage' => $this->userMessage,
             ]
         );
     }

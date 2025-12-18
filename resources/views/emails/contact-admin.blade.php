@@ -99,7 +99,7 @@
         </div>
 
         <h3 style="color: #333; margin-top: 30px;">Mensaje:</h3>
-        <div class="message-content">{{ $message }}</div>
+        <div class="message-content">{{ $userMessage }}</div>
 
         <div style="text-align: center; margin-top: 30px;">
             <a href="mailto:{{ $email }}" class="button">Responder</a>
