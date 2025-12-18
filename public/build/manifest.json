@@ -1,4 +1,8 @@
 {
+  "_DashboardMUI-BgWir8s1.js": {
+    "file": "assets/DashboardMUI-BgWir8s1.js",
+    "name": "DashboardMUI"
+  },
   "resources/css/app.css": {
     "file": "assets/app-l0sNRNKZ.js",
     "name": "app",
@@ -6,12 +10,21 @@
     "isEntry": true
   },
   "resources/js/app.jsx": {
-    "file": "assets/app-FDfDlcst.js",
+    "file": "assets/app-C6l823ms.js",
     "name": "app",
     "src": "resources/js/app.jsx",
     "isEntry": true,
-    "css": [
-      "assets/app-CEbkmmR2.css"
+    "imports": [
+      "_DashboardMUI-BgWir8s1.js"
+    ]
+  },
+  "resources/js/dashboard-mui.jsx": {
+    "file": "assets/dashboard-mui-B9EAJ24o.js",
+    "name": "dashboard-mui",
+    "src": "resources/js/dashboard-mui.jsx",
+    "isEntry": true,
+    "imports": [
+      "_DashboardMUI-BgWir8s1.js"
     ]
   }
 }

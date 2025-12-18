@@ -262,23 +262,46 @@ php --version
 
 ## 🔄 Actualizar Código en Servidor
 
-Cuando hagas cambios locales:
+Cuando hagas cambios locales, sigue estos pasos:
+
+### Desde tu máquina local:
 
 ```bash
-# Local
-git push origin main
+# 1. Si cambias frontend (React/CSS/JS):
+npm run build
 
-# En servidor (SSH)
-cd public_html
+# 2. Subir cambios a GitHub:
+git add .
+git commit -m "descripción de cambios"
+git push origin main
+```
+
+### En Hostinger (vía PuTTY/SSH):
+
+```bash
+# 3. Ir al directorio del proyecto
+cd /home/u336394587/domains/costaricatrippackages.com
+
+# 4. Actualizar desde GitHub
 git pull origin main
 
-# Si hay cambios en dependencias PHP
+# 5. Copiar archivos de public/ a public_html/
+cp -r public/* public_html/
+
+# 6. Si hay cambios en dependencias PHP:
 composer install --no-dev --optimize-autoloader
 
-# Limpiar caché
+# 7. Limpiar caché de Laravel
 php artisan config:cache
 php artisan route:cache
 ```
+
+### Notas importantes:
+
+- **Si solo cambias frontend**: Ejecuta pasos 1, 2, 3, 4 y 5
+- **Si solo cambias backend**: Ejecuta pasos 2, 3, 4, 6 y 7
+- **Si cambias ambos**: Ejecuta todos los pasos
+- Siempre hacer `npm run build` antes de subir cambios de frontend
 
 ## 📱 Monitorear en Producción
 
