@@ -875,3 +875,4 @@
     </script>
 </body>
 </html>
+<?php /**PATH /home/elizabeth/costaricatrippackages/resources/views/home.blade.php ENDPATH**/ ?>
