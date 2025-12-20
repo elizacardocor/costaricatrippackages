@@ -1,16 +1,22 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Descubre los mejores tours y paquetes turísticos en Costa Rica. Playas paradisíacas, volcanes, bosques nublados y aventuras inolvidables.">
-    <meta name="keywords" content="Costa Rica, tours, paquetes turísticos, playas, volcanes, aventuras">
-    <title>Costa Rica Trip Packages - Tours y Paquetes Turísticos</title>
+    <meta name="description" content="{{ __('home.meta_description') }}">
+    <meta name="keywords" content="{{ __('home.meta_keywords') }}">
+    @if(config('app.env') !== 'production')
+    <meta name="robots" content="noindex, nofollow">
+    @endif
+    <title>{{ __('home.title') }} - {{ __('home.subtitle') }}</title>
     
     <!-- Preconnect para optimización -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <style>
         * {
@@ -292,6 +298,302 @@
             font-size: 0.9rem;
             opacity: 0.9;
         }
+        .destination-card-wrapper {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            height: 350px;
+            cursor: pointer;
+        }
+
+        .destination-card-wrapper:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .destination-card {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: block;
+        }
+
+        .destination-card:hover {
+            /* hover effect handled by wrapper */
+        }
+
+        .destination-actions {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem;
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.6) 50%, transparent 100%);
+            z-index: 10;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .action-btn {
+            padding: 0.9rem 1.1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .action-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .action-btn {
+            z-index: 1;
+        }
+
+        .action-btn span {
+            position: relative;
+            z-index: 2;
+            font-size: 1.1rem;
+        }
+
+        .action-btn.hotels {
+            background: linear-gradient(135deg, #76BB6A 0%, #558B2F 100%);
+            color: white;
+            box-shadow: 0 6px 15px rgba(66, 165, 245, 0.35);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .action-btn.hotels:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 187, 106, 0.5);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .action-btn.tours {
+            background: linear-gradient(135deg, #42A5F5 0%, #1976D2 100%);
+            color: white;
+            box-shadow: 0 6px 15px rgba(33, 150, 243, 0.35);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .action-btn.tours:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(66, 165, 245, 0.5);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .action-btn.transport {
+            background: linear-gradient(135deg, #FFA726 0%, #F57C00 100%);
+            color: white;
+            box-shadow: 0 6px 15px rgba(255, 87, 34, 0.35);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .action-btn.transport:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 152, 0, 0.5);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .action-btn.plan {
+            background: linear-gradient(135deg, #EF5350 0%, #D32F2F 100%);
+            color: white;
+            box-shadow: 0 6px 15px rgba(233, 30, 99, 0.35);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .action-btn.plan:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(244, 67, 54, 0.5);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Destination Modal Styles */
+        .destination-modal-content {
+            border: none;
+            background: white;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .destination-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            background: rgba(0,0,0,0.4) !important;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .destination-modal-close:hover {
+            background: rgba(0,0,0,0.6) !important;
+            transform: scale(1.1);
+        }
+
+        .destination-modal-image-wrapper {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+        }
+
+        .destination-modal-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .destination-modal-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+            padding: 3rem 2rem 2rem;
+            color: white;
+        }
+
+        .destination-modal-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin: 0;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .destination-modal-body {
+            padding: 3rem 2rem;
+        }
+
+        .destination-modal-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .destination-modal-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .modal-action-btn {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-action-btn span {
+            font-size: 2rem;
+        }
+
+        .modal-action-btn div {
+            text-align: left;
+        }
+
+        .btn-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 0.3rem;
+        }
+
+        .btn-subtitle {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .modal-action-btn.hotels {
+            background: linear-gradient(135deg, #76BB6A 0%, #558B2F 100%);
+        }
+
+        .modal-action-btn.hotels:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(102, 187, 106, 0.4);
+        }
+
+        .modal-action-btn.tours {
+            background: linear-gradient(135deg, #42A5F5 0%, #1976D2 100%);
+        }
+
+        .modal-action-btn.tours:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(66, 165, 245, 0.4);
+        }
+
+        .modal-action-btn.transport {
+            background: linear-gradient(135deg, #FFA726 0%, #F57C00 100%);
+        }
+
+        .modal-action-btn.transport:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(255, 152, 0, 0.4);
+        }
+
+        .modal-action-btn.plan {
+            background: linear-gradient(135deg, #EF5350 0%, #D32F2F 100%);
+        }
+
+        .modal-action-btn.plan:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(244, 67, 54, 0.4);
+        }
 
         /* Tours Section */
         .tours-section {
@@ -547,11 +849,16 @@
             </a>
             <button class="nav-toggle" id="navToggle">☰</button>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="/">Inicio</a></li>
-                <li><a href="/tours">Tours</a></li>
-                <li><a href="#destinos">Destinos</a></li>
-                <li><a href="/contacto">Contacto</a></li>
+                <li><a href="{{ app()->getLocale() === 'es' ? '/es/' : '/en/' }}">{{ app()->getLocale() === 'es' ? 'Inicio' : 'Home' }}</a></li>
+                <li><a href="{{ app()->getLocale() === 'es' ? '/es/tours' : '/en/tours' }}">Tours</a></li>
+                <li><a href="#destinos">{{ app()->getLocale() === 'es' ? 'Destinos' : 'Destinations' }}</a></li>
+                <li><a href="/contacto">{{ app()->getLocale() === 'es' ? 'Contacto' : 'Contact' }}</a></li>
                 <li><a href="/dashboard" style="color: var(--secondary-color);">Dashboard</a></li>
+                <li>
+                    <a href="{{ app()->getLocale() === 'es' ? '/en/' : '/es/' }}" style="color: var(--accent-color); font-weight: 600;">
+                        {{ app()->getLocale() === 'es' ? '🇬🇧 EN' : '🇪🇸 ES' }}
+                    </a>
+                </li>
             </ul>
         </div>
     </nav>
@@ -562,9 +869,9 @@
             <img src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=1920&q=80" alt="Volcán Arenal" class="slide-image" loading="eager">
             <div class="slide-overlay">
                 <div class="slide-content">
-                    <h1>Descubre Costa Rica</h1>
-                    <p>Aventuras inolvidables entre volcanes, playas y naturaleza exuberante</p>
-                    <a href="/tours" class="cta-button">Explorar Tours</a>
+                    <h1>{{ app()->getLocale() === 'es' ? 'Descubre Costa Rica' : 'Discover Costa Rica' }}</h1>
+                    <p>{{ app()->getLocale() === 'es' ? 'Aventuras inolvidables entre volcanes, playas y naturaleza exuberante' : 'Unforgettable adventures among volcanoes, beaches and lush nature' }}</p>
+                    <a href="{{ app()->getLocale() === 'es' ? '/es/tours' : '/en/tours' }}" class="cta-button">{{ __('home.cta_explore') }}</a>
                 </div>
             </div>
         </div>
@@ -572,9 +879,9 @@
             <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1920&q=80" alt="Playa Manuel Antonio" class="slide-image" loading="lazy">
             <div class="slide-overlay">
                 <div class="slide-content">
-                    <h1>Playas Paradisíacas</h1>
-                    <p>Arena blanca, agua cristalina y vida silvestre única</p>
-                    <a href="/tours" class="cta-button">Ver Destinos</a>
+                    <h1>{{ app()->getLocale() === 'es' ? 'Playas Paradisíacas' : 'Paradise Beaches' }}</h1>
+                    <p>{{ app()->getLocale() === 'es' ? 'Arena blanca, agua cristalina y vida silvestre única' : 'White sand, crystal clear water and unique wildlife' }}</p>
+                    <a href="{{ app()->getLocale() === 'es' ? '/es/tours' : '/en/tours' }}" class="cta-button">{{ app()->getLocale() === 'es' ? 'Ver Destinos' : 'See Destinations' }}</a>
                 </div>
             </div>
         </div>
@@ -582,9 +889,9 @@
             <img src="https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=1920&q=80" alt="Bosque Nublado" class="slide-image" loading="lazy">
             <div class="slide-overlay">
                 <div class="slide-content">
-                    <h1>Bosques Místicos</h1>
-                    <p>Explora la biodiversidad más rica del planeta</p>
-                    <a href="/tours" class="cta-button">Reservar Ahora</a>
+                    <h1>{{ app()->getLocale() === 'es' ? 'Bosques Místicos' : 'Mystical Forests' }}</h1>
+                    <p>{{ app()->getLocale() === 'es' ? 'Explora la biodiversidad más rica del planeta' : 'Explore the richest biodiversity on the planet' }}</p>
+                    <a href="{{ app()->getLocale() === 'es' ? '/es/tours' : '/en/tours' }}" class="cta-button">{{ app()->getLocale() === 'es' ? 'Reservar Ahora' : 'Book Now' }}</a>
                 </div>
             </div>
         </div>
@@ -598,57 +905,58 @@
     <!-- Destinations Section -->
     <section class="section" id="destinos">
         <div class="container">
-            <h2 class="section-title">Destinos Populares</h2>
-            <p class="section-subtitle">Explora los lugares más hermosos de Costa Rica</p>
+            <h2 class="section-title">{{ __('home.destinations_title') }}</h2>
+            <p class="section-subtitle">{{ app()->getLocale() === 'es' ? 'Explora los lugares más hermosos de Costa Rica' : 'Explore the most beautiful places in Costa Rica' }}</p>
             
             <div class="destinations-grid">
-                <a href="/destino/manuel-antonio" class="destination-card">
-                    <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=80" alt="Manuel Antonio" class="destination-image" loading="lazy">
-                    <div class="destination-overlay">
-                        <h3 class="destination-name">Manuel Antonio</h3>
-                        <p class="destination-description">Playas vírgenes y vida silvestre</p>
+                @php
+                    $locale = app()->getLocale();
+                    $toursUrl = $locale === 'es' ? '/es/tours' : '/en/tours';
+                    $destinations = [
+                        [
+                            'name' => 'Manuel Antonio',
+                            'description' => $locale === 'es' ? 'Playas vírgenes y vida silvestre' : 'Virgin beaches and wildlife',
+                            'image' => 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=80'
+                        ],
+                        [
+                            'name' => $locale === 'es' ? 'Volcán Arenal' : 'Arenal Volcano',
+                            'description' => $locale === 'es' ? 'Volcán activo y aguas termales' : 'Active volcano and hot springs',
+                            'image' => 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800&q=80'
+                        ],
+                        [
+                            'name' => 'Monteverde',
+                            'description' => $locale === 'es' ? 'Bosque nublado místico' : 'Mystical cloud forest',
+                            'image' => 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=800&q=80'
+                        ],
+                        [
+                            'name' => 'Tortuguero',
+                            'description' => $locale === 'es' ? 'Canales y tortugas marinas' : 'Canals and sea turtles',
+                            'image' => 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&q=80'
+                        ],
+                        [
+                            'name' => 'Tamarindo',
+                            'description' => $locale === 'es' ? 'Surf y atardeceres espectaculares' : 'Surf and spectacular sunsets',
+                            'image' => 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800&q=80'
+                        ],
+                        [
+                            'name' => 'Corcovado',
+                            'description' => $locale === 'es' ? 'Jungla prístina y biodiversidad' : 'Pristine jungle and biodiversity',
+                            'image' => 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80'
+                        ]
+                    ];
+                @endphp
+                
+                @foreach($destinations as $dest)
+                    <div class="destination-card-wrapper" onclick="openDestinationModal('{{ $dest['name'] }}', '{{ $dest['image'] }}', '{{ $dest['description'] }}')">
+                        <div class="destination-card">
+                            <img src="{{ $dest['image'] }}" alt="{{ $dest['name'] }}" class="destination-image" loading="lazy">
+                            <div class="destination-overlay">
+                                <h3 class="destination-name">{{ $dest['name'] }}</h3>
+                                <p class="destination-description">{{ $dest['description'] }}</p>
+                            </div>
+                        </div>
                     </div>
-                </a>
-
-                <a href="/destino/arenal" class="destination-card">
-                    <img src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800&q=80" alt="Volcán Arenal" class="destination-image" loading="lazy">
-                    <div class="destination-overlay">
-                        <h3 class="destination-name">Volcán Arenal</h3>
-                        <p class="destination-description">Volcán activo y aguas termales</p>
-                    </div>
-                </a>
-
-                <a href="/destino/monteverde" class="destination-card">
-                    <img src="https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=800&q=80" alt="Monteverde" class="destination-image" loading="lazy">
-                    <div class="destination-overlay">
-                        <h3 class="destination-name">Monteverde</h3>
-                        <p class="destination-description">Bosque nublado místico</p>
-                    </div>
-                </a>
-
-                <a href="/destino/tortuguero" class="destination-card">
-                    <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&q=80" alt="Tortuguero" class="destination-image" loading="lazy">
-                    <div class="destination-overlay">
-                        <h3 class="destination-name">Tortuguero</h3>
-                        <p class="destination-description">Canales y tortugas marinas</p>
-                    </div>
-                </a>
-
-                <a href="/destino/tamarindo" class="destination-card">
-                    <img src="https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800&q=80" alt="Tamarindo" class="destination-image" loading="lazy">
-                    <div class="destination-overlay">
-                        <h3 class="destination-name">Tamarindo</h3>
-                        <p class="destination-description">Surf y atardeceres espectaculares</p>
-                    </div>
-                </a>
-
-                <a href="/destino/corcovado" class="destination-card">
-                    <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80" alt="Corcovado" class="destination-image" loading="lazy">
-                    <div class="destination-overlay">
-                        <h3 class="destination-name">Corcovado</h3>
-                        <p class="destination-description">Jungla prístina y biodiversidad</p>
-                    </div>
-                </a>
+                @endforeach
             </div>
         </div>
     </section>
@@ -656,8 +964,8 @@
     <!-- Landing Pages Section -->
     <section class="landings-section">
         <div class="container">
-            <h2 class="section-title">Paquetes Especializados</h2>
-            <p class="section-subtitle">Explora nuestras landing pages con ofertas exclusivas y precios reales</p>
+            <h2 class="section-title">{{ __('home.packages_title') }}</h2>
+            <p class="section-subtitle">{{ app()->getLocale() === 'es' ? 'Explora nuestras landing pages con ofertas exclusivas y precios reales' : 'Explore our landing pages with exclusive offers and real prices' }}</p>
             
             <div class="landings-grid">
                 <a href="/es/hoteles-volcan-arenal" class="landing-button">
@@ -702,15 +1010,15 @@
     <!-- Tours Section -->
     <section class="section tours-section">
         <div class="container">
-            <h2 class="section-title">Tours Destacados</h2>
-            <p class="section-subtitle">Los mejores paquetes turísticos seleccionados para ti</p>
+            <h2 class="section-title">{{ __('home.featured_tours') }}</h2>
+            <p class="section-subtitle">{{ app()->getLocale() === 'es' ? 'Los mejores paquetes turísticos seleccionados para ti' : 'The best travel packages selected for you' }}</p>
             
             <div class="tours-grid" id="toursGrid">
                 <!-- Tours will be loaded here -->
             </div>
 
             <div style="text-align: center; margin-top: 3rem;">
-                <a href="/tours" class="cta-button">Ver Todos los Tours</a>
+                <a href="{{ app()->getLocale() === 'es' ? '/es/tours' : '/en/tours' }}" class="cta-button">{{ app()->getLocale() === 'es' ? 'Ver Todos los Tours' : 'View All Tours' }}</a>
             </div>
         </div>
     </section>
@@ -741,17 +1049,168 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2025 Costa Rica Trip Packages. Todos los derechos reservados.</p>
+            <p>&copy; 2025 Costa Rica Trip Packages. {{ app()->getLocale() === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.' }}</p>
         </div>
     </footer>
 
+    <!-- Destination Detail Modal -->
+    <div class="modal fade" id="destinationModal" tabindex="-1" aria-labelledby="destinationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content destination-modal-content">
+                <button type="button" class="btn-close btn-close-white destination-modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="destination-modal-image-wrapper">
+                    <img id="modalDestImage" src="" alt="Destination" class="destination-modal-image">
+                    <div class="destination-modal-overlay">
+                        <h2 id="modalDestName" class="destination-modal-title"></h2>
+                    </div>
+                </div>
+                <div class="destination-modal-body">
+                    <p id="modalDestDescription" class="destination-modal-description"></p>
+                    <div class="destination-modal-actions">
+                        <a href="" id="modalHotelsBtn" class="modal-action-btn hotels">
+                            <span>🏨</span> 
+                            <div>
+                                <div class="btn-title">{{ app()->getLocale() === 'es' ? 'Hoteles' : 'Hotels' }}</div>
+                                <div class="btn-subtitle">{{ app()->getLocale() === 'es' ? 'Hospedaje exclusivo' : 'Exclusive lodging' }}</div>
+                            </div>
+                        </a>
+                        <a href="" id="modalToursBtn" class="modal-action-btn tours">
+                            <span>🌴</span>
+                            <div>
+                                <div class="btn-title">{{ app()->getLocale() === 'es' ? 'Tours' : 'Tours' }}</div>
+                                <div class="btn-subtitle">{{ app()->getLocale() === 'es' ? 'Aventuras increíbles' : 'Amazing adventures' }}</div>
+                            </div>
+                        </a>
+                        <a href="" id="modalTransportBtn" class="modal-action-btn transport">
+                            <span>🚐</span>
+                            <div>
+                                <div class="btn-title">{{ app()->getLocale() === 'es' ? 'Transporte' : 'Transport' }}</div>
+                                <div class="btn-subtitle">{{ app()->getLocale() === 'es' ? 'Viajes cómodos' : 'Comfortable rides' }}</div>
+                            </div>
+                        </a>
+                        <button type="button" id="modalPlanBtn" class="modal-action-btn plan" data-bs-toggle="modal" data-bs-target="#planModal">
+                            <span>📋</span>
+                            <div>
+                                <div class="btn-title">{{ app()->getLocale() === 'es' ? 'Arma tu Plan' : 'Build Your Plan' }}</div>
+                                <div class="btn-subtitle">{{ app()->getLocale() === 'es' ? 'Personalizado' : 'Personalized' }}</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Build Your Plan Modal -->
+    <div class="modal fade" id="planModal" tabindex="-1" aria-labelledby="planModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background: var(--primary-color); color: white;">
+                    <h5 class="modal-title" id="planModalLabel">{{ app()->getLocale() === 'es' ? 'Arma tu Plan' : 'Build Your Plan' }}</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="destInput" class="form-label">{{ app()->getLocale() === 'es' ? 'Destino' : 'Destination' }}</label>
+                            <input type="text" class="form-control destination-name-input" id="destInput" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nameInput" class="form-label">{{ app()->getLocale() === 'es' ? 'Tu Nombre' : 'Your Name' }}</label>
+                            <input type="text" class="form-control" id="nameInput" placeholder="{{ app()->getLocale() === 'es' ? 'Juan Pérez' : 'John Doe' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="emailInput" class="form-label">{{ app()->getLocale() === 'es' ? 'Correo Electrónico' : 'Email' }}</label>
+                            <input type="email" class="form-control" id="emailInput" placeholder="correo@ejemplo.com">
+                        </div>
+                        <div class="mb-3">
+                            <label for="phoneInput" class="form-label">{{ app()->getLocale() === 'es' ? 'Teléfono' : 'Phone' }}</label>
+                            <input type="tel" class="form-control" id="phoneInput" placeholder="+506 1234-5678">
+                        </div>
+                        <div class="mb-3">
+                            <label for="datesInput" class="form-label">{{ app()->getLocale() === 'es' ? 'Fechas Aproximadas' : 'Approximate Dates' }}</label>
+                            <input type="text" class="form-control" id="datesInput" placeholder="{{ app()->getLocale() === 'es' ? 'Ej: 15-20 Diciembre' : 'Ex: Dec 15-20' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="detailsInput" class="form-label">{{ app()->getLocale() === 'es' ? 'Detalles del Plan' : 'Plan Details' }}</label>
+                            <textarea class="form-control" id="detailsInput" rows="3" placeholder="{{ app()->getLocale() === 'es' ? 'Cuéntanos qué buscas...' : 'Tell us what you\'re looking for...' }}"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ app()->getLocale() === 'es' ? 'Cancelar' : 'Cancel' }}</button>
+                    <button type="button" class="btn btn-primary" style="background: var(--primary-color); border: none;" onclick="submitPlan()">{{ app()->getLocale() === 'es' ? 'Enviar Plan' : 'Submit Plan' }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        function openDestinationModal(name, image, description) {
+            // Set modal content
+            document.getElementById('modalDestName').textContent = name;
+            document.getElementById('modalDestImage').src = image;
+            document.getElementById('modalDestDescription').textContent = description;
+            
+            // Get locale
+            const locale = '{{ app()->getLocale() }}';
+            const baseUrl = locale === 'es' ? '/es' : '/en';
+            
+            // Set button links
+            document.getElementById('modalHotelsBtn').href = baseUrl + '/tours';
+            document.getElementById('modalToursBtn').href = baseUrl + '/tours';
+            document.getElementById('modalTransportBtn').href = baseUrl + '/tours';
+            
+            // Set plan button destination
+            document.getElementById('modalPlanBtn').onclick = function() {
+                document.querySelector('.destination-name-input').value = name;
+                // The modal will be shown by Bootstrap data attributes
+            };
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('destinationModal'));
+            modal.show();
+        }
+
+        function submitPlan() {
+            const destination = document.querySelector('.destination-name-input').value;
+            const name = document.getElementById('nameInput').value;
+            const email = document.getElementById('emailInput').value;
+            const phone = document.getElementById('phoneInput').value;
+            const dates = document.getElementById('datesInput').value;
+            const details = document.getElementById('detailsInput').value;
+
+            if (!name || !email || !phone) {
+                alert('{{ app()->getLocale() === "es" ? "Por favor completa todos los campos requeridos" : "Please fill in all required fields" }}');
+                return;
+            }
+
+            // Send to contact form or email
+            const message = `Plan para ${destination}:\n\nNombre: ${name}\nCorreo: ${email}\nTeléfono: ${phone}\nFechas: ${dates}\nDetalles: ${details}`;
+            
+            // You can send this via AJAX to your contact endpoint
+            console.log('Plan submitted:', {destination, name, email, phone, dates, details});
+            alert('{{ app()->getLocale() === "es" ? "¡Plan enviado! Nos pondremos en contacto pronto." : "Plan sent! We\'ll contact you soon." }}');
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('planModal'));
+            modal.hide();
+
+            // Reset form
+            document.getElementById('nameInput').value = '';
+            document.getElementById('emailInput').value = '';
+            document.getElementById('phoneInput').value = '';
+            document.getElementById('datesInput').value = '';
+            document.getElementById('detailsInput').value = '';
+        }
+
         // Slider functionality
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         const dots = document.querySelectorAll('.slider-dot');
 
         function showSlide(index) {
+            if (slides.length === 0) return;
             slides.forEach(slide => slide.classList.remove('active'));
             dots.forEach(dot => dot.classList.remove('active'));
             
@@ -761,19 +1220,24 @@
         }
 
         function nextSlide() {
+            if (slides.length === 0) return;
             currentSlide = (currentSlide + 1) % slides.length;
             showSlide(currentSlide);
         }
 
         // Auto advance slider
-        setInterval(nextSlide, 5000);
+        if (slides.length > 0) {
+            setInterval(nextSlide, 5000);
+        }
 
         // Dot controls
-        dots.forEach(dot => {
-            dot.addEventListener('click', () => {
-                showSlide(parseInt(dot.dataset.slide));
+        if (dots.length > 0) {
+            dots.forEach(dot => {
+                dot.addEventListener('click', () => {
+                    showSlide(parseInt(dot.dataset.slide));
+                });
             });
-        });
+        }
 
         // Mobile menu toggle
         const navToggle = document.getElementById('navToggle');
@@ -792,6 +1256,14 @@
                 navbar.classList.remove('scrolled');
             }
         });
+
+        // Build your plan modal handler
+        function setPlanDestination(destinationName) {
+            const modal = document.getElementById('planModal');
+            if (modal) {
+                modal.querySelector('.destination-name-input').value = destinationName;
+            }
+        }
 
         // Load featured tours
         const tours = [
@@ -843,9 +1315,11 @@
         ];
 
         const toursGrid = document.getElementById('toursGrid');
-        tours.forEach(tour => {
-            const tourCard = `
-                <div class="tour-card">
+        if (toursGrid) {
+            tours.forEach(tour => {
+                const tourCard = document.createElement('div');
+                tourCard.className = 'tour-card';
+                tourCard.innerHTML = `
                     <img src="${tour.image}" alt="${tour.title}" class="tour-image" loading="lazy">
                     <div class="tour-content">
                         <div class="tour-header">
@@ -868,10 +1342,13 @@
                         </div>
                         <a href="/tour/${tour.id}" class="tour-button">Ver Detalles</a>
                     </div>
-                </div>
-            `;
-            toursGrid.innerHTML += tourCard;
-        });
+                `;
+                toursGrid.appendChild(tourCard);
+            });
+        }
     </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

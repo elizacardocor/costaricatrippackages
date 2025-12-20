@@ -97,7 +97,7 @@
                             <div style="color: var(--gray); font-size: 0.85rem;">{{ __('landings.price_from') }}</div>
                             <div class="price-value">$120</div>
                         </div>
-                        <a href="#" class="view-btn">View</a>
+                        <a href="{{ app()->getLocale() === 'es' ? '/es/provincia/guanacaste/destino/arenal/transport/private-suv' : '/en/province/guanacaste/destination/arenal/transport/private-suv' }}" class="view-btn">{{ app()->getLocale() === 'es' ? 'Ver' : 'View' }}</a>
                     </div>
                 </div>
             </div>
@@ -113,7 +113,7 @@
                             <div style="color: var(--gray); font-size: 0.85rem;">{{ __('landings.price_from') }}</div>
                             <div class="price-value">$35</div>
                         </div>
-                        <a href="#" class="view-btn">View</a>
+                        <a href="{{ app()->getLocale() === 'es' ? '/es/provincia/guanacaste/destino/arenal/transport/shared-shuttle' : '/en/province/guanacaste/destination/arenal/transport/shared-shuttle' }}" class="view-btn">{{ app()->getLocale() === 'es' ? 'Ver' : 'View' }}</a>
                     </div>
                 </div>
             </div>
@@ -129,7 +129,7 @@
                             <div style="color: var(--gray); font-size: 0.85rem;">{{ __('landings.price_from') }}</div>
                             <div class="price-value">$450</div>
                         </div>
-                        <a href="#" class="view-btn">View</a>
+                        <a href="{{ app()->getLocale() === 'es' ? '/es/provincia/guanacaste/destino/arenal/transport/group-tour-bus' : '/en/province/guanacaste/destination/arenal/transport/group-tour-bus' }}" class="view-btn">{{ app()->getLocale() === 'es' ? 'Ver' : 'View' }}</a>
                     </div>
                 </div>
             </div>
@@ -193,8 +193,19 @@
     </section>
 
     <footer>
-        <p>&copy; 2025 Costa Rica Trip Packages. All rights reserved.</p>
-        <p>WhatsApp: <a href="https://wa.me/506" style="color: var(--primary); text-decoration: none;">+506 1234-5678</a></p>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+            <div>
+                <p>&copy; 2025 Costa Rica Trip Packages. All rights reserved.</p>
+                <p>WhatsApp: <a href="https://wa.me/506" style="color: var(--primary); text-decoration: none;">+506 1234-5678</a></p>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                @if(app()->getLocale() === 'es')
+                    <a href="{{ route('landing.transport.en') }}" class="cta-button" style="font-size: 0.9rem; padding: 0.6rem 1.2rem; display: inline-flex; align-items: center; gap: 0.5rem;">🇬🇧 English</a>
+                @else
+                    <a href="{{ route('landing.transport.es') }}" class="cta-button" style="font-size: 0.9rem; padding: 0.6rem 1.2rem; display: inline-flex; align-items: center; gap: 0.5rem;">🇪🇸 Español</a>
+                @endif
+            </div>
+        </div>
     </footer>
 </body>
 </html>

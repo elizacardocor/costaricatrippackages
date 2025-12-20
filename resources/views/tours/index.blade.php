@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Todos los tours y paquetes turísticos disponibles en Costa Rica">
-    <title>Todos los Tours - Costa Rica Trip Packages</title>
+    <meta name="description" content="{{ __('tours.listing_meta_description') }}">
+    <title>{{ __('tours.listing_title') }} - Costa Rica Trip Packages</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -359,22 +359,27 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="/" class="logo">
+            <a href="{{ app()->getLocale() === 'es' ? '/es/' : '/en/' }}" class="logo">
                 <span>🌴</span> Costa Rica Trips
             </a>
             <ul class="nav-menu">
-                <li><a href="/">Inicio</a></li>
-                <li><a href="/tours" style="color: var(--primary-color);">Tours</a></li>
-                <li><a href="/#destinos">Destinos</a></li>
-                <li><a href="/#contacto">Contacto</a></li>
+                <li><a href="{{ app()->getLocale() === 'es' ? '/es/' : '/en/' }}">{{ app()->getLocale() === 'es' ? 'Inicio' : 'Home' }}</a></li>
+                <li><a href="{{ app()->getLocale() === 'es' ? '/es/tours' : '/en/tours' }}" style="color: var(--primary-color);">Tours</a></li>
+                <li><a href="{{ app()->getLocale() === 'es' ? '/es/#destinos' : '/en/#destinos' }}">{{ app()->getLocale() === 'es' ? 'Destinos' : 'Destinations' }}</a></li>
+                <li><a href="/contacto">{{ app()->getLocale() === 'es' ? 'Contacto' : 'Contact' }}</a></li>
+                <li>
+                    <a href="{{ app()->getLocale() === 'es' ? '/en/tours' : '/es/tours' }}" style="color: var(--accent-color); font-weight: 600;">
+                        {{ app()->getLocale() === 'es' ? '🇬🇧 EN' : '🇪🇸 ES' }}
+                    </a>
+                </li>
             </ul>
         </div>
     </nav>
 
     <!-- Page Header -->
     <div class="page-header">
-        <h1>Todos Nuestros Tours</h1>
-        <p>Descubre experiencias únicas en los destinos más hermosos de Costa Rica</p>
+        <h1>{{ __('tours.listing_title') }}</h1>
+        <p>{{ __('tours.listing_subtitle') }}</p>
     </div>
 
     <!-- Filters -->
@@ -382,9 +387,9 @@
         <div class="container">
             <div class="filters">
                 <div class="filter-group">
-                    <label>Destino</label>
+                    <label>{{ __('tours.filter_destination') }}</label>
                     <select id="destinoFilter">
-                        <option value="">Todos los destinos</option>
+                        <option value="">{{ __('tours.all_destinations') }}</option>
                         <option value="arenal">Arenal</option>
                         <option value="manuel-antonio">Manuel Antonio</option>
                         <option value="monteverde">Monteverde</option>
@@ -394,21 +399,21 @@
                 </div>
 
                 <div class="filter-group">
-                    <label>Duración</label>
+                    <label>{{ __('tours.filter_duration') }}</label>
                     <select id="durationFilter">
-                        <option value="">Todas las duraciones</option>
-                        <option value="1">1 día</option>
-                        <option value="2">2-3 días</option>
-                        <option value="4">4+ días</option>
+                        <option value="">{{ app()->getLocale() === 'es' ? 'Todas las duraciones' : 'All durations' }}</option>
+                        <option value="1">{{ app()->getLocale() === 'es' ? '1 día' : '1 day' }}</option>
+                        <option value="2">{{ app()->getLocale() === 'es' ? '2-3 días' : '2-3 days' }}</option>
+                        <option value="4">{{ app()->getLocale() === 'es' ? '4+ días' : '4+ days' }}</option>
                     </select>
                 </div>
 
                 <div class="filter-group">
-                    <label>Precio Máximo</label>
+                    <label>{{ __('tours.filter_price') }}</label>
                     <input type="number" id="priceFilter" placeholder="$500" min="0">
                 </div>
 
-                <button class="filter-button" onclick="applyFilters()">Aplicar Filtros</button>
+                <button class="filter-button" onclick="applyFilters()">{{ __('tours.apply_filters') }}</button>
             </div>
         </div>
     </div>
@@ -417,7 +422,7 @@
     <section class="tours-section">
         <div class="container">
             <div class="section-info">
-                <p class="tours-count">Mostrando <strong id="tourCount">10</strong> tours disponibles</p>
+                <p class="tours-count">{{ __('tours.showing_results') }} <strong id="tourCount">10</strong> {{ __('tours.results') }}</p>
             </div>
 
             <div class="tours-grid" id="toursGrid">
@@ -438,6 +443,7 @@
             {
                 id: 1,
                 title: 'Arenal Volcano Adventure',
+                slug: 'arenal-volcano-adventure',
                 category: 'Aventura',
                 price: 299,
                 duration: '2 días',
@@ -449,6 +455,7 @@
             {
                 id: 2,
                 title: 'Manuel Antonio Beach Paradise',
+                slug: 'manuel-antonio-beach-paradise',
                 category: 'Playa',
                 price: 199,
                 duration: '1 día',
@@ -460,6 +467,7 @@
             {
                 id: 3,
                 title: 'Monteverde Cloud Forest Experience',
+                slug: 'monteverde-cloud-forest-experience',
                 category: 'Naturaleza',
                 price: 249,
                 duration: '1 día',
@@ -470,6 +478,7 @@
             {
                 id: 4,
                 title: 'Tortuguero National Park',
+                slug: 'tortuguero-national-park',
                 category: 'Naturaleza',
                 price: 399,
                 duration: '3 días',
@@ -481,6 +490,7 @@
             {
                 id: 5,
                 title: 'Tamarindo Surf Package',
+                slug: 'tamarindo-surf-package',
                 category: 'Deportes',
                 price: 179,
                 duration: '1 día',
@@ -491,6 +501,7 @@
             {
                 id: 6,
                 title: 'Rio Celeste Waterfall Trek',
+                slug: 'rio-celeste-waterfall-trek',
                 category: 'Aventura',
                 price: 149,
                 duration: '1 día',
@@ -501,6 +512,7 @@
             {
                 id: 7,
                 title: 'Corcovado Jungle Expedition',
+                slug: 'corcovado-jungle-expedition',
                 category: 'Aventura',
                 price: 599,
                 duration: '4 días',
@@ -512,6 +524,7 @@
             {
                 id: 8,
                 title: 'La Fortuna Hot Springs',
+                slug: 'la-fortuna-hot-springs',
                 category: 'Relax',
                 price: 129,
                 duration: '1 día',
@@ -522,6 +535,7 @@
             {
                 id: 9,
                 title: 'Caribbean Snorkeling Adventure',
+                slug: 'caribbean-snorkeling-adventure',
                 category: 'Playa',
                 price: 169,
                 duration: '1 día',
@@ -532,6 +546,7 @@
             {
                 id: 10,
                 title: 'Coffee & Chocolate Tour',
+                slug: 'coffee-chocolate-tour',
                 category: 'Cultural',
                 price: 99,
                 duration: '4 horas',
@@ -572,7 +587,7 @@
                                     $${tour.price}
                                     <small>por persona</small>
                                 </div>
-                                <a href="/tour/${tour.id}" class="tour-button">Ver Tour</a>
+                                <a href="/es/provincia/guanacaste/destino/arenal/tour/${tour.slug}" class="tour-button">Ver Tour</a>
                             </div>
                         </div>
                     </div>
@@ -589,5 +604,18 @@
         // Initial render
         renderTours(allTours);
     </script>
+
+    <!-- Footer -->
+    <footer style="background: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 100%); color: white; padding: 3rem 2rem 1rem; margin-top: 5rem; text-align: center;">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+            <div style="text-align: left;">
+                <p>&copy; 2025 Costa Rica Trip Packages. {{ app()->getLocale() === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.' }}</p>
+                <p>{{ app()->getLocale() === 'es' ? 'WhatsApp' : 'WhatsApp' }}: <a href="https://wa.me/506" style="color: white; text-decoration: none;">+506 1234-5678</a></p>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <a href="{{ app()->getLocale() === 'es' ? '/en/tours' : '/es/tours' }}" style="display: inline-block; padding: 0.6rem 1.2rem; background: var(--primary-color); color: white; text-decoration: none; border-radius: 50px; font-weight: 700; transition: all 0.3s;">{{ app()->getLocale() === 'es' ? '🇬🇧 English' : '🇪🇸 Español' }}</a>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

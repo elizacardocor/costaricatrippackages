@@ -401,7 +401,14 @@
             <a href="/" class="logo">
                 <span>🌴</span> Costa Rica Trips
             </a>
-            <a href="/tours" class="back-button">← Volver a Tours</a>
+            <div style="display: flex; gap: 0.5rem;">
+                <a href="/tours" class="back-button">← Volver a Tours</a>
+                @if(app()->getLocale() === 'es')
+                    <a href="/en/province/{{ $province_slug }}/destination/{{ $destination_slug }}/tour/{{ $tour_slug }}" class="back-button" style="background: var(--secondary-color); color: white;">🇬🇧 English</a>
+                @else
+                    <a href="/es/provincia/{{ $province_slug }}/destino/{{ $destination_slug }}/tour/{{ $tour_slug }}" class="back-button" style="background: var(--secondary-color); color: white;">🇪🇸 Español</a>
+                @endif
+            </div>
         </div>
     </nav>
 
@@ -477,7 +484,7 @@
 
                 <!-- Itinerary -->
                 <section>
-                    <h2 class="section-title">Itinerario Detallado</h2>
+                    <h2 class="section-title">{{ __('tours.itinerary') }}</h2>
                     <ul class="itinerary">
                         <li class="itinerary-item">
                             <div class="itinerary-time">Día 1 - 8:00 AM</div>
@@ -514,7 +521,7 @@
 
                 <!-- What's Included -->
                 <section>
-                    <h2 class="section-title">Qué Incluye</h2>
+                    <h2 class="section-title">{{ __('tours.included') }}</h2>
                     <ul class="included-list">
                         <li>Transporte ida y vuelta</li>
                         <li>Guía profesional bilingüe</li>
@@ -543,9 +550,8 @@
                 <!-- Reviews Placeholder -->
                 <section>
                     <div class="reviews-placeholder">
-                        <h3>⭐ Calificaciones y Comentarios</h3>
-                        <p>Esta funcionalidad estará disponible en la Fase 2 del proyecto.</p>
-                        <p>Aquí los usuarios podrán dejar sus reseñas y calificaciones del tour.</p>
+                        <h3>⭐ {{ __('tours.reviews') }}</h3>
+                        <p>{{ __('tours.title') }} - Phase 2</p>
                     </div>
                 </section>
             </div>

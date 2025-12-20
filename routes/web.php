@@ -3,9 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
 
+// Home pages with language support
 Route::get('/', function () {
-    return view('home');
-})->name('home');
+    return redirect('/es/', 301);
+})->name('home.redirect');
 
 Route::get('/dashboard', function () {
     return view('dashboard-mui');
@@ -15,10 +16,6 @@ Route::get('/contacto', function () {
     return view('contacto');
 });
 Route::post('/contacto', [ContactController::class, 'store']);
-
-Route::get('/tours', function () {
-    return view('tours.index');
-});
 
 Route::get('/tour/{id}', function () {
     return view('tours.show');
@@ -53,4 +50,22 @@ Route::middleware('locale')->group(function () {
     Route::get('/en/transport-volcano-arenal', function () {
         return view('landings.transport');
     })->name('landing.transport.en');
+
+    // HOME PAGE with language support
+    Route::get('/es/', function () {
+        return view('home');
+    })->name('home.es');
+
+    Route::get('/en/', function () {
+        return view('home');
+    })->name('home.en');
+
+    // TOURS LISTING PAGE with language support
+    Route::get('/es/tours', function () {
+        return view('tours.index');
+    })->name('tours.es');
+
+    Route::get('/en/tours', function () {
+        return view('tours.index');
+    })->name('tours.en');
 });

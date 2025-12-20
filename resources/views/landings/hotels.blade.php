@@ -194,7 +194,7 @@
                             <div class="price-label">{{ __('landings.price_from') }}</div>
                             <div class="price-value">$189</div>
                         </div>
-                        <a href="#" class="view-btn">View</a>
+                        <a href="{{ app()->getLocale() === 'es' ? '/es/provincia/guanacaste/destino/arenal/hotel/la-fortuna-resort' : '/en/province/guanacaste/destination/arenal/hotel/la-fortuna-resort' }}" class="view-btn">{{ app()->getLocale() === 'es' ? 'Ver' : 'View' }}</a>
                     </div>
                 </div>
             </div>
@@ -211,7 +211,7 @@
                             <div class="price-label">{{ __('landings.price_from') }}</div>
                             <div class="price-value">$129</div>
                         </div>
-                        <a href="#" class="view-btn">View</a>
+                        <a href="{{ app()->getLocale() === 'es' ? '/es/provincia/guanacaste/destino/arenal/hotel/arenal-boutique' : '/en/province/guanacaste/destination/arenal/hotel/arenal-boutique' }}" class="view-btn">{{ app()->getLocale() === 'es' ? 'Ver' : 'View' }}</a>
                     </div>
                 </div>
             </div>
@@ -228,7 +228,7 @@
                             <div class="price-label">{{ __('landings.price_from') }}</div>
                             <div class="price-value">$99</div>
                         </div>
-                        <a href="#" class="view-btn">View</a>
+                        <a href="{{ app()->getLocale() === 'es' ? '/es/provincia/guanacaste/destino/arenal/hotel/arenal-eco-lodge' : '/en/province/guanacaste/destination/arenal/hotel/arenal-eco-lodge' }}" class="view-btn">{{ app()->getLocale() === 'es' ? 'Ver' : 'View' }}</a>
                     </div>
                 </div>
             </div>
@@ -311,8 +311,19 @@
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2025 Costa Rica Trip Packages. All rights reserved.</p>
-        <p>WhatsApp: <a href="https://wa.me/506" style="color: var(--primary); text-decoration: none;">+506 1234-5678</a></p>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+            <div>
+                <p>&copy; 2025 Costa Rica Trip Packages. All rights reserved.</p>
+                <p>WhatsApp: <a href="https://wa.me/506" style="color: var(--primary); text-decoration: none;">+506 1234-5678</a></p>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                @if(app()->getLocale() === 'es')
+                    <a href="{{ route('landing.hotels.en') }}" class="cta-button" style="font-size: 0.9rem; padding: 0.6rem 1.2rem; display: inline-flex; align-items: center; gap: 0.5rem;">🇬🇧 English</a>
+                @else
+                    <a href="{{ route('landing.hotels.es') }}" class="cta-button" style="font-size: 0.9rem; padding: 0.6rem 1.2rem; display: inline-flex; align-items: center; gap: 0.5rem;">🇪🇸 Español</a>
+                @endif
+            </div>
+        </div>
     </footer>
 </body>
 </html>
