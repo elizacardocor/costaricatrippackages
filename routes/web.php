@@ -25,8 +25,20 @@ Route::get('/destino/{slug}', function () {
     return redirect('/tours');
 });
 
-// Landing pages con soporte multiidioma
+// Landing pages con soporte multiidioma y rutas multiidioma
 Route::middleware('locale')->group(function () {
+    // Contact routes
+    Route::get('/es/contacto', function () {
+        return view('contacto');
+    })->name('contact.es');
+
+    Route::get('/en/contact', function () {
+        return view('contacto');
+    })->name('contact.en');
+
+    Route::post('/es/contacto', [ContactController::class, 'store'])->name('contact.store.es');
+    Route::post('/en/contact', [ContactController::class, 'store'])->name('contact.store.en');
+
     Route::get('/es/hoteles-volcan-arenal', function () {
         return view('landings.hotels');
     })->name('landing.hotels.es');

@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="description" content="Contáctanos para más información sobre tours y paquetes turísticos en Costa Rica">
-    <title>Contacto - Costa Rica Trip Packages</title>
+    <meta name="description" content="{{ __('contact.meta_description') }}">
+    @if(config('app.env') !== 'production')
+    <meta name="robots" content="noindex, nofollow">
+    @endif
+    <title>{{ __('contact.title') }} - Costa Rica Trip Packages</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -78,6 +81,19 @@
 
         .nav-menu a:hover {
             color: var(--primary-color);
+        }
+
+        .lang-switch {
+            padding: 0.5rem 1rem;
+            background: var(--light);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .lang-switch:hover {
+            background: var(--primary-color) !important;
+            color: white !important;
         }
 
         .nav-toggle {
@@ -486,18 +502,29 @@
             </a>
             <button class="nav-toggle" id="navToggle">☰</button>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="/">Inicio</a></li>
-                <li><a href="/tours">Tours</a></li>
-                <li><a href="/#destinos">Destinos</a></li>
-                <li><a href="/contacto" style="color: var(--primary-color);">Contacto</a></li>
+                <li><a href="/">{{ app()->getLocale() === 'es' ? 'Inicio' : 'Home' }}</a></li>
+                <li><a href="{{ app()->getLocale() === 'es' ? '/es/tours' : '/en/tours' }}">{{ app()->getLocale() === 'es' ? 'Tours' : 'Tours' }}</a></li>
+                <li><a href="/#destinos">{{ app()->getLocale() === 'es' ? 'Destinos' : 'Destinations' }}</a></li>
+                <li>
+                    <a href="{{ app()->getLocale() === 'es' ? '/es/contacto' : '/en/contact' }}" style="color: var(--primary-color);">
+                        {{ app()->getLocale() === 'es' ? 'Contacto' : 'Contact' }}
+                    </a>
+                </li>
+                <li>
+                    @if(app()->getLocale() === 'es')
+                        <a href="{{ str_replace('/es/', '/en/', request()->getPathInfo()) }}" class="lang-switch">🇬🇧 EN</a>
+                    @else
+                        <a href="{{ str_replace('/en/', '/es/', request()->getPathInfo()) }}" class="lang-switch">🇪🇸 ES</a>
+                    @endif
+                </li>
             </ul>
         </div>
     </nav>
 
     <!-- Page Header -->
     <div class="page-header">
-        <h1>Contáctanos</h1>
-        <p>¿Listo para tu próxima aventura? Estamos aquí para ayudarte a planificar el viaje perfecto a Costa Rica</p>
+        <h1>{{ __('contact.header_title') }}</h1>
+        <p>{{ __('contact.header_subtitle') }}</p>
     </div>
 
     <!-- Contact Section -->
@@ -506,48 +533,48 @@
             <div class="contact-grid">
                 <!-- Contact Form -->
                 <div class="contact-form">
-                    <h2 class="form-title">Envíanos un Mensaje</h2>
+                    <h2 class="form-title">{{ __('contact.form_title') }}</h2>
                     
                     <div class="success-message" id="successMessage">
-                        ¡Gracias por contactarnos! Tu mensaje ha sido enviado. Te responderemos pronto.
+                        {{ __('contact.form_success') }}
                     </div>
 
                     <form id="contactForm" onsubmit="handleSubmit(event)">
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="name">Nombre Completo *</label>
+                                <label for="name">{{ __('contact.form_name') }} {{ __('contact.form_required') }}</label>
                                 <input type="text" id="name" name="name" required>
                             </div>
                             <div class="form-group">
-                                <label for="email">Email *</label>
+                                <label for="email">{{ __('contact.form_email') }} {{ __('contact.form_required') }}</label>
                                 <input type="email" id="email" name="email" required>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="phone">Teléfono</label>
+                                <label for="phone">{{ __('contact.form_phone') }}</label>
                                 <input type="tel" id="phone" name="phone">
                             </div>
                             <div class="form-group">
-                                <label for="subject">Asunto *</label>
+                                <label for="subject">{{ __('contact.form_subject') }} {{ __('contact.form_required') }}</label>
                                 <select id="subject" name="subject" required>
-                                    <option value="">Selecciona un asunto</option>
-                                    <option value="tour">Consulta sobre tours</option>
-                                    <option value="reservation">Reserva</option>
-                                    <option value="price">Información de precios</option>
-                                    <option value="custom">Paquete personalizado</option>
-                                    <option value="other">Otro</option>
+                                    <option value="">{{ __('contact.subject_select') }}</option>
+                                    <option value="tour">{{ __('contact.subject_tour') }}</option>
+                                    <option value="reservation">{{ __('contact.subject_reservation') }}</option>
+                                    <option value="price">{{ __('contact.subject_price') }}</option>
+                                    <option value="custom">{{ __('contact.subject_custom') }}</option>
+                                    <option value="other">{{ __('contact.subject_other') }}</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="message">Mensaje *</label>
-                            <textarea id="message" name="message" required placeholder="Cuéntanos sobre tu próxima aventura en Costa Rica..."></textarea>
+                            <label for="message">{{ __('contact.form_message') }} {{ __('contact.form_required') }}</label>
+                            <textarea id="message" name="message" required placeholder="{{ __('contact.form_placeholder') }}"></textarea>
                         </div>
 
-                        <button type="submit" class="submit-button">Enviar Mensaje</button>
+                        <button type="submit" class="submit-button">{{ __('contact.form_submit') }}</button>
                     </form>
                 </div>
 
@@ -556,39 +583,36 @@
                     <div class="info-card">
                         <div class="info-icon">📧</div>
                         <div class="info-content">
-                            <h3>Email</h3>
-                            <p>Escríbenos en cualquier momento</p>
-                            <a href="mailto:info@costaricatrips.com">info@costaricatrips.com</a><br>
-                            <a href="mailto:reservas@costaricatrips.com">reservas@costaricatrips.com</a>
+                            <h3>{{ __('contact.contact_email') }}</h3>
+                            <p>{{ __('contact.contact_email_text') }}</p>
+                            <a href="mailto:info@costaricatrips.com">{{ __('contact.contact_email_info') }}</a><br>
+                            <a href="mailto:reservas@costaricatrips.com">{{ __('contact.contact_email_reservations') }}</a>
                         </div>
                     </div>
 
                     <div class="info-card">
                         <div class="info-icon">📱</div>
                         <div class="info-content">
-                            <h3>Teléfono / WhatsApp</h3>
-                            <p>Lunes a Viernes: 8:00 AM - 6:00 PM<br>
-                               Sábados: 9:00 AM - 2:00 PM</p>
-                            <a href="tel:+50612345678">+506 1234-5678</a><br>
-                            <a href="https://wa.me/50612345678" target="_blank">WhatsApp: +506 1234-5678</a>
+                            <h3>{{ __('contact.contact_phone') }}</h3>
+                            <p>{{ __('contact.contact_phone_hours') }}</p>
+                            <a href="tel:+50612345678">{{ __('contact.contact_phone_number') }}</a><br>
+                            <a href="https://wa.me/50612345678" target="_blank">{{ __('contact.contact_whatsapp') }}</a>
                         </div>
                     </div>
 
                     <div class="info-card">
                         <div class="info-icon">📍</div>
                         <div class="info-content">
-                            <h3>Oficina Central</h3>
-                            <p>Avenida Central, San José<br>
-                               Costa Rica, 10101<br>
-                               Edificio Costa Rica Trips, Piso 3</p>
+                            <h3>{{ __('contact.contact_office') }}</h3>
+                            <p>{{ __('contact.contact_office_address') }}</p>
                         </div>
                     </div>
 
                     <div class="info-card">
                         <div class="info-icon">🌐</div>
                         <div class="info-content">
-                            <h3>Síguenos en Redes Sociales</h3>
-                            <p>Mantente al día con nuestras ofertas y destinos</p>
+                            <h3>{{ __('contact.contact_social') }}</h3>
+                            <p>{{ __('contact.contact_social_text') }}</p>
                             <div class="social-links">
                                 <a href="#" class="social-link" title="Facebook">📘</a>
                                 <a href="#" class="social-link" title="Instagram">📷</a>
@@ -605,7 +629,7 @@
     <!-- Map Section -->
     <section class="map-section">
         <div class="container">
-            <h2 class="section-title">Nuestra Ubicación</h2>
+            <h2 class="section-title">{{ __('contact.location_title') }}</h2>
             <div class="map-container">
                 <iframe 
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d251644.5447867131!2d-84.19109841593447!3d9.934739299623824!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fa0e342c50d15c5%3A0xe6746a6a9f11b882!2sSan%20Jos%C3%A9%2C%20Costa%20Rica!5e0!3m2!1sen!2s!4v1702393200000!5m2!1sen!2s" 
@@ -620,70 +644,70 @@
     <!-- FAQ Section -->
     <section class="faq-section">
         <div class="container">
-            <h2 class="section-title">Preguntas Frecuentes</h2>
+            <h2 class="section-title">{{ __('contact.faq_title') }}</h2>
             <div class="faq-list">
                 <div class="faq-item">
                     <div class="faq-question" onclick="toggleFAQ(this)">
-                        ¿Cuál es el mejor momento para visitar Costa Rica?
+                        {{ __('contact.faq_q1') }}
                     </div>
                     <div class="faq-answer">
                         <div class="faq-answer-content">
-                            Costa Rica es un destino de todo el año. La temporada seca (diciembre-abril) es ideal para playas y sol. La temporada verde (mayo-noviembre) ofrece paisajes exuberantes y menos turistas.
+                            {{ __('contact.faq_a1') }}
                         </div>
                     </div>
                 </div>
 
                 <div class="faq-item">
                     <div class="faq-question" onclick="toggleFAQ(this)">
-                        ¿Los tours incluyen transporte?
+                        {{ __('contact.faq_q2') }}
                     </div>
                     <div class="faq-answer">
                         <div class="faq-answer-content">
-                            Sí, todos nuestros tours incluyen transporte con aire acondicionado desde y hacia tu hotel en San José. Si te hospedas en otra ciudad, podemos coordinar el punto de encuentro.
+                            {{ __('contact.faq_a2') }}
                         </div>
                     </div>
                 </div>
 
                 <div class="faq-item">
                     <div class="faq-question" onclick="toggleFAQ(this)">
-                        ¿Necesito vacunas para viajar a Costa Rica?
+                        {{ __('contact.faq_q3') }}
                     </div>
                     <div class="faq-answer">
                         <div class="faq-answer-content">
-                            No hay vacunas obligatorias para ingresar a Costa Rica. Sin embargo, recomendamos consultar con tu médico y considerar vacunas para hepatitis A y B, y tétanos.
+                            {{ __('contact.faq_a3') }}
                         </div>
                     </div>
                 </div>
 
                 <div class="faq-item">
                     <div class="faq-question" onclick="toggleFAQ(this)">
-                        ¿Puedo personalizar un tour?
+                        {{ __('contact.faq_q4') }}
                     </div>
                     <div class="faq-answer">
                         <div class="faq-answer-content">
-                            ¡Absolutamente! Ofrecemos paquetes personalizados adaptados a tus intereses, presupuesto y tiempo disponible. Contáctanos para diseñar tu aventura perfecta.
+                            {{ __('contact.faq_a4') }}
                         </div>
                     </div>
                 </div>
 
                 <div class="faq-item">
                     <div class="faq-question" onclick="toggleFAQ(this)">
-                        ¿Qué métodos de pago aceptan?
+                        {{ __('contact.faq_q5') }}
                     </div>
                     <div class="faq-answer">
                         <div class="faq-answer-content">
-                            Aceptamos tarjetas de crédito/débito (Visa, Mastercard, American Express), transferencias bancarias y PayPal. Se requiere un depósito del 30% para confirmar la reserva.
+                            {{ __('contact.faq_a5') }}
                         </div>
                     </div>
                 </div>
 
                 <div class="faq-item">
                     <div class="faq-question" onclick="toggleFAQ(this)">
-                        ¿Cuál es la política de cancelación?
+                        {{ __('contact.faq_q6') }}
                     </div>
                     <div class="faq-answer">
                         <div class="faq-answer-content">
-                            Cancelaciones con más de 30 días: reembolso del 100%. Entre 15-30 días: 50%. Menos de 15 días: no reembolsable. Recomendamos adquirir seguro de viaje.
+                            {{ __('contact.faq_a6') }}
                         </div>
                     </div>
                 </div>
@@ -696,19 +720,19 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>Costa Rica Trips</h3>
-                <p>Tu mejor aliado para descubrir las maravillas de Costa Rica</p>
+                <p>{{ __('contact.footer_text') }}</p>
             </div>
             <div class="footer-section">
-                <h3>Enlaces Rápidos</h3>
+                <h3>{{ __('contact.footer_quick_links') }}</h3>
                 <ul>
-                    <li><a href="/tours">Tours</a></li>
-                    <li><a href="/#destinos">Destinos</a></li>
-                    <li><a href="/contacto">Contacto</a></li>
+                    <li><a href="{{ app()->getLocale() === 'es' ? '/es/tours' : '/en/tours' }}">Tours</a></li>
+                    <li><a href="/#destinos">{{ app()->getLocale() === 'es' ? 'Destinos' : 'Destinations' }}</a></li>
+                    <li><a href="{{ app()->getLocale() === 'es' ? '/es/contacto' : '/en/contact' }}">{{ __('contact.footer_contact') }}</a></li>
                     <li><a href="/dashboard">Dashboard</a></li>
                 </ul>
             </div>
             <div class="footer-section">
-                <h3>Contacto</h3>
+                <h3>{{ __('contact.footer_contact') }}</h3>
                 <ul>
                     <li>📧 info@costaricatrips.com</li>
                     <li>📱 +506 1234-5678</li>
@@ -717,7 +741,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2025 Costa Rica Trip Packages. Todos los derechos reservados.</p>
+            <p>{{ __('contact.footer_copyright') }}</p>
         </div>
     </footer>
 
