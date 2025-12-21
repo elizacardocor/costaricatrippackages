@@ -48,10 +48,14 @@
     ┌──────────┼──────────┬────────────┐   │ service_type (enum)  │
     │          │          │            │   │ service_id (FK)      │
     │          │          │            │   │ rate_type_id (FK)    │
+    │          │          │            │   │ pricing_model (enum) │
     │          │          │            │   │ price                │
-    │          │          │            │   │ start_date           │
-    ▼          ▼          ▼            ▼   │ end_date             │
-┌──────┐  ┌─────────┐ ┌────────┐  ┌──────┐│ min_nights           │
+    │          │          │            │   │ min_hours (opt)      │
+    │          │          │            │   │ min_km (opt)         │
+    │          │          │            │   │ max_km (opt)         │
+    │          │          │            │   │ min_persons (opt)    │
+    ▼          ▼          ▼            ▼   │ start_date           │
+┌──────┐  ┌─────────┐ ┌────────┐  ┌──────┐│ end_date             │
 │HOTELS│  │  TOURS  │ │TRANSPORT  │OPERATORS││ active               │
 └──────┘  └─────────┘ └────────┘  └──────┘└──────────────────────┘
     │          │          │            │
@@ -292,10 +296,12 @@ Via tabla: destination_transport
 
 ```
 PRICING ────→ HOTELS / TOURS / TRANSPORTS
-Via columnas: service_type + service_id
+Via columnas: service_type + service_id + pricing_model
 └─ Una tabla de precios para los 3 tipos de servicios
 └─ service_type: enum('hotel', 'tour', 'transport')
 └─ service_id: ID del servicio específico
+└─ pricing_model: enum('fixed', 'hourly', 'per_km', 'per_day', 'per_person')
+   └─ Permite múltiples modelos de cálculo de precio para el mismo servicio
 ```
 
 ---
@@ -327,7 +333,7 @@ Via columnas: service_type + service_id
 
 | Tabla | Descripción | Relaciones |
 |-------|-------------|-----------|
-| **pricing** | Precios por temporada | Polimórfica: HOTELS, TOURS, TRANSPORTS, 1:N ← rate_types |
+| **pricing** | Precios por temporada con múltiples modelos de cálculo | Polimórfica: HOTELS, TOURS, TRANSPORTS, 1:N ← rate_types, Soporta 5 modelos de precio |
 
 ### Tablas de Imágenes (3)
 
@@ -392,6 +398,515 @@ TABLAS DE CARACTERÍSTICAS:       2
 ═══════════════════════════════════════════════
 TOTAL:                          20 TABLAS
 ═══════════════════════════════════════════════
+```
+
+---
+
+## 🎁 Sistema de Descuentos Inteligente
+
+### Estrategia: DISCOUNTS TABLE + Descuentos Automáticos
+
+En lugar de complicar BOOKINGS, usamos una tabla separada **DISCOUNTS** que se aplica automáticamente:
+
+```sql
+CREATE TABLE discounts (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    
+    -- Identificación
+    name VARCHAR(100) NOT NULL,                    -- "Descuento Paquete 3+ Servicios"
+    code VARCHAR(20) UNIQUE DEFAULT NULL,          -- Código opcional (ej: VERANO2024)
+    description TEXT DEFAULT NULL,
+    
+    -- Tipo de descuento
+    discount_type ENUM(
+        'percentage',                              -- Porcentaje (20%)
+        'fixed_amount',                            -- Cantidad fija ($50)
+        'bundle',                                  -- Descuento por paquete
+        'tiered'                                   -- Escalonado por cantidad
+    ) NOT NULL,
+    
+    -- Condiciones
+    min_items INT DEFAULT 1,                       -- Mínimo de items
+    min_services INT DEFAULT 1,                    -- Mínimo de servicios diferentes
+    min_total_price DECIMAL(10, 2) DEFAULT 0,      -- Monto mínimo
+    
+    -- Aplicable a
+    applicable_to ENUM(
+        'all',                                     -- Todos los servicios
+        'specific_services',                       -- Servicios específicos
+        'service_type'                             -- Tipo de servicio (hotel/tour/transport)
+    ) DEFAULT 'all',
+    
+    -- Valor del descuento
+    discount_value DECIMAL(10, 2) NOT NULL,        -- 20 (%) o 50 ($)
+    max_discount DECIMAL(10, 2) DEFAULT NULL,      -- Máximo descuento permitido
+    
+    -- Validez
+    start_date DATE DEFAULT NULL,
+    end_date DATE DEFAULT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    
+    -- Límites
+    usage_limit INT DEFAULT NULL,                  -- Máximo de usos
+    usage_count INT DEFAULT 0,                     -- Usos actuales
+    per_user_limit INT DEFAULT NULL,               -- Por usuario
+    
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    INDEX idx_code (code),
+    INDEX idx_active (is_active),
+    INDEX idx_dates (start_date, end_date)
+);
+```
+
+---
+
+## 💡 Ejemplos de Descuentos Reales
+
+### 1️⃣ Descuento por Cantidad de Servicios (Muy Común)
+
+```
+Nombre: "Ahorra en Paquetes"
+Tipo: percentage
+Condición: min_services >= 3 (3+ servicios diferentes)
+Valor: 15% descuento
+
+Ejemplo 1:
+├─ Hotel: $200 × 5 noches = $1,000
+├─ Tour: $299 × 1 = $299
+├─ Transport: $100 × 1 = $100
+├─ Subtotal: $1,399
+├─ Descuento 15%: -$209.85
+└─ Total: $1,189.15 ✅
+
+Ejemplo 2 (Sin descuento):
+├─ Hotel: $200 × 5 noches = $1,000
+├─ Subtotal: $1,000
+└─ Total: $1,000 (no cumple min_services >= 3)
+```
+
+### 2️⃣ Descuento por Monto Total
+
+```
+Nombre: "Mega Ahorro"
+Tipo: tiered (escalonado)
+Condiciones:
+├─ $500-$999: 5% descuento
+├─ $1,000-$1,999: 10% descuento
+├─ $2,000+: 15% descuento
+
+Ejemplo:
+├─ Subtotal: $1,500
+├─ Descuento 10%: -$150
+└─ Total: $1,350
+```
+
+### 3️⃣ Descuento por Temporada
+
+```
+Nombre: "Verano Low Cost"
+Tipo: fixed_amount
+Valor: $50 descuento fijo
+Fechas: 2024-06-01 a 2024-08-31
+Condición: applicable_to = 'tours'
+
+Ejemplo:
+├─ Tour 1: $299
+├─ Tour 2: $199
+├─ Subtotal: $498
+├─ Descuento: -$50
+└─ Total: $448
+```
+
+### 4️⃣ Código Promocional
+
+```
+Nombre: "Referido Amigo"
+Tipo: percentage
+Código: REFERIDO20
+Valor: 20% descuento
+Límite: 50 usos máximo
+Válido hasta: 2024-12-31
+
+Ejemplo:
+├─ Usuario aplica código "REFERIDO20"
+├─ Subtotal: $1,000
+├─ Descuento 20%: -$200
+└─ Total: $800
+```
+
+---
+
+## 🧮 Cómo Calcular Descuentos (Algoritmo)
+
+```php
+public function applyDiscounts($bookingItems, $appliedCodes = [])
+{
+    $subtotal = $bookingItems->sum('subtotal');
+    $discountApplied = 0;
+    $discountsUsed = [];
+    
+    // 1. Obtener descuentos elegibles
+    $eligibleDiscounts = Discount::where('is_active', true)
+                                  ->where('start_date', '<=', now()->date)
+                                  ->where('end_date', '>=', now()->date)
+                                  ->orWhereNull('end_date')
+                                  ->get();
+    
+    foreach ($eligibleDiscounts as $discount) {
+        
+        // 2. Verificar condiciones
+        if (!$this->meetsConditions($bookingItems, $subtotal, $discount)) {
+            continue;
+        }
+        
+        // 3. Calcular descuento
+        $discountAmount = match($discount->discount_type) {
+            'percentage' => ($subtotal * $discount->discount_value) / 100,
+            'fixed_amount' => $discount->discount_value,
+            'bundle' => $this->calculateBundleDiscount($bookingItems, $discount),
+            'tiered' => $this->calculateTieredDiscount($subtotal, $discount),
+        };
+        
+        // 4. Respetar límite máximo
+        if ($discount->max_discount) {
+            $discountAmount = min($discountAmount, $discount->max_discount);
+        }
+        
+        // 5. Respetar límite de uso
+        if ($discount->usage_limit && $discount->usage_count >= $discount->usage_limit) {
+            continue;
+        }
+        
+        // 6. Acumular descuento (si se permiten múltiples)
+        $discountApplied += $discountAmount;
+        $discountsUsed[] = [
+            'id' => $discount->id,
+            'name' => $discount->name,
+            'amount' => $discountAmount
+        ];
+    }
+    
+    // 7. Aplicar códigos promocionales
+    foreach ($appliedCodes as $code) {
+        $promoDiscount = Discount::where('code', $code)->first();
+        if ($promoDiscount && $this->meetsConditions($bookingItems, $subtotal, $promoDiscount)) {
+            $discountAmount = $promoDiscount->discount_type === 'percentage'
+                ? (($subtotal - $discountApplied) * $promoDiscount->discount_value) / 100
+                : $promoDiscount->discount_value;
+            
+            $discountApplied += $discountAmount;
+            $discountsUsed[] = ['code' => $code, 'amount' => $discountAmount];
+        }
+    }
+    
+    return [
+        'subtotal' => $subtotal,
+        'discounts' => $discountsUsed,
+        'total_discount' => $discountApplied,
+        'final_total' => max(0, $subtotal - $discountApplied)
+    ];
+}
+
+private function meetsConditions($bookingItems, $subtotal, $discount)
+{
+    // Verificar cantidad de items
+    if ($bookingItems->count() < $discount->min_items) {
+        return false;
+    }
+    
+    // Verificar cantidad de servicios diferentes
+    $uniqueServices = $bookingItems->groupBy('service_type')->count();
+    if ($uniqueServices < $discount->min_services) {
+        return false;
+    }
+    
+    // Verificar monto mínimo
+    if ($subtotal < $discount->min_total_price) {
+        return false;
+    }
+    
+    return true;
+}
+```
+
+---
+
+## 📊 Tabla BOOKING_ITEMS Mejorada (Con Descuentos)
+
+```sql
+CREATE TABLE booking_items (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    booking_id BIGINT NOT NULL,
+    service_type ENUM('hotel', 'tour', 'transport') NOT NULL,
+    service_id BIGINT NOT NULL,
+    pricing_id BIGINT NOT NULL,
+    quantity INT DEFAULT 1,
+    unit_price DECIMAL(10, 2) NOT NULL,
+    subtotal DECIMAL(12, 2) NOT NULL,
+    
+    -- ✨ NUEVO: Descuentos a nivel de item
+    discount_amount DECIMAL(10, 2) DEFAULT 0,     -- Descuento aplicado
+    item_total DECIMAL(12, 2) NOT NULL,           -- subtotal - discount_amount
+    
+    notes TEXT DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE,
+    FOREIGN KEY (pricing_id) REFERENCES pricing(id) ON DELETE RESTRICT,
+    INDEX idx_booking (booking_id)
+);
+```
+
+---
+
+## 💰 Ejemplo Completo de Cálculo
+
+```
+ESCENARIO: Cliente quiere reservar en Arenal
+
+┌─────────────────────────────────────────────────────────────────┐
+│ CARRITO DE COMPRA (Sin Descuentos)                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│ 1. La Fortuna Resort (Hotel)                                    │
+│    5 noches × $200 = $1,000                                     │
+│                                                                  │
+│ 2. Arenal Adventure Tour                                        │
+│    1 día × $299 = $299                                          │
+│                                                                  │
+│ 3. Transport Arenal (Van)                                       │
+│    1 transporte × $100 = $100                                   │
+│                                                                  │
+│ SUBTOTAL: $1,399                                                │
+├─────────────────────────────────────────────────────────────────┤
+│ DESCUENTOS APLICADOS:                                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│ ✓ Descuento Paquete 3+ Servicios: 15%                          │
+│   ($1,399 × 15%) = -$209.85                                     │
+│                                                                  │
+│ ✓ Descuento Verano Low Cost (Tours): $50                        │
+│   -$50.00                                                        │
+│                                                                  │
+│ TOTAL DESCUENTOS: -$259.85                                      │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│ TOTAL A PAGAR: $1,399 - $259.85 = $1,139.15                    │
+│                                                                  │
+│ AHORRAS: $259.85 (18.6%)                                        │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 📈 Total de Tablas ACTUALIZADO
+
+```
+TABLAS PRINCIPALES (originales):    20
+├─ provinces, destinations, hotels, tours, transports, pricing, etc.
+
+TABLAS NUEVAS PARA DESCUENTOS:      1
+└─ discounts
+
+TABLAS PARA FUTURO (No implementadas): 4
+├─ users
+├─ roles  
+├─ bookings
+└─ booking_items
+
+═══════════════════════════════════════════════
+TOTAL (Cuando se implemente todo):  25 TABLAS
+TOTAL (Ahora - Solo descuentos):    21 TABLAS
+═══════════════════════════════════════════════
+```
+
+---
+
+## 🎯 Flujo de Descuentos (Resumen)
+
+```
+1. CLIENTE agrega items al carrito
+   ├─ Hotel $1,000
+   ├─ Tour $299
+   └─ Transport $100
+   
+2. SISTEMA calcula descuentos automáticos
+   ├─ Verifica: ¿3+ servicios? SÍ → -15%
+   ├─ Verifica: ¿Tours en temporada? SÍ → -$50
+   
+3. CLIENTE VE RESULTADO
+   ├─ Subtotal: $1,399
+   ├─ Descuentos: -$259.85
+   └─ Total: $1,139.15
+   
+4. CLIENTE CONFIRMA (Aplica también código si tiene)
+   ├─ Ingresa código promocional
+   ├─ Sistema valida y aplica
+   └─ Crea BOOKING con descuentos registrados
+```
+
+
+
+### Tipos de Modelos Soportados (pricing_model)
+
+La tabla `pricing` soporta **5 modelos diferentes** de cálculo de precio, permitiendo máxima flexibilidad:
+
+```
+pricing_model ENUM(
+    'fixed',      -- Precio fijo único
+    'hourly',     -- Precio por hora
+    'per_km',     -- Precio por kilómetro
+    'per_day',    -- Precio por día completo
+    'per_person'  -- Precio por persona
+)
+```
+
+### Ejemplo Real: Vans Arenal (Transporte)
+
+```
+Transporte: Vans Arenal (id=5)
+
+┌─────────────────────────────────────────────────────────────┐
+│ MODELOS DE PRECIO - Temporada Alta (Diciembre-Enero)       │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│ 1️⃣ FIXED (Precio Fijo)                                     │
+│    - Precio: $50                                            │
+│    - Caso: Puerta a puerta San José → Arenal               │
+│    - Cálculo: Siempre $50                                   │
+│                                                              │
+│ 2️⃣ HOURLY (Por Hora)                                       │
+│    - Precio: $30/hora                                       │
+│    - Min Hours: 1                                           │
+│    - Caso: Tour de 4 horas                                  │
+│    - Cálculo: max(4, 1) × $30 = $120                       │
+│                                                              │
+│ 3️⃣ PER_KM (Por Kilómetro)                                  │
+│    - Precio: $2.50/km                                       │
+│    - Min KM: 10, Max KM: 100                               │
+│    - Caso: Viaje de 50km                                    │
+│    - Cálculo: max(50, 10) × $2.50 = $125                  │
+│                                                              │
+│ 4️⃣ PER_DAY (Por Día - 8 horas)                             │
+│    - Precio: $200/día                                       │
+│    - Caso: Tour completo de un día                          │
+│    - Cálculo: 1 día × $200 = $200                          │
+│                                                              │
+│ 5️⃣ PER_PERSON (Por Persona)                                │
+│    - Precio: $15/persona                                    │
+│    - Min Persons: 1                                         │
+│    - Caso: Grupo de 8 personas                              │
+│    - Cálculo: 8 × $15 = $120                               │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Tabla: pricing (Estructura Mejorada)
+
+```sql
+CREATE TABLE pricing (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    
+    -- Referencia al servicio (polimórfica)
+    service_type ENUM('hotel', 'tour', 'transport') NOT NULL,
+    service_id BIGINT NOT NULL,
+    
+    -- Temporada
+    rate_type_id BIGINT NOT NULL,
+    
+    -- ✨ MODELO DE CÁLCULO (Flexible Pricing)
+    pricing_model ENUM('fixed', 'hourly', 'per_km', 'per_day', 'per_person') 
+                  DEFAULT 'fixed' NOT NULL,
+    
+    -- Precio (significado depende de pricing_model)
+    price DECIMAL(10, 2) NOT NULL,
+    
+    -- Parámetros opcionales según el modelo
+    min_hours INT DEFAULT NULL,          -- Para 'hourly'
+    min_km INT DEFAULT NULL,             -- Para 'per_km'
+    max_km INT DEFAULT NULL,             -- Para 'per_km'
+    min_persons INT DEFAULT NULL,        -- Para 'per_person'
+    
+    -- Rango de validez
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    active BOOLEAN DEFAULT TRUE,
+    
+    -- Timestamps
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Relaciones
+    FOREIGN KEY (rate_type_id) REFERENCES rate_types(id) ON DELETE CASCADE,
+    
+    -- Índices para búsquedas rápidas
+    INDEX idx_service (service_type, service_id),
+    INDEX idx_dates (start_date, end_date),
+    INDEX idx_pricing_model (pricing_model),
+    
+    -- Unicidad
+    UNIQUE (service_type, service_id, rate_type_id, pricing_model, start_date)
+);
+```
+
+### Ejemplos de Datos: Vans Arenal
+
+```
+┌────┬─────────────┬──────────┬──────────┬────────────┬───────┬──────────┬────────┬────────────┬────────────┬──────────────┬───────────────────┬───────────────┐
+│ id │service_type │service_id│rate_id   │model       │ price │min_hours │min_km  │max_km      │min_persons │start_date    │end_date           │active         │
+├────┼─────────────┼──────────┼──────────┼────────────┼───────┼──────────┼────────┼────────────┼────────────┼──────────────┼───────────────────┼───────────────┤
+│ 1  │ 'transport' │ 5        │ 1        │ 'fixed'    │ 50    │ NULL     │ NULL   │ NULL       │ NULL       │ 2024-12-01   │ 2025-01-15        │ 1             │
+│ 2  │ 'transport' │ 5        │ 1        │ 'hourly'   │ 30    │ 1        │ NULL   │ NULL       │ NULL       │ 2024-12-01   │ 2025-01-15        │ 1             │
+│ 3  │ 'transport' │ 5        │ 1        │ 'per_km'   │ 2.50  │ NULL     │ 10     │ 100        │ NULL       │ 2024-12-01   │ 2025-01-15        │ 1             │
+│ 4  │ 'transport' │ 5        │ 1        │ 'per_day'  │ 200   │ NULL     │ NULL   │ NULL       │ NULL       │ 2024-12-01   │ 2025-01-15        │ 1             │
+│ 5  │ 'transport' │ 5        │ 1        │ 'per_person│ 15    │ NULL     │ NULL   │ NULL       │ 1          │ 2024-12-01   │ 2025-01-15        │ 1             │
+│ 6  │ 'transport' │ 5        │ 2        │ 'fixed'    │ 35    │ NULL     │ NULL   │ NULL       │ NULL       │ 2025-01-16   │ 2025-05-31        │ 1             │
+│ 7  │ 'transport' │ 5        │ 2        │ 'hourly'   │ 20    │ 1        │ NULL   │ NULL       │ NULL       │ 2025-01-16   │ 2025-05-31        │ 1             │
+│ 8  │ 'tour'      │ 12       │ 1        │ 'per_person│ 50    │ NULL     │ NULL   │ NULL       │ 2          │ 2024-12-01   │ 2025-01-15        │ 1             │
+│ 9  │ 'hotel'     │ 3        │ 1        │ 'fixed'    │ 120   │ NULL     │ NULL   │ NULL       │ NULL       │ 2024-12-01   │ 2025-01-15        │ 1             │
+└────┴─────────────┴──────────┴──────────┴────────────┴───────┴──────────┴────────┴────────────┴────────────┴──────────────┴───────────────────┴───────────────┘
+```
+
+### Cómo Calcular el Precio Final en Laravel
+
+```php
+public function calculatePrice(Pricing $pricing, $parameters = [])
+{
+    switch($pricing->pricing_model) {
+        
+        case 'fixed':
+            // Precio fijo - no requiere parámetros adicionales
+            return $pricing->price;
+            
+        case 'hourly':
+            // Precio por hora: max(hours, min_hours) * price
+            $hours = $parameters['hours'] ?? 1;
+            return max($hours, $pricing->min_hours ?? 0) * $pricing->price;
+            
+        case 'per_km':
+            // Precio por km: max(km, min_km) * price (respetando max_km)
+            $km = $parameters['km'] ?? $pricing->min_km ?? 0;
+            $km = min($km, $pricing->max_km ?? PHP_INT_MAX);
+            return max($km, $pricing->min_km ?? 0) * $pricing->price;
+            
+        case 'per_day':
+            // Precio por día: days * price
+            $days = $parameters['days'] ?? 1;
+            return $days * $pricing->price;
+            
+        case 'per_person':
+            // Precio por persona: persons * price
+            $persons = $parameters['persons'] ?? 1;
+            return $persons * $pricing->price;
+            
+        default:
+            return null;
+    }
+}
 ```
 
 ---
@@ -528,9 +1043,15 @@ TOTAL:                          20 TABLAS
 ## 🚀 Siguiente Paso
 
 Proceder con la creación de:
-- ✅ Todas las migraciones (20 archivos)
+- ✅ Todas las migraciones (20 + 5 archivos)
 - ✅ Todos los Models con relaciones
 - ✅ Seeders con datos realistas
 - ✅ Controllers para consultas
+
+### 📌 Tablas Preparadas Pero NO Implementadas (Para Futuro):
+- ⏳ users (Sistema de login simplificado)
+- ⏳ roles (Roles: admin, customer, operator)
+- ⏳ bookings (Reservas)
+- ⏳ booking_items (Detalles de reserva)
 
 **Estado:** Listo para implementación ✅

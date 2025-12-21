@@ -3,9 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="{{ __('landings.meta_description') }}">
-    <meta name="keywords" content="{{ __('landings.meta_keywords') }}">
+    <meta name="description" content="{{ __('hotels.listing_meta_description') }}">
+    <meta name="keywords" content="hoteles Costa Rica, alojamiento, resorts, hospedajes, hoteles de lujo">
+    <meta name="author" content="Costa Rica Trip Packages">
+    <meta name="language" content="{{ app()->getLocale() === 'es' ? 'Spanish' : 'English' }}">
+    
+    <!-- Open Graph Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ __('hotels.listing_og_title', ['default' => __('landings.hotels_title')]) }}">
+    <meta property="og:description" content="{{ __('hotels.listing_og_description', ['default' => __('hotels.listing_meta_description')]) }}">
+    <meta property="og:image" content="{{ asset('images/og-hotels.jpg') }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:site_name" content="Costa Rica Trip Packages">
+    <meta property="og:locale" content="{{ app()->getLocale() === 'es' ? 'es_CR' : 'en_US' }}">
+    
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ __('hotels.listing_og_title', ['default' => __('landings.hotels_title')]) }}">
+    <meta name="twitter:description" content="{{ __('hotels.listing_og_description', ['default' => __('hotels.listing_meta_description')]) }}">
+    <meta name="twitter:image" content="{{ asset('images/og-hotels.jpg') }}">
+    
+    @if(config('app.env') !== 'production')
+    <meta name="robots" content="noindex, nofollow">
+    @else
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    @endif
+    
     <title>{{ __('landings.hotels_title') }} - Costa Rica Trip Packages</title>
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ url()->current() }}">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -153,6 +180,21 @@
     <!-- SEO: Hreflang -->
     <link rel="alternate" hreflang="es" href="{{ route('landing.hotels.es') }}" />
     <link rel="alternate" hreflang="en" href="{{ route('landing.hotels.en') }}" />
+    
+    <!-- Schema.org JSON-LD - Hotel Collection -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "{{ __('landings.hotels_title') }}",
+        "description": "{{ __('hotels.listing_meta_description') }}",
+        "url": "{{ url()->current() }}",
+        "mainEntity": {
+            "@type": "ItemList",
+            "itemListElement": []
+        }
+    }
+    </script>
 </head>
 <body>
     <!-- Navigation -->

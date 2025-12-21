@@ -1,0 +1,169 @@
+{
+  "ProvinceSeeder.php": {
+    "descripcion": "Seeder para 7 provincias de Costa Rica con datos geográficos",
+    "cantidad": 7,
+    "provincias": [
+      "San José",
+      "Alajuela",
+      "Cartago",
+      "Heredia",
+      "Guanacaste",
+      "Puntarenas",
+      "Limón"
+    ],
+    "ruta": "database/seeders/ProvinceSeeder.php"
+  },
+  "DestinationSeeder.php": {
+    "descripcion": "Seeder para 15 destinos turísticos distribuidos en provincias",
+    "cantidad": 15,
+    "destinos_principales": [
+      "Arenal",
+      "Tamarindo",
+      "Papagayo",
+      "Liberia",
+      "Manuel Antonio",
+      "Uvita",
+      "Dominical",
+      "Jaco",
+      "Cahuita",
+      "Tortuguero",
+      "Puerto Limón",
+      "La Fortuna",
+      "Valle Central",
+      "Monteverde"
+    ],
+    "ruta": "database/seeders/DestinationSeeder.php"
+  },
+  "RateTypeSeeder.php": {
+    "descripcion": "Seeder para 4 tipos de tarifa turística",
+    "cantidad": 4,
+    "tipos_tarifa": [
+      "low-season (Temporada Baja)",
+      "high-season (Temporada Alta)",
+      "peak-season (Temporada Pico)",
+      "weekend (Fin de Semana)"
+    ],
+    "ruta": "database/seeders/RateTypeSeeder.php"
+  },
+  "TourOperatorSeeder.php": {
+    "descripcion": "Seeder para 5 operadores de tours Costa Rica",
+    "cantidad": 5,
+    "operadores": [
+      "Aventuras Costarricenses",
+      "Eco Tours CR",
+      "Costa Rica Adventures",
+      "Wild Nature Tours",
+      "Tropic Explorer"
+    ],
+    "campos": [
+      "name",
+      "slug",
+      "description",
+      "phone",
+      "email",
+      "website",
+      "rating (4.5-4.9)",
+      "commission_percentage (15-20%)",
+      "status"
+    ],
+    "ruta": "database/seeders/TourOperatorSeeder.php"
+  },
+  "HotelSeeder.php": {
+    "descripcion": "Seeder para 5 hoteles del área de Arenal",
+    "cantidad": 5,
+    "hoteles": [
+      "La Fortuna Resort (5 estrellas, 85 habitaciones)",
+      "Arenal Springs Resort (5 estrellas, 72 habitaciones)",
+      "Volcano Lodge (5 estrellas, 90 habitaciones)",
+      "Arenal Boutique (4 estrellas, 35 habitaciones)",
+      "Arenal Eco Lodge (4 estrellas, 45 habitaciones)"
+    ],
+    "campos": [
+      "name",
+      "slug",
+      "description",
+      "destination_id",
+      "commission_percentage (15%)",
+      "rating (4.5-4.9)",
+      "stars (4-5)",
+      "rooms_count",
+      "phone",
+      "email",
+      "website",
+      "checkin_time (14:00)",
+      "checkout_time (11:00)",
+      "status"
+    ],
+    "ruta": "database/seeders/HotelSeeder.php"
+  },
+  "TourSeeder.php": {
+    "descripcion": "Seeder para 4 tours con datos completos",
+    "cantidad": 4,
+    "tours": [
+      "Arenal Adventure (8 horas, moderado)",
+      "Rainforest Expedition (6 horas, fácil)",
+      "Nighttime Wildlife (4 horas, fácil)",
+      "Coffee & Chocolate Tour (5 horas, fácil)"
+    ],
+    "campos": [
+      "name",
+      "slug",
+      "destination_id",
+      "tour_operator_id",
+      "description",
+      "commission_percentage (15%)",
+      "duration_hours",
+      "start_time",
+      "max_capacity",
+      "difficulty (easy/moderate/hard)",
+      "languages (JSON: es, en)",
+      "includes (JSON array)",
+      "itinerary (JSON array)",
+      "rating (4.6-4.9)",
+      "status"
+    ],
+    "ruta": "database/seeders/TourSeeder.php"
+  },
+  "TransportSeeder.php": {
+    "descripcion": "Seeder para 5 servicios de transporte",
+    "cantidad": 5,
+    "transportes": [
+      "Taxi Express (car, 4 pasajeros)",
+      "Private Shuttle (van, 8 pasajeros)",
+      "Beach Bus Tours (bus, 45 pasajeros)",
+      "Motorcycle Rentals (motorcycle, 1 pasajero)",
+      "Bike Adventures (bicycle, 1 pasajero)"
+    ],
+    "campos": [
+      "name",
+      "slug",
+      "vehicle_type",
+      "description",
+      "commission_percentage (10-15%)",
+      "capacity",
+      "rating (4.4-4.8)",
+      "status"
+    ],
+    "ruta": "database/seeders/TransportSeeder.php"
+  },
+  "resumen_datos": {
+    "total_provincias": 7,
+    "total_destinos": 15,
+    "total_tipos_tarifa": 4,
+    "total_operadores": 5,
+    "total_hoteles": 5,
+    "total_tours": 4,
+    "total_transportes": 5,
+    "ubicacion": "database/seeders/",
+    "notas": [
+      "Todos los seeders usan DB::table() para inserción",
+      "Incluyen timestamps created_at y updated_at",
+      "Datos realistas y específicos de Costa Rica",
+      "Relaciones lógicas entre tablas",
+      "Descripciones en español e inglés",
+      "Datos geográficos precisos (latitud/longitud)",
+      "JSON para campos complejos (languages, includes, itinerary)",
+      "Comisiones y ratings realistas"
+    ]
+  }
+}

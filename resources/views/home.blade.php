@@ -5,10 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{{ __('home.meta_description') }}">
     <meta name="keywords" content="{{ __('home.meta_keywords') }}">
+    <meta name="author" content="Costa Rica Trip Packages">
+    <meta name="language" content="{{ app()->getLocale() === 'es' ? 'Spanish' : 'English' }}">
+    
+    <!-- Open Graph Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ __('home.og_title', ['default' => __('home.title')]) }}">
+    <meta property="og:description" content="{{ __('home.og_description', ['default' => __('home.meta_description')]) }}">
+    <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:site_name" content="Costa Rica Trip Packages">
+    <meta property="og:locale" content="{{ app()->getLocale() === 'es' ? 'es_CR' : 'en_US' }}">
+    
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ __('home.og_title', ['default' => __('home.title')]) }}">
+    <meta name="twitter:description" content="{{ __('home.og_description', ['default' => __('home.meta_description')]) }}">
+    <meta name="twitter:image" content="{{ asset('images/og-image.jpg') }}">
+    
     @if(config('app.env') !== 'production')
     <meta name="robots" content="noindex, nofollow">
+    @else
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     @endif
+    
     <title>{{ __('home.title') }} - {{ __('home.subtitle') }}</title>
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ url('/') }}">
+    <link rel="alternate" hreflang="es" href="{{ url('/es') }}">
+    <link rel="alternate" hreflang="en" href="{{ url('/en') }}">
     
     <!-- Preconnect para optimización -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -595,6 +621,65 @@
             box-shadow: 0 15px 35px rgba(244, 67, 54, 0.4);
         }
 
+        /* Related Tours in Modal */
+        .related-tour-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
+        }
+
+        .related-tour-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .related-tour-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .related-tour-content {
+            padding: 1rem;
+        }
+
+        .related-tour-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .related-tour-price {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.8rem;
+        }
+
+        .related-tour-btn {
+            display: block;
+            width: 100%;
+            padding: 0.6rem;
+            background: var(--secondary-color);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .related-tour-btn:hover {
+            background: #0052a3;
+            transform: translateY(-2px);
+        }
+
         /* Tours Section */
         .tours-section {
             background: var(--light);
@@ -839,6 +924,56 @@
             }
         }
     </style>
+    
+    <!-- Schema.org JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "@id": "{{ url('/') }}",
+        "name": "Costa Rica Trip Packages",
+        "description": "{{ __('home.meta_description') }}",
+        "url": "{{ url('/') }}",
+        "image": "{{ asset('images/logo.png') }}",
+        "telephone": "+506-2234-5678",
+        "email": "info@costaricatrippackages.com",
+        "areaServed": "CR",
+        "priceRange": "$$$",
+        "hasMenu": "",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "San José",
+            "addressLocality": "San José",
+            "postalCode": "10101",
+            "addressCountry": "CR"
+        },
+        "sameAs": [
+            "https://www.facebook.com/costaricatrippackages",
+            "https://www.instagram.com/costaricatrippackages"
+        ],
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "reviewCount": "248"
+        }
+    }
+    </script>
+    
+    <!-- Travel Agency Organization Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TravelAgency",
+        "name": "Costa Rica Trip Packages",
+        "url": "{{ url('/') }}",
+        "logo": "{{ asset('images/logo.png') }}",
+        "description": "{{ __('home.meta_description') }}",
+        "sameAs": [
+            "https://www.facebook.com/costaricatrippackages",
+            "https://www.instagram.com/costaricatrippackages"
+        ]
+    }
+    </script>
 </head>
 <body>
     <!-- Navigation -->
@@ -910,49 +1045,21 @@
             
             <div class="destinations-grid">
                 @php
-                    $locale = app()->getLocale();
-                    $toursUrl = $locale === 'es' ? '/es/tours' : '/en/tours';
-                    $destinations = [
-                        [
-                            'name' => 'Manuel Antonio',
-                            'description' => $locale === 'es' ? 'Playas vírgenes y vida silvestre' : 'Virgin beaches and wildlife',
-                            'image' => 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=80'
-                        ],
-                        [
-                            'name' => $locale === 'es' ? 'Volcán Arenal' : 'Arenal Volcano',
-                            'description' => $locale === 'es' ? 'Volcán activo y aguas termales' : 'Active volcano and hot springs',
-                            'image' => 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800&q=80'
-                        ],
-                        [
-                            'name' => 'Monteverde',
-                            'description' => $locale === 'es' ? 'Bosque nublado místico' : 'Mystical cloud forest',
-                            'image' => 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=800&q=80'
-                        ],
-                        [
-                            'name' => 'Tortuguero',
-                            'description' => $locale === 'es' ? 'Canales y tortugas marinas' : 'Canals and sea turtles',
-                            'image' => 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&q=80'
-                        ],
-                        [
-                            'name' => 'Tamarindo',
-                            'description' => $locale === 'es' ? 'Surf y atardeceres espectaculares' : 'Surf and spectacular sunsets',
-                            'image' => 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800&q=80'
-                        ],
-                        [
-                            'name' => 'Corcovado',
-                            'description' => $locale === 'es' ? 'Jungla prístina y biodiversidad' : 'Pristine jungle and biodiversity',
-                            'image' => 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80'
-                        ]
-                    ];
+                    $destinations = \App\Models\Destination::limit(6)->get();
                 @endphp
                 
                 @foreach($destinations as $dest)
-                    <div class="destination-card-wrapper" onclick="openDestinationModal('{{ $dest['name'] }}', '{{ $dest['image'] }}', '{{ $dest['description'] }}')">
+                    @php
+                        $destSlug = $dest->slug;
+                        $destTitle = __('destinations.' . $destSlug . '.title') ?? $dest->name;
+                        $destDescription = __('destinations.' . $destSlug . '.description') ?? 'Explore this beautiful Costa Rican destination';
+                    @endphp
+                    <div class="destination-card-wrapper" data-dest-slug="{{ $destSlug }}">
                         <div class="destination-card">
-                            <img src="{{ $dest['image'] }}" alt="{{ $dest['name'] }}" class="destination-image" loading="lazy">
+                            <img src="{{ $dest->image_url ?? 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80' }}" alt="{{ $destTitle }}" class="destination-image" loading="lazy">
                             <div class="destination-overlay">
-                                <h3 class="destination-name">{{ $dest['name'] }}</h3>
-                                <p class="destination-description">{{ $dest['description'] }}</p>
+                                <h3 class="destination-name">{{ $destTitle }}</h3>
+                                <p class="destination-description">{{ Str::limit($destDescription, 100) }}</p>
                             </div>
                         </div>
                     </div>
@@ -960,6 +1067,70 @@
             </div>
         </div>
     </section>
+
+    <!-- SEO: Tours by Destination Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": "{{ app()->getLocale() === 'es' ? 'Tours en Costa Rica por Destino' : 'Tours in Costa Rica by Destination' }}",
+        "itemListElement": [
+            @php
+                $index = 1;
+                foreach(\App\Models\Tour::get() as $tour) {
+                    foreach($tour->destinations as $dest) {
+                        if($index > 1) echo ',';
+                        echo json_encode([
+                            "@type" => "ListItem",
+                            "position" => $index,
+                            "item" => [
+                                "@type" => "Product",
+                                "@id" => url('/tour/' . $tour->slug),
+                                "name" => $tour->name,
+                                "description" => $tour->description,
+                                "image" => $tour->images->first()?->url ?? 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
+                                "offers" => [
+                                    "@type" => "Offer",
+                                    "price" => $tour->base_price ?? 199,
+                                    "priceCurrency" => "USD"
+                                ]
+                            ]
+                        ]);
+                        $index++;
+                    }
+                }
+            @endphp
+        ]
+    }
+    </script>
+    <script>
+        // Destination translations for modal
+        const destinationData = {!! json_encode(
+            \App\Models\Destination::limit(6)->get()->reduce(function($carry, $dest) {
+                $slug = $dest->slug;
+                $title = __('destinations.' . $slug . '.title') ?? $dest->name;
+                $description = __('destinations.' . $slug . '.description') ?? 'Explore this beautiful Costa Rican destination';
+                $carry[$slug] = [
+                    'id' => $dest->id,
+                    'title' => $title,
+                    'description' => $description,
+                    'image' => $dest->image_url ?? 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80'
+                ];
+                return $carry;
+            }, [])
+        ) !!};
+
+        // Add click handlers to destination cards
+        document.querySelectorAll('.destination-card-wrapper').forEach(card => {
+            card.addEventListener('click', function() {
+                const slug = this.getAttribute('data-dest-slug');
+                const data = destinationData[slug];
+                if (data) {
+                    openDestinationModal(data.title, data.image, data.description, data.id);
+                }
+            });
+        });
+    </script>
 
     <!-- Landing Pages Section -->
     <section class="landings-section">
@@ -1066,6 +1237,33 @@
                 </div>
                 <div class="destination-modal-body">
                     <p id="modalDestDescription" class="destination-modal-description"></p>
+                    
+                    <!-- Related Tours Section - Pre-rendered for SEO -->
+                    <div id="relatedToursContainer" style="margin-bottom: 2.5rem;">
+                        <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--dark);">{{ app()->getLocale() === 'es' ? 'Tours Destacados en este Destino' : 'Featured Tours in this Destination' }}</h3>
+                        <div id="relatedToursList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                            <!-- Related tours will be loaded here by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <!-- SEO: Include all tours in hidden content for search engines -->
+                    <div style="display: none;">
+                        @php
+                            $allTours = \App\Models\Tour::get();
+                        @endphp
+                        @foreach($allTours as $tour)
+                            <article itemscope itemtype="https://schema.org/Product" data-tour-id="{{ $tour->id }}">
+                                <h4 itemprop="name">{{ $tour->name }}</h4>
+                                <p itemprop="description">{{ $tour->description }}</p>
+                                <span itemprop="price">{{ $tour->base_price ?? 199 }}</span>
+                                <meta itemprop="url" content="{{ url('/tours/' . $tour->slug) }}">
+                                @foreach($tour->destinations as $dest)
+                                    <meta itemprop="destination" content="{{ $dest->id }}">
+                                @endforeach
+                            </article>
+                        @endforeach
+                    </div>
+                    
                     <div class="destination-modal-actions">
                         <a href="" id="modalHotelsBtn" class="modal-action-btn hotels">
                             <span>🏨</span> 
@@ -1146,7 +1344,7 @@
     </div>
 
     <script>
-        function openDestinationModal(name, image, description) {
+        function openDestinationModal(name, image, description, destinationId) {
             // Set modal content
             document.getElementById('modalDestName').textContent = name;
             document.getElementById('modalDestImage').src = image;
@@ -1156,10 +1354,13 @@
             const locale = '{{ app()->getLocale() }}';
             const baseUrl = locale === 'es' ? '/es' : '/en';
             
-            // Set button links
+            // Set button links - Tours button now filters by destination
+            document.getElementById('modalToursBtn').href = baseUrl + '/tours?destination_id=' + destinationId;
             document.getElementById('modalHotelsBtn').href = baseUrl + '/tours';
-            document.getElementById('modalToursBtn').href = baseUrl + '/tours';
             document.getElementById('modalTransportBtn').href = baseUrl + '/tours';
+            
+            // Load related tours
+            loadRelatedTours(destinationId);
             
             // Set plan button destination
             document.getElementById('modalPlanBtn').onclick = function() {
@@ -1170,6 +1371,43 @@
             // Show modal
             const modal = new bootstrap.Modal(document.getElementById('destinationModal'));
             modal.show();
+        }
+
+        function loadRelatedTours(destinationId) {
+            // Get all tours from the page
+            const allTours = window.allDestinationTours || [];
+            
+            // Filter tours that have this destination
+            const relatedTours = allTours.filter(tour => 
+                tour.destinations && tour.destinations.includes(destinationId)
+            ).slice(0, 3); // Show up to 3 tours
+            
+            const container = document.getElementById('relatedToursContainer');
+            const toursList = document.getElementById('relatedToursList');
+            
+            if (relatedTours.length > 0) {
+                toursList.innerHTML = '';
+                
+                relatedTours.forEach(tour => {
+                    const tourCard = document.createElement('div');
+                    tourCard.className = 'related-tour-card';
+                    tourCard.innerHTML = `
+                        <img src="${tour.image}" alt="${tour.title}" class="related-tour-image">
+                        <div class="related-tour-content">
+                            <div class="related-tour-title">${tour.title}</div>
+                            <div class="related-tour-price">$${tour.price}</div>
+                            <a href="/${'{{ app()->getLocale() }}'}/tour/${tour.slug}" class="related-tour-btn">
+                                ${'{{ app()->getLocale() === "es" ? "Ver más" : "See more" }}'}
+                            </a>
+                        </div>
+                    `;
+                    toursList.appendChild(tourCard);
+                });
+                
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'none';
+            }
         }
 
         function submitPlan() {
@@ -1266,53 +1504,38 @@
         }
 
         // Load featured tours
-        const tours = [
-            {
-                id: 1,
-                title: 'Arenal Volcano Adventure',
-                price: 299,
-                duration: '2 días',
-                people: '2-8 personas',
-                description: 'Explora el majestuoso Volcán Arenal, disfruta de aguas termales y aventuras en la naturaleza.',
-                image: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&q=80'
-            },
-            {
-                id: 2,
-                title: 'Manuel Antonio Beach',
-                price: 199,
-                duration: '1 día',
-                people: '2-6 personas',
-                description: 'Playas paradisíacas, monos, perezosos y la mejor vida silvestre de Costa Rica.',
-                image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&q=80'
-            },
-            {
-                id: 3,
-                title: 'Monteverde Cloud Forest',
-                price: 249,
-                duration: '1 día',
-                people: '2-10 personas',
-                description: 'Camina entre las nubes en el bosque nublado más famoso del mundo.',
-                image: 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=600&q=80'
-            },
-            {
-                id: 4,
-                title: 'Tortuguero National Park',
-                price: 399,
-                duration: '3 días',
-                people: '2-6 personas',
-                description: 'Navega los canales y observa tortugas marinas en su hábitat natural.',
-                image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&q=80'
-            },
-            {
-                id: 5,
-                title: 'Tamarindo Surf Package',
-                price: 179,
-                duration: '1 día',
-                people: '1-4 personas',
-                description: 'Aprende a surfear en las mejores olas de Guanacaste con instructores expertos.',
-                image: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=600&q=80'
+        @php
+            $tours = \App\Models\Tour::limit(5)->get();
+            $toursJson = [];
+            $toursWithDests = [];
+            foreach ($tours as $tour) {
+                $tourData = [
+                    'id' => $tour->id,
+                    'title' => $tour->name,
+                    'price' => $tour->base_price ?? 199,
+                    'duration' => $tour->duration_hours . ' horas',
+                    'people' => ($tour->max_capacity ?? '6') . ' personas',
+                    'description' => $tour->description ?? 'Tour en Costa Rica',
+                    'image' => $tour->images->first()?->url ?? 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80',
+                    'slug' => $tour->slug,
+                    'destinations' => $tour->destinations->pluck('id')->toArray()
+                ];
+                $toursJson[] = $tourData;
+                $toursWithDests[] = $tourData;
             }
-        ];
+        @endphp
+        const tours = {!! json_encode($toursJson) !!};
+        window.allDestinationTours = {!! json_encode(\App\Models\Tour::get()->map(function($tour) {
+            return [
+                'id' => $tour->id,
+                'title' => $tour->name,
+                'price' => $tour->base_price ?? 199,
+                'description' => $tour->description ?? 'Tour en Costa Rica',
+                'image' => $tour->images->first()?->url ?? 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80',
+                'slug' => $tour->slug,
+                'destinations' => $tour->destinations->pluck('id')->toArray()
+            ];
+        })->toArray()) !!};
 
         const toursGrid = document.getElementById('toursGrid');
         if (toursGrid) {
@@ -1340,7 +1563,7 @@
                                 <span>👥</span> ${tour.people}
                             </div>
                         </div>
-                        <a href="/tour/${tour.id}" class="tour-button">Ver Detalles</a>
+                        <a href="/{{ app()->getLocale() }}/tour/${tour.slug}" class="tour-button">Ver Detalles</a>
                     </div>
                 `;
                 toursGrid.appendChild(tourCard);

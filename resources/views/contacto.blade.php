@@ -512,9 +512,9 @@
                 </li>
                 <li>
                     @if(app()->getLocale() === 'es')
-                        <a href="{{ str_replace('/es/', '/en/', request()->getPathInfo()) }}" class="lang-switch">🇬🇧 EN</a>
+                        <a href="{{ \App\Helpers\UrlHelper::translateUrlToEnglish(request()->getPathInfo()) }}" class="lang-switch">🇬🇧 EN</a>
                     @else
-                        <a href="{{ str_replace('/en/', '/es/', request()->getPathInfo()) }}" class="lang-switch">🇪🇸 ES</a>
+                        <a href="{{ \App\Helpers\UrlHelper::translateUrlToSpanish(request()->getPathInfo()) }}" class="lang-switch">🇪🇸 ES</a>
                     @endif
                 </li>
             </ul>

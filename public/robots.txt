@@ -1,2 +1,15 @@
 User-agent: *
-Disallow:
+Allow: /
+
+# Desindexar URLs simples (tenemos canonical a las complejas)
+Disallow: /es/tour/
+Disallow: /es/hotel/
+Disallow: /en/tour/
+Disallow: /en/hotel/
+
+# Permitir acceso a URLs complejas (SEO)
+Allow: /es/provincia/
+Allow: /en/province/
+
+# Sitemap
+Sitemap: https://costaricatrippackages.com/sitemap.xml

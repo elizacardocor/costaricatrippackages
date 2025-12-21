@@ -4,7 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{{ __('tours.listing_meta_description') }}">
-    <title>{{ __('tours.listing_title') }} - Costa Rica Trip Packages</title>
+    <meta name="keywords" content="tours Costa Rica, paquetes turísticos, aventuras, volcanes, selva tropical">
+    <meta name="author" content="Costa Rica Trip Packages">
+    <meta name="language" content="{{ app()->getLocale() === 'es' ? 'Spanish' : 'English' }}">
+    
+    <!-- Open Graph Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ __('tours.listing_og_title', ['default' => __('tours.listing_title')]) }}">
+    <meta property="og:description" content="{{ __('tours.listing_og_description', ['default' => __('tours.listing_meta_description')]) }}">
+    <meta property="og:image" content="{{ asset('images/og-tours.jpg') }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:site_name" content="Costa Rica Trip Packages">
+    <meta property="og:locale" content="{{ app()->getLocale() === 'es' ? 'es_CR' : 'en_US' }}">
+    
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ __('tours.listing_og_title', ['default' => __('tours.listing_title')]) }}">
+    <meta name="twitter:description" content="{{ __('tours.listing_og_description', ['default' => __('tours.listing_meta_description')]) }}">
+    <meta name="twitter:image" content="{{ asset('images/og-tours.jpg') }}">
+    
+    @if(config('app.env') !== 'production')
+    <meta name="robots" content="noindex, nofollow">
+    @else
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    @endif
+    
+    <title>{{ __('tours.listing_title') }}</title>
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ url()->current() }}">
+    <link rel="alternate" hreflang="es" href="{{ route('tours.index.es') }}">
+    <link rel="alternate" hreflang="en" href="{{ route('tours.index.en') }}">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -354,6 +384,44 @@
             }
         }
     </style>
+    
+    <!-- Schema.org JSON-LD - Tours Collection -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "{{ __('tours.listing_title') }}",
+        "description": "{{ __('tours.listing_meta_description') }}",
+        "url": "{{ url()->current() }}",
+        "mainEntity": {
+            "@type": "ItemList",
+            "itemListElement": [
+                @php
+                    $toursArray = \App\Models\Tour::get();
+                @endphp
+                @foreach($toursArray as $index => $tour)
+                {
+                    "@type": "ListItem",
+                    "position": {{ $index + 1 }},
+                    "item": {
+                        "@type": "TouristAttraction",
+                        "@id": "{{ url('/es/tour/' . $tour->slug) }}",
+                        "name": "{{ addslashes($tour->name) }}",
+                        "description": "{{ addslashes(substr($tour->description, 0, 160)) }}",
+                        "image": "{{ $tour->images->first()?->url ?? asset('images/default-tour.jpg') }}",
+                        "url": "{{ url('/es/tour/' . $tour->slug) }}",
+                        "aggregateRating": {
+                            "@type": "AggregateRating",
+                            "ratingValue": "{{ $tour->rating ?? 4.5 }}",
+                            "reviewCount": "{{ $tour->reviews?->count() ?? 0 }}"
+                        }
+                    }
+                }{{ $loop->last ? '' : ',' }}
+                @endforeach
+            ]
+        }
+    }
+    </script>
 </head>
 <body>
     <!-- Navigation -->
@@ -439,122 +507,41 @@
     </section>
 
     <script>
-        const allTours = [
-            {
-                id: 1,
-                title: 'Arenal Volcano Adventure',
-                slug: 'arenal-volcano-adventure',
-                category: 'Aventura',
-                price: 299,
-                duration: '2 días',
-                people: '2-8 personas',
-                badge: 'Más Popular',
-                description: 'Explora el majestuoso Volcán Arenal, disfruta de aguas termales naturales y aventuras extremas en la naturaleza.',
-                image: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&q=80'
-            },
-            {
-                id: 2,
-                title: 'Manuel Antonio Beach Paradise',
-                slug: 'manuel-antonio-beach-paradise',
-                category: 'Playa',
-                price: 199,
-                duration: '1 día',
-                people: '2-6 personas',
-                badge: 'Mejor Valorado',
-                description: 'Playas paradisíacas, monos capuchinos, perezosos y la mejor vida silvestre de Costa Rica en un solo lugar.',
-                image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&q=80'
-            },
-            {
-                id: 3,
-                title: 'Monteverde Cloud Forest Experience',
-                slug: 'monteverde-cloud-forest-experience',
-                category: 'Naturaleza',
-                price: 249,
-                duration: '1 día',
-                people: '2-10 personas',
-                description: 'Camina entre las nubes en el bosque nublado más famoso del mundo. Incluye canopy tour y puentes colgantes.',
-                image: 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=600&q=80'
-            },
-            {
-                id: 4,
-                title: 'Tortuguero National Park',
-                slug: 'tortuguero-national-park',
-                category: 'Naturaleza',
-                price: 399,
-                duration: '3 días',
-                people: '2-6 personas',
-                badge: 'Experiencia Única',
-                description: 'Navega los canales amazónicos de Costa Rica y observa tortugas marinas en su hábitat natural.',
-                image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&q=80'
-            },
-            {
-                id: 5,
-                title: 'Tamarindo Surf Package',
-                slug: 'tamarindo-surf-package',
-                category: 'Deportes',
-                price: 179,
-                duration: '1 día',
-                people: '1-4 personas',
-                description: 'Aprende a surfear en las mejores olas de Guanacaste con instructores certificados. Todo el equipo incluido.',
-                image: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=600&q=80'
-            },
-            {
-                id: 6,
-                title: 'Rio Celeste Waterfall Trek',
-                slug: 'rio-celeste-waterfall-trek',
-                category: 'Aventura',
-                price: 149,
-                duration: '1 día',
-                people: '2-8 personas',
-                description: 'Descubre la cascada de agua turquesa más increíble de Costa Rica en el Parque Nacional Tenorio.',
-                image: 'https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=600&q=80'
-            },
-            {
-                id: 7,
-                title: 'Corcovado Jungle Expedition',
-                slug: 'corcovado-jungle-expedition',
-                category: 'Aventura',
-                price: 599,
-                duration: '4 días',
-                people: '2-6 personas',
-                badge: 'Premium',
-                description: 'La jungla más biodiversa del planeta. National Geographic lo nombró el lugar biológicamente más intenso.',
-                image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&q=80'
-            },
-            {
-                id: 8,
-                title: 'La Fortuna Hot Springs',
-                slug: 'la-fortuna-hot-springs',
-                category: 'Relax',
-                price: 129,
-                duration: '1 día',
-                people: '2-10 personas',
-                description: 'Relájate en las aguas termales naturales rodeadas de la exuberante selva tropical costarricense.',
-                image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600&q=80'
-            },
-            {
-                id: 9,
-                title: 'Caribbean Snorkeling Adventure',
-                slug: 'caribbean-snorkeling-adventure',
-                category: 'Playa',
-                price: 169,
-                duration: '1 día',
-                people: '2-8 personas',
-                description: 'Explora los arrecifes de coral del Caribe, nada con tortugas y descubre la vida marina colorida.',
-                image: 'https://images.unsplash.com/photo-1544551763-77ef2d0cfc6c?w=600&q=80'
-            },
-            {
-                id: 10,
-                title: 'Coffee & Chocolate Tour',
-                slug: 'coffee-chocolate-tour',
-                category: 'Cultural',
-                price: 99,
-                duration: '4 horas',
-                people: '2-12 personas',
-                description: 'Aprende el proceso del café y chocolate costarricense. Degustación incluida en plantaciones orgánicas.',
-                image: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=600&q=80'
-            }
-        ];
+        const allTours = {!! json_encode(\App\Models\Tour::get()->map(function($tour) {
+            return [
+                'id' => $tour->id,
+                'title' => $tour->name,
+                'slug' => $tour->slug,
+                'category' => $tour->category,
+                'price' => $tour->price,
+                'duration' => $tour->duration,
+                'people' => $tour->people,
+                'description' => $tour->description,
+                'image' => $tour->image ?? 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&q=80',
+                'destinations' => $tour->destinations->pluck('id')->toArray()
+            ];
+        })->toArray()) !!};
+
+        // Get filtered tours from server
+        const filteredTours = {!! json_encode($tours->map(function($tour) {
+            return [
+                'id' => $tour->id,
+                'title' => $tour->name,
+                'slug' => $tour->slug,
+                'category' => $tour->category,
+                'price' => $tour->price,
+                'duration' => $tour->duration,
+                'people' => $tour->people,
+                'description' => $tour->description,
+                'image' => $tour->image ?? 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&q=80',
+                'destinations' => $tour->destinations->pluck('id')->toArray()
+            ];
+        })->toArray()) !!};
+
+        // Check if we're filtering by destination
+        const urlParams = new URLSearchParams(window.location.search);
+        const destinationId = urlParams.get('destination_id');
+        const isFiltered = destinationId !== null;
 
         function renderTours(tours) {
             const grid = document.getElementById('toursGrid');
@@ -562,6 +549,11 @@
             
             grid.innerHTML = '';
             count.textContent = tours.length;
+
+            if (tours.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">{{ app()->getLocale() === "es" ? "No hay tours disponibles para este destino" : "No tours available for this destination" }}</div>';
+                return;
+            }
 
             tours.forEach(tour => {
                 const card = `
@@ -585,9 +577,9 @@
                             <div class="tour-footer">
                                 <div class="tour-price">
                                     $${tour.price}
-                                    <small>por persona</small>
+                                    <small>{{ app()->getLocale() === "es" ? "por persona" : "per person" }}</small>
                                 </div>
-                                <a href="/es/provincia/guanacaste/destino/arenal/tour/${tour.slug}" class="tour-button">Ver Tour</a>
+                                <a href="/{{ app()->getLocale() }}/provincia/guanacaste/destino/arenal/tour/${tour.slug}" class="tour-button">{{ app()->getLocale() === "es" ? "Ver Tour" : "View Tour" }}</a>
                             </div>
                         </div>
                     </div>
@@ -598,11 +590,11 @@
 
         function applyFilters() {
             // Placeholder for filtering logic
-            alert('Filtros aplicados (funcionalidad completa en siguiente fase)');
+            alert('{{ app()->getLocale() === "es" ? "Filtros aplicados (funcionalidad completa en siguiente fase)" : "Filters applied (full functionality in next phase)" }}');
         }
 
         // Initial render
-        renderTours(allTours);
+        renderTours(filteredTours.length > 0 ? filteredTours : allTours);
     </script>
 
     <!-- Footer -->

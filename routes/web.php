@@ -2,6 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\HotelController;
+use App\Http\Controllers\TourController;
+use App\Http\Controllers\SitemapController;
+
+// Sitemap (fuera de middleware para acceso público)
+Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 
 // Home pages with language support
 Route::get('/', function () {
@@ -13,7 +19,7 @@ Route::get('/dashboard', function () {
 });
 
 Route::get('/contacto', function () {
-    return view('contacto');
+    return redirect('/es/contacto', 301);
 });
 Route::post('/contacto', [ContactController::class, 'store']);
 
@@ -73,11 +79,25 @@ Route::middleware('locale')->group(function () {
     })->name('home.en');
 
     // TOURS LISTING PAGE with language support
-    Route::get('/es/tours', function () {
-        return view('tours.index');
-    })->name('tours.es');
+    Route::get('/es/tours', [TourController::class, 'index'])->name('tours.index.es');
 
-    Route::get('/en/tours', function () {
-        return view('tours.index');
-    })->name('tours.en');
+    Route::get('/en/tours', [TourController::class, 'index'])->name('tours.index.en');
+});
+
+// DETAIL PAGES WITH FULL URL STRUCTURE (Outside middleware for better routing)
+Route::middleware('locale')->group(function () {
+    // Hotels: /es/provincia/{province}/destino/{destination}/hotel/{hotel}
+    Route::get('/es/provincia/{province}/destino/{destination}/hotel/{hotel}', [HotelController::class, 'showComplex'])->name('hotel.show.complex.es');
+    Route::get('/en/province/{province}/destination/{destination}/hotel/{hotel}', [HotelController::class, 'showComplex'])->name('hotel.show.complex.en');
+    
+    // Tours: /es/provincia/{province}/destino/{destination}/tour/{tour}
+    Route::get('/es/provincia/{province}/destino/{destination}/tour/{tour}', [TourController::class, 'showComplex'])->name('tour.show.complex.es');
+    Route::get('/en/province/{province}/destination/{destination}/tour/{tour}', [TourController::class, 'showComplex'])->name('tour.show.complex.en');
+    
+    // Simple DETAIL PAGES (fallback)
+    Route::get('/es/hotel/{slug}', [HotelController::class, 'show'])->name('hotel.show.es');
+    Route::get('/en/hotel/{slug}', [HotelController::class, 'show'])->name('hotel.show.en');
+
+    Route::get('/es/tour/{slug}', [TourController::class, 'show'])->name('tour.show.es');
+    Route::get('/en/tour/{slug}', [TourController::class, 'show'])->name('tour.show.en');
 });
