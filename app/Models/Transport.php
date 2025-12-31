@@ -19,6 +19,7 @@ class Transport extends Model
         'capacity',
         'rating',
         'status',
+        'user_id',
     ];
 
     public function destinations()

@@ -21,9 +21,11 @@ class Hotel extends Model
         'phone',
         'email',
         'website',
+        'address',
         'checkin_time',
         'checkout_time',
         'status',
+        'user_id',
     ];
 
     public function destinations()
@@ -42,15 +44,9 @@ class Hotel extends Model
         return $this->hotelImages();
     }
 
-    public function hotelAmenities()
-    {
-        return $this->hasMany(HotelAmenity::class);
-    }
-
-    // Alias for views
     public function amenities()
     {
-        return $this->hotelAmenities();
+        return $this->belongsToMany(Amenity::class, 'hotel_amenities');
     }
 
     public function hotelReviews()

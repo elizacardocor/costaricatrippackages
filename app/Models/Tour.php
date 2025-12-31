@@ -24,6 +24,7 @@ class Tour extends Model
         'itinerary',
         'rating',
         'status',
+        'user_id',
     ];
 
     protected $casts = [

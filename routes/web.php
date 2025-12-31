@@ -3,7 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HotelController;
+use App\Http\Controllers\HotelsController;
 use App\Http\Controllers\TourController;
+use App\Http\Controllers\TransportsController;
+use App\Http\Controllers\ListingController;
 use App\Http\Controllers\SitemapController;
 
 // Sitemap (fuera de middleware para acceso público)
@@ -82,6 +85,16 @@ Route::middleware('locale')->group(function () {
     Route::get('/es/tours', [TourController::class, 'index'])->name('tours.index.es');
 
     Route::get('/en/tours', [TourController::class, 'index'])->name('tours.index.en');
+
+    // HOTELS LISTING PAGE with language support
+    Route::get('/es/hoteles', [HotelsController::class, 'index'])->name('hotels.index.es');
+
+    Route::get('/en/hotels', [HotelsController::class, 'index'])->name('hotels.index.en');
+
+    // TRANSPORTS LISTING PAGE with language support
+    Route::get('/es/transporte', [TransportsController::class, 'index'])->name('transports.index.es');
+
+    Route::get('/en/transport', [TransportsController::class, 'index'])->name('transports.index.en');
 });
 
 // DETAIL PAGES WITH FULL URL STRUCTURE (Outside middleware for better routing)
@@ -100,4 +113,16 @@ Route::middleware('locale')->group(function () {
 
     Route::get('/es/tour/{slug}', [TourController::class, 'show'])->name('tour.show.es');
     Route::get('/en/tour/{slug}', [TourController::class, 'show'])->name('tour.show.en');
+    
+    Route::get('/es/transporte/{slug}', function() { return view('transports.show'); })->name('transport.show.es');
+    Route::get('/en/transport/{slug}', function() { return view('transports.show'); })->name('transport.show.en');
+});
+
+// Listing routes - Formulario público para registrar servicios
+Route::middleware('locale')->group(function () {
+    Route::get('/es/registrar_servicio', [ListingController::class, 'create'])->name('listings.create.es');
+    Route::get('/en/register_service', [ListingController::class, 'create'])->name('listings.create.en');
+    
+    Route::post('/es/registrar_servicio', [ListingController::class, 'store'])->name('listings.store.es');
+    Route::post('/en/register_service', [ListingController::class, 'store'])->name('listings.store.en');
 });

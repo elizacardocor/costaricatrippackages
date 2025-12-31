@@ -41,10 +41,20 @@
 @endsection
 
 @section('content')
+<!-- Mensaje de Éxito -->
+@if(session('success'))
+    <div class="container mt-3">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill"></i> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+@endif
+
 <div class="container-fluid p-0">
     <!-- Hero Image Section -->
     <div class="position-relative" style="height: 300px; overflow: hidden; margin-top: 80px;">
-        <img src="{{ $tour->images->first()?->url ?? 'https://via.placeholder.com/1200x500' }}" 
+        <img src="{{ $tour->images->first() ? asset('storage/' . $tour->images->first()->url) : 'https://via.placeholder.com/1200x500' }}" 
              alt="{{ $tour->name }}" 
              class="w-100 h-100 object-fit-cover"
              style="object-fit: cover;">
@@ -117,7 +127,7 @@
                     <div class="row g-3">
                         @foreach ($tour->images as $image)
                             <div class="col-md-6">
-                                <img src="{{ $image->url }}" alt="{{ $tour->name }}" class="img-fluid rounded" style="height: 300px; object-fit: cover; width: 100%;">
+                                <img src="{{ asset('storage/' . $image->url) }}" alt="{{ $tour->name }}" class="img-fluid rounded" style="height: 300px; object-fit: cover; width: 100%;">
                             </div>
                         @endforeach
                     </div>
