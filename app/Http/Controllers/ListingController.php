@@ -550,6 +550,102 @@ class ListingController extends Controller
     private function compressAndStoreImage($uploadedFile, $directory, $customName, $isMainImage = false)
     {
         try {
+            // Si la librería Intervention no está disponible (hosting compartido),
+            // intentamos usar GD nativo para redimensionar/comprimir; si no, guardamos el archivo crudo.
+            if (!class_exists('Intervention\\Image\\ImageManager')) {
+                if (extension_loaded('gd')) {
+                    \Log::warning('Intervention Image not found, using native GD image processing fallback');
+
+                    $tmpPath = $uploadedFile->getPathname();
+                    if (!file_exists($tmpPath)) {
+                        // fallback al guardado directo
+                        $ext = $uploadedFile->getClientOriginalExtension() ?: 'jpg';
+                        $fileName = $customName . '.' . $ext;
+                        \Storage::putFileAs("public/$directory", $uploadedFile, $fileName);
+                        return "$directory/$fileName";
+                    }
+
+                    [$width, $height, $type] = getimagesize($tmpPath);
+
+                    switch ($type) {
+                        case IMAGETYPE_JPEG:
+                            $src = imagecreatefromjpeg($tmpPath);
+                            break;
+                        case IMAGETYPE_PNG:
+                            $src = imagecreatefrompng($tmpPath);
+                            break;
+                        case IMAGETYPE_GIF:
+                            $src = imagecreatefromgif($tmpPath);
+                            break;
+                        default:
+                            // formato no soportado por GD -> guardar crudo
+                            $ext = $uploadedFile->getClientOriginalExtension() ?: 'jpg';
+                            $fileName = $customName . '.' . $ext;
+                            \Storage::putFileAs("public/$directory", $uploadedFile, $fileName);
+                            return "$directory/$fileName";
+                    }
+
+                    // Escalar manteniendo aspecto
+                    $targetWidth = 1200;
+                    if ($isMainImage) {
+                        $targetWidth = 1200;
+                    }
+
+                    if ($width > $targetWidth) {
+                        $newHeight = intval($height * ($targetWidth / $width));
+                        $resized = imagecreatetruecolor($targetWidth, $newHeight);
+                        // preservar transparencia para PNG/GIF by filling with white background
+                        imagefill($resized, 0, 0, imagecolorallocate($resized, 255, 255, 255));
+                        imagecopyresampled($resized, $src, 0, 0, 0, 0, $targetWidth, $newHeight, $width, $height);
+                    } else {
+                        $resized = imagecreatetruecolor($width, $height);
+                        imagefill($resized, 0, 0, imagecolorallocate($resized, 255, 255, 255));
+                        imagecopyresampled($resized, $src, 0, 0, 0, 0, $width, $height, $width, $height);
+                        $newHeight = $height;
+                    }
+
+                    // Si es imagen principal, recortar a 16:9
+                    if ($isMainImage) {
+                        $cropHeight = intdiv($targetWidth * 9, 16); // 675
+                        if ($newHeight > $cropHeight) {
+                            $y = intdiv($newHeight - $cropHeight, 2);
+                            $crop = imagecreatetruecolor($targetWidth, $cropHeight);
+                            imagecopy($crop, $resized, 0, 0, 0, $y, $targetWidth, $cropHeight);
+                            imagedestroy($resized);
+                            $finalImg = $crop;
+                        } else {
+                            $finalImg = $resized;
+                        }
+                    } else {
+                        $finalImg = $resized;
+                    }
+
+                    $quality = $isMainImage ? 80 : 75;
+
+                    // Obtener contenido JPEG desde GD
+                    ob_start();
+                    imagejpeg($finalImg, null, $quality);
+                    $jpeg = ob_get_clean();
+
+                    // Nombre del archivo JPG
+                    $fileName = $customName . '.jpg';
+                    $path = "public/$directory/$fileName";
+                    \Storage::put($path, $jpeg);
+
+                    // Liberar recursos
+                    imagedestroy($src);
+                    imagedestroy($finalImg);
+
+                    return "$directory/$fileName";
+                }
+
+                \Log::warning('Intervention and GD not available, storing raw file fallback');
+                $ext = $uploadedFile->getClientOriginalExtension() ?: 'jpg';
+                $fileName = $customName . '.' . $ext;
+                \Storage::putFileAs("public/$directory", $uploadedFile, $fileName);
+                return "$directory/$fileName";
+            }
+
             $image = \Intervention\Image\ImageManager::gd()->read($uploadedFile);
             
             // Para imagen principal: optimizar para 16:9 (hero 1200x675)
