@@ -245,4 +245,4 @@
     </script>
 </body>
 </html>
-<?php /**PATH /home/elizabeth/costaricatrippackages/resources/views/layouts/app.blade.php ENDPATH**/ ?>
+<?php /**PATH /mnt/c/Users/Elizabeth/costaricatrippackages/resources/views/layouts/app.blade.php ENDPATH**/ ?>

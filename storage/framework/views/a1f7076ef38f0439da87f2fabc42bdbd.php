@@ -1357,8 +1357,8 @@
             
             // Set button links - Tours button now filters by destination
             document.getElementById('modalToursBtn').href = baseUrl + '/tours?destination_id=' + destinationId;
-            document.getElementById('modalHotelsBtn').href = baseUrl + '/tours';
-            document.getElementById('modalTransportBtn').href = baseUrl + '/tours';
+            document.getElementById('modalHotelsBtn').href = baseUrl + (locale === 'es' ? '/hoteles' : '/hotels') + '?destination_id=' + destinationId;
+            document.getElementById('modalTransportBtn').href = baseUrl + (locale === 'es' ? '/transporte' : '/transport') + '?destination_id=' + destinationId;
             
             // Load related tours
             loadRelatedTours(destinationId);
@@ -1572,8 +1572,36 @@
         }
     </script>
 
+    <!-- Publish Your Listing Section -->
+    <section class="listing-cta-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 60px 20px; text-align: center; color: white; margin-top: 60px;">
+        <div class="container">
+            <h2 style="font-size: 2.5rem; margin-bottom: 1rem; font-weight: 700;">
+                <?php if(app()->getLocale() === 'es'): ?>
+                    ¿Tienes un Hotel, Tour o Transporte?
+                <?php else: ?>
+                    Do you have a Hotel, Tour or Transport Service?
+                <?php endif; ?>
+            </h2>
+            <p style="font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.95;">
+                <?php if(app()->getLocale() === 'es'): ?>
+                    Registra tu negocio en Costa Rica Trips y conecta con miles de turistas buscando experiencias únicas
+                <?php else: ?>
+                    Register your business on Costa Rica Trips and connect with thousands of tourists looking for unique experiences
+                <?php endif; ?>
+            </p>
+            <a href="<?php echo e(app()->getLocale() === 'es' ? route('listings.create.es') : route('listings.create.en')); ?>" 
+               class="btn btn-light btn-lg" style="font-weight: 600; padding: 12px 40px;">
+                <?php if(app()->getLocale() === 'es'): ?>
+                    <i class="bi bi-plus-circle"></i> Registrar Servicio
+                <?php else: ?>
+                    <i class="bi bi-plus-circle"></i> Register Service
+                <?php endif; ?>
+            </a>
+        </div>
+    </section>
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-<?php /**PATH /home/elizabeth/costaricatrippackages/resources/views/home.blade.php ENDPATH**/ ?>
+<?php /**PATH /mnt/c/Users/Elizabeth/costaricatrippackages/resources/views/home.blade.php ENDPATH**/ ?>

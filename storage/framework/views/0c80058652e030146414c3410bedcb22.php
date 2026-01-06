@@ -613,4 +613,4 @@
     </footer>
 </body>
 </html>
-<?php /**PATH /home/elizabeth/costaricatrippackages/resources/views/tours/index.blade.php ENDPATH**/ ?>
+<?php /**PATH /mnt/c/Users/Elizabeth/costaricatrippackages/resources/views/tours/index.blade.php ENDPATH**/ ?>

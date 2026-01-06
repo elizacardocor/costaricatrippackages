@@ -10,8 +10,10 @@ use App\Models\TourOperator;
 use App\Models\User;
 use App\Models\RateType;
 use App\Models\Amenity;
+use App\Models\HotelAmenity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
 
 class ListingController extends Controller
 {
@@ -22,7 +24,9 @@ class ListingController extends Controller
     {
         $destinations = Destination::all();
         $rateTypes = RateType::all();
-        $amenities = \DB::table('amenities')->get();
+        // Obtener amenidades únicas desde la tabla `hotel_amenities` (no existe tabla global `amenities`)
+        // Incluir `id` para que los checkboxes en la vista puedan usarlo como `value`
+        $amenities = HotelAmenity::select('id','name','icon')->distinct('name')->get();
         
         return view('listings.create', compact('destinations', 'rateTypes', 'amenities'));
     }
@@ -53,13 +57,14 @@ class ListingController extends Controller
         ]);
 
         try {
-            // Crear o obtener usuario
+            // Crear o obtener usuario: registramos solo name, email y una
+            // contraseña genérica hasheada; `email_verified_at` se mantiene null.
             $user = User::firstOrCreate(
                 ['email' => $request->input('contact_email')],
                 [
                     'name' => $request->input('contact_name'),
-                    'phone' => $request->input('contact_phone'),
-                    'address' => $request->input('contact_address'),
+                    'password' => Hash::make('1234567'),
+                    'email_verified_at' => null,
                 ]
             );
 
@@ -109,10 +114,34 @@ class ListingController extends Controller
             \Log::info('=== FIN STORE EXITOSO ===');
             return redirect($detailUrl)
                 ->with('success', __('Tu servicio ha sido registrado exitosamente.'));
+        } catch (\Illuminate\Validation\ValidationException $ve) {
+            // Log estructurado para errores de validación con flag
+            \Log::warning('ListingController::store validation failed', [
+                'flag' => 'listing.validation_failed',
+                'errors' => $ve->errors(),
+                'input' => $request->except(['hotel_image', 'hotel_images']),
+            ]);
+
+            if (env('LISTING_DEBUG', false)) {
+                return back()->withErrors($ve->errors())->withInput()->with('debug_flag', 'validation_failed');
+            }
+
+            return back()->withErrors($ve->errors())->withInput();
         } catch (\Exception $e) {
-            \Log::error('Error en ListingController::store: ' . $e->getMessage());
-            \Log::error($e->getTraceAsString());
-            return back()->with('error', 'Error: ' . $e->getMessage());
+            // Log estructurado con bandera y nivel de severidad
+            \Log::error('ListingController::store exception', [
+                'flag' => 'listing.store_exception',
+                'severity' => 'high',
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'input' => $request->except(['hotel_image', 'hotel_images']),
+            ]);
+
+            if (env('LISTING_DEBUG', false)) {
+                return back()->with('error', 'Error: ' . $e->getMessage())->with('debug_flag', 'store_exception');
+            }
+
+            return back()->with('error', 'Error: Ocurrió un error al procesar tu solicitud.')->with('debug_flag', 'store_exception');
         }
     }
 
@@ -132,7 +161,8 @@ class ListingController extends Controller
             'hotel_commission' => 'nullable|numeric|min:0|max:100',
             'hotel_checkin' => 'nullable|date_format:H:i',
             'hotel_checkout' => 'nullable|date_format:H:i',
-            'hotel_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120',
+            // Validación de imágenes: aceptar JPEG/PNG y límite 5MB
+            'hotel_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
             'hotel_images' => 'nullable|array|max:9',
             'hotel_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:5120',
             'hotel_amenities' => 'nullable|array',
@@ -155,7 +185,6 @@ class ListingController extends Controller
             'slug' => \Str::slug($request->input('hotel_name')),
             'description' => $request->input('hotel_description'),
             'stars' => $request->input('hotel_stars', 5),
-            'address' => $request->input('hotel_address'),
             'phone' => $request->input('hotel_phone'),
             'email' => $request->input('contact_email'),
             'website' => $website,
@@ -173,21 +202,51 @@ class ListingController extends Controller
         // Asociar al destino
         $hotel->destinations()->attach($destinationId);
 
-        // Asociar amenidades usando attach() (tabla pivot)
+        // Guardar amenidades en la tabla `hotel_amenities` (schema actual)
         \Log::info('Amenidades en request:', [
             'has_amenities' => $request->has('hotel_amenities'),
             'amenities' => $request->input('hotel_amenities'),
         ]);
 
-        if ($request->has('hotel_amenities') && is_array($request->input('hotel_amenities'))) {
-            try {
-                $hotel->amenities()->attach($request->input('hotel_amenities'));
-                \Log::info('Amenidades guardadas exitosamente');
-            } catch (\Exception $e) {
-                \Log::error('Error al guardar amenidades: ' . $e->getMessage());
+        $amenitiesInput = $request->input('hotel_amenities');
+
+        if ($request->has('hotel_amenities') && is_array($amenitiesInput)) {
+            foreach ($amenitiesInput as $amenityItem) {
+                try {
+                    $name = null;
+                    $icon = null;
+
+                    // Si el item es un array con nombre/icono
+                    if (is_array($amenityItem)) {
+                        $name = $amenityItem['name'] ?? null;
+                        $icon = $amenityItem['icon'] ?? null;
+                    }
+                    // Si viene un ID (checkbox value), resolver el nombre desde la tabla
+                    elseif (is_numeric($amenityItem)) {
+                        $source = HotelAmenity::find($amenityItem);
+                        if ($source) {
+                            $name = $source->name;
+                            $icon = $source->icon ?? null;
+                        }
+                    } else {
+                        // Valor simple (posiblemente nombre)
+                        $name = (string)$amenityItem;
+                    }
+
+                    if ($name) {
+                        HotelAmenity::firstOrCreate(
+                            ['hotel_id' => $hotel->id, 'name' => $name],
+                            ['icon' => $icon]
+                        );
+                    }
+                } catch (\Exception $e) {
+                    \Log::error('Error al crear hotel_amenity: ' . $e->getMessage(), ['item' => $amenityItem]);
+                }
             }
+
+            \Log::info('Amenidades guardadas en hotel_amenities para hotel_id: ' . $hotel->id);
         } else {
-            \Log::warning('No hay amenidades o no es un array válido');
+            \Log::warning('No hay amenidades válidas en request');
         }
 
         return $hotel;

@@ -46,7 +46,10 @@ class Hotel extends Model
 
     public function amenities()
     {
-        return $this->belongsToMany(Amenity::class, 'hotel_amenities');
+        // The schema stores amenity records per hotel in `hotel_amenities`.
+        // Treat them as a one-to-many relationship to avoid querying a
+        // non-existent global `amenities` table.
+        return $this->hasMany(HotelAmenity::class);
     }
 
     public function hotelReviews()

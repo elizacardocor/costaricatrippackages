@@ -39,10 +39,21 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('content'); ?>
+<!-- Mensaje de Éxito -->
+<?php if(session('success')): ?>
+    <div class="container mt-3">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill"></i> <?php echo e(session('success')); ?>
+
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+<?php endif; ?>
+
 <div class="container-fluid p-0">
     <!-- Hero Image Section -->
     <div class="position-relative" style="height: 300px; overflow: hidden; margin-top: 80px;">
-        <img src="<?php echo e($tour->images->first()?->url ?? 'https://via.placeholder.com/1200x500'); ?>" 
+        <img src="<?php echo e($tour->images->first() ? asset('storage/' . $tour->images->first()->url) : 'https://via.placeholder.com/1200x500'); ?>" 
              alt="<?php echo e($tour->name); ?>" 
              class="w-100 h-100 object-fit-cover"
              style="object-fit: cover;">
@@ -115,7 +126,7 @@
                     <div class="row g-3">
                         <?php $__currentLoopData = $tour->images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <div class="col-md-6">
-                                <img src="<?php echo e($image->url); ?>" alt="<?php echo e($tour->name); ?>" class="img-fluid rounded" style="height: 300px; object-fit: cover; width: 100%;">
+                                <img src="<?php echo e(asset('storage/' . $image->url)); ?>" alt="<?php echo e($tour->name); ?>" class="img-fluid rounded" style="height: 300px; object-fit: cover; width: 100%;">
                             </div>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
@@ -237,4 +248,4 @@
 </style>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /home/elizabeth/costaricatrippackages/resources/views/tours/show.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /mnt/c/Users/Elizabeth/costaricatrippackages/resources/views/tours/show.blade.php ENDPATH**/ ?>
