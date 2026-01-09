@@ -11,9 +11,11 @@ use App\Models\User;
 use App\Models\RateType;
 use App\Models\Amenity;
 use App\Models\HotelAmenity;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
+use Intervention\Image\ImageManager;
 
 class ListingController extends Controller
 {
@@ -24,9 +26,16 @@ class ListingController extends Controller
     {
         $destinations = Destination::all();
         $rateTypes = RateType::all();
-        // Obtener amenidades únicas desde la tabla `hotel_amenities` (no existe tabla global `amenities`)
-        // Incluir `id` para que los checkboxes en la vista puedan usarlo como `value`
-        $amenities = HotelAmenity::select('id','name','icon')->distinct('name')->get();
+        // Si existe la tabla global `amenities`, usarla (lista canonical).
+        // Si no, agrupar por `name` desde `hotel_amenities` como fallback.
+        if (Schema::hasTable('amenities')) {
+            $amenities = Amenity::select('id', 'name', 'icon')->orderBy('name')->get();
+        } else {
+            $amenities = HotelAmenity::selectRaw('MIN(id) as id, name, MIN(icon) as icon')
+                ->groupBy('name')
+                ->orderBy('name')
+                ->get();
+        }
         
         return view('listings.create', compact('destinations', 'rateTypes', 'amenities'));
     }
@@ -168,10 +177,10 @@ class ListingController extends Controller
             'hotel_amenities' => 'nullable|array',
         ]);
 
-        // Corregir URL si no tiene protocolo
+        // Corregir URL si no tiene protocolo: aceptar http(s) o añadir http:// por defecto
         $website = $request->input('hotel_website');
         if ($website && !preg_match('~^https?://~i', $website)) {
-            $website = 'https://' . $website;
+            $website = 'http://' . $website;
         }
 
         // Asegurar valores por defecto
@@ -193,7 +202,7 @@ class ListingController extends Controller
             'checkin_time' => $request->input('hotel_checkin', '14:00:00'),
             'checkout_time' => $request->input('hotel_checkout', '11:00:00'),
             'user_id' => $userId,
-            'status' => 'active',
+            'status' => 'pending',
         ]);
 
         // Guardar imágenes (principal + adicionales)
@@ -221,12 +230,22 @@ class ListingController extends Controller
                         $name = $amenityItem['name'] ?? null;
                         $icon = $amenityItem['icon'] ?? null;
                     }
-                    // Si viene un ID (checkbox value), resolver el nombre desde la tabla
+                    // Si viene un ID (checkbox value), puede ser id de `amenities` o de `hotel_amenities`
                     elseif (is_numeric($amenityItem)) {
-                        $source = HotelAmenity::find($amenityItem);
-                        if ($source) {
-                            $name = $source->name;
-                            $icon = $source->icon ?? null;
+                        // Primero buscar en tabla canonical `amenities`
+                        $global = Amenity::find($amenityItem);
+                        if ($global) {
+                            $name = $global->name;
+                            $icon = $global->icon ?? null;
+                            $amenityId = $global->id;
+                        } else {
+                            // Fallback: buscar en hotel_amenities (por si el listado estaba basado en esa tabla)
+                            $source = HotelAmenity::find($amenityItem);
+                            if ($source) {
+                                $name = $source->name;
+                                $icon = $source->icon ?? null;
+                                $amenityId = $source->amenity_id ?? null;
+                            }
                         }
                     } else {
                         // Valor simple (posiblemente nombre)
@@ -234,10 +253,17 @@ class ListingController extends Controller
                     }
 
                     if ($name) {
-                        HotelAmenity::firstOrCreate(
-                            ['hotel_id' => $hotel->id, 'name' => $name],
-                            ['icon' => $icon]
-                        );
+                        // Si tenemos un amenity_id canonical, lo guardamos en hotel_amenities
+                        $attributes = ['hotel_id' => $hotel->id, 'name' => $name];
+                        if (!empty($amenityId)) {
+                            $attributes['amenity_id'] = $amenityId;
+                        }
+
+                        $values = ['icon' => $icon];
+
+                        HotelAmenity::firstOrCreate($attributes, $values);
+                        // limpiar variable para la siguiente iteración
+                        $amenityId = null;
                     }
                 } catch (\Exception $e) {
                     \Log::error('Error al crear hotel_amenity: ' . $e->getMessage(), ['item' => $amenityItem]);
@@ -280,7 +306,7 @@ class ListingController extends Controller
             'commission_percentage' => $request->input('tour_commission', 0),
             'tour_operator_id' => $tourOperator->id,
             'user_id' => $userId,
-            'status' => 'active',
+            'status' => 'pending',
         ]);
 
         // Asociar al destino
@@ -305,10 +331,10 @@ class ListingController extends Controller
                 'operator_license' => 'nullable|string|max:255',
             ]);
 
-            // Corregir URL si no tiene protocolo
+            // Corregir URL si no tiene protocolo: aceptar http(s) o añadir http:// por defecto
             $website = $request->input('operator_website');
             if ($website && !preg_match('~^https?://~i', $website)) {
-                $website = 'https://' . $website;
+                $website = 'http://' . $website;
                 $request->merge(['operator_website' => $website]);
             }
 
@@ -355,7 +381,7 @@ class ListingController extends Controller
             'capacity_per_vehicle' => $request->input('transport_capacity'),
             'commission_percentage' => $request->input('transport_commission', 0),
             'user_id' => $userId,
-            'status' => 'active',
+            'status' => 'pending',
         ]);
 
         // Asociar al destino
@@ -562,6 +588,7 @@ class ListingController extends Controller
                         $ext = $uploadedFile->getClientOriginalExtension() ?: 'jpg';
                         $fileName = $customName . '.' . $ext;
                         \Storage::putFileAs("public/$directory", $uploadedFile, $fileName);
+                        \Log::warning('Saved raw uploaded file (GD no tmp path fallback)', ['path' => "public/$directory/$fileName"]);
                         return "$directory/$fileName";
                     }
 
@@ -632,6 +659,8 @@ class ListingController extends Controller
                     $path = "public/$directory/$fileName";
                     \Storage::put($path, $jpeg);
 
+                    \Log::info('Image compressed and stored (GD)', ['path' => $path, 'isMain' => $isMainImage]);
+
                     // Liberar recursos
                     imagedestroy($src);
                     imagedestroy($finalImg);
@@ -643,10 +672,18 @@ class ListingController extends Controller
                 $ext = $uploadedFile->getClientOriginalExtension() ?: 'jpg';
                 $fileName = $customName . '.' . $ext;
                 \Storage::putFileAs("public/$directory", $uploadedFile, $fileName);
+                \Log::info('Raw file stored (no GD/intervention)', ['path' => "public/$directory/$fileName"]);
                 return "$directory/$fileName";
             }
 
-            $image = \Intervention\Image\ImageManager::gd()->read($uploadedFile);
+            if (extension_loaded('imagick')) {
+                $manager = ImageManager::imagick();
+            } else {
+                $manager = ImageManager::gd();
+            }
+
+            // Use read() with the uploaded file path to create an image instance
+            $image = $manager->read($uploadedFile->getPathname());
             
             // Para imagen principal: optimizar para 16:9 (hero 1200x675)
             // Para imágenes adicionales: 1200px máximo manteniendo aspecto

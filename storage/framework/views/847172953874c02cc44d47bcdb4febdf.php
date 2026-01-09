@@ -3,7 +3,11 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="<?php echo e($hotel->name); ?> - Costa Rica Trip Packages">
 <meta property="og:description" content="<?php echo e(substr($hotel->description, 0, 160)); ?>">
-<meta property="og:image" content="<?php echo e($hotel->images->first()?->url ?? asset('images/default-hotel.jpg')); ?>">
+<?php
+    $ogImg = $hotel->images->first()?->url;
+    $ogImg = $ogImg ? (\Illuminate\Support\Str::startsWith($ogImg, ['http://','https://','//']) ? $ogImg : asset('storage/' . ltrim($ogImg,'/'))) : asset('images/default-hotel.jpg');
+?>
+<meta property="og:image" content="<?php echo e($ogImg); ?>">
 <meta property="og:url" content="<?php echo e(url($canonicalUrl)); ?>">
 <meta property="og:site_name" content="Costa Rica Trip Packages">
 <meta property="og:locale" content="<?php echo e(app()->getLocale() === 'es' ? 'es_CR' : 'en_US'); ?>">
@@ -11,7 +15,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="<?php echo e($hotel->name); ?>">
 <meta name="twitter:description" content="<?php echo e(substr($hotel->description, 0, 160)); ?>">
-<meta name="twitter:image" content="<?php echo e($hotel->images->first()?->url ?? asset('images/default-hotel.jpg')); ?>">
+<meta name="twitter:image" content="<?php echo e($ogImg); ?>">
 
 <!-- Schema.org JSON-LD for Hotel -->
 <script type="application/ld+json">
@@ -21,7 +25,12 @@
     "@id": "<?php echo e(url($canonicalUrl)); ?>",
     "name": "<?php echo e(addslashes($hotel->name)); ?>",
     "description": "<?php echo e(addslashes($hotel->description)); ?>",
-    "image": "<?php echo e($hotel->images->pluck('url')->toJson()); ?>",
+    <?php
+        $images = $hotel->images->pluck('url')->map(function($u){
+            return \Illuminate\Support\Str::startsWith($u, ['http://','https://','//']) ? $u : asset('storage/' . ltrim($u,'/'));
+        })->toArray();
+    ?>
+    "image": <?php echo json_encode($images); ?>,
     "url": "<?php echo e(url($canonicalUrl)); ?>",
     "priceRange": "$$<?php echo e(str_repeat('$', intval($hotel->stars ?? 3))); ?>",
     "starRating": {
@@ -52,10 +61,15 @@
 <div class="container-fluid p-0">
     <!-- Hero Image Section -->
     <div class="position-relative" style="height: 300px; overflow: hidden; margin-top: 80px;">
-        <img src="<?php echo e($hotel->images->first() ? asset('storage/' . $hotel->images->first()->url) : 'https://via.placeholder.com/1200x500'); ?>" 
-             alt="<?php echo e($hotel->name); ?>" 
-             class="w-100 h-100 object-fit-cover"
-             style="object-fit: cover;">
+        <?php if($hotel->images->first()): ?>
+            <?php $hero = $hotel->images->first()->url; ?>
+            <img src="<?php echo e(\Illuminate\Support\Str::startsWith($hero, ['http://','https://','//']) ? $hero : asset('storage/' . ltrim($hero,'/'))); ?>" 
+                 alt="<?php echo e($hotel->name); ?>" 
+                 class="w-100 h-100 object-fit-cover"
+                 style="object-fit: cover;">
+        <?php else: ?>
+            <img src="https://via.placeholder.com/1200x500" alt="<?php echo e($hotel->name); ?>" class="w-100 h-100 object-fit-cover" style="object-fit: cover;">
+        <?php endif; ?>
         <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark" style="opacity: 0.3;"></div>
         
         <!-- Back Button -->
@@ -106,10 +120,15 @@
                     <!-- Main Image -->
                     <div class="mb-4">
                         <div style="position: relative; height: 400px; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
-                            <img src="<?php echo e(asset('storage/' . $hotel->images->first()?->url)); ?>" 
-                                 alt="<?php echo e($hotel->name); ?>" 
-                                 class="w-100 h-100" 
-                                 style="object-fit: cover;">
+                            <?php if($hotel->images->first()): ?>
+                                <?php $mainImg = $hotel->images->first()->url; ?>
+                                <img src="<?php echo e(\Illuminate\Support\Str::startsWith($mainImg, ['http://','https://','//']) ? $mainImg : asset('storage/' . ltrim($mainImg,'/'))); ?>" 
+                                     alt="<?php echo e($hotel->name); ?>" 
+                                     class="w-100 h-100" 
+                                     style="object-fit: cover;">
+                            <?php else: ?>
+                                <img src="https://via.placeholder.com/1200x500" alt="<?php echo e($hotel->name); ?>" class="w-100 h-100" style="object-fit: cover;">
+                            <?php endif; ?>
                             <div style="position: absolute; top: 10px; left: 10px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 8px 14px; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">
                                 <i class="bi bi-image"></i> Imagen Principal
                             </div>
@@ -126,10 +145,11 @@
                                 <div class="carousel-inner">
                                     <?php $__currentLoopData = $hotel->images->skip(1); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <div class="carousel-item <?php echo e($index === 0 ? 'active' : ''); ?>">
-                                            <img src="<?php echo e(asset('storage/' . $image->url)); ?>" 
-                                                 alt="<?php echo e($image->alt_text ?? $hotel->name); ?>" 
-                                                 class="d-block w-100 rounded" 
-                                                 style="height: 300px; object-fit: cover;">
+                                                <?php $imgUrl = $image->url; ?>
+                                                <img src="<?php echo e(\Illuminate\Support\Str::startsWith($imgUrl, ['http://','https://','//']) ? $imgUrl : asset('storage/' . ltrim($imgUrl,'/'))); ?>" 
+                                                    alt="<?php echo e($image->alt_text ?? $hotel->name); ?>" 
+                                                    class="d-block w-100 rounded" 
+                                                    style="height: 300px; object-fit: cover;">
                                         </div>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </div>
@@ -160,10 +180,11 @@
                                     <div style="position: relative; height: 150px; border-radius: 8px; overflow: hidden; cursor: pointer; transition: all 0.3s ease;" 
                                          onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 8px 16px rgba(0,0,0,0.2)'" 
                                          onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
-                                        <img src="<?php echo e(asset('storage/' . $image->url)); ?>" 
-                                             alt="<?php echo e($image->alt_text ?? $hotel->name); ?>" 
-                                             class="img-fluid" 
-                                             style="height: 100%; width: 100%; object-fit: cover;">
+                                        <?php $thumb = $image->url; ?>
+                                        <img src="<?php echo e(\Illuminate\Support\Str::startsWith($thumb, ['http://','https://','//']) ? $thumb : asset('storage/' . ltrim($thumb,'/'))); ?>" 
+                                            alt="<?php echo e($image->alt_text ?? $hotel->name); ?>" 
+                                            class="img-fluid" 
+                                            style="height: 100%; width: 100%; object-fit: cover;">
                                     </div>
                                 </div>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -242,7 +263,7 @@
                             $minPrice = $hotel->pricing()->min('price') ?? 100;
                         ?>
                         <h3 class="mb-0" style="font-weight: 700; margin-top: 0.25rem; font-size: 1.75rem;">
-                            ₡<?php echo e(number_format($minPrice, 0)); ?>
+                            $<?php echo e(number_format($minPrice, 2)); ?>
 
                             <small style="font-size: 0.4em; opacity: 0.9;">/noche</small>
                         </h3>
@@ -265,7 +286,7 @@
                                                 <?php echo e($rateType?->name ?? 'Tarifa'); ?>
 
                                             </span>
-                                            <strong style="color: #667eea;">₡<?php echo e(number_format($price->price, 0)); ?></strong>
+                                            <strong style="color: #667eea;">$<?php echo e(number_format($price->price, 2)); ?></strong>
                                         </div>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </div>

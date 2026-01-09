@@ -32,7 +32,8 @@
                             <!-- Image -->
                             <div style="height: 220px; overflow: hidden; background: #f0f0f0;">
                                 <?php if($hotel->images->first()): ?>
-                                    <img src="<?php echo e(asset('storage/' . $hotel->images->first()->url)); ?>" 
+                                    <?php $imgUrl = $hotel->images->first()->url; ?>
+                                    <img src="<?php echo e(\Illuminate\Support\Str::startsWith($imgUrl, ['http://','https://','//']) ? $imgUrl : asset('storage/' . ltrim($imgUrl, '/'))); ?>" 
                                          alt="<?php echo e($hotel->name); ?>" 
                                          style="width: 100%; height: 100%; object-fit: cover;">
                                 <?php else: ?>

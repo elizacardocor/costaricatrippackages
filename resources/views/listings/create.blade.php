@@ -551,7 +551,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="hotel_website" class="form-label">{{ __('Sitio Web') }}</label>
-                            <input type="url" name="hotel_website" id="hotel_website" class="form-control">
+                            <input type="text" name="hotel_website" id="hotel_website" class="form-control" placeholder="https://ejemplo.com o ejemplo.com">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="hotel_rooms" class="form-label">{{ __('Cantidad de Habitaciones') }}</label>
@@ -656,7 +656,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="operator_website" class="form-label">{{ __('Sitio Web') }}</label>
-                                <input type="url" name="operator_website" id="operator_website" class="form-control">
+                                <input type="text" name="operator_website" id="operator_website" class="form-control" placeholder="https://ejemplo.com o ejemplo.com">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="operator_license" class="form-label">{{ __('Número de Licencia') }}</label>
@@ -704,9 +704,9 @@
                     <div class="col-md-6 mb-3">
                         <label for="price_${rateType.id}" class="form-label">{{ __('Precio') }} - ${rateType.name || rateType.type}</label>
                         <div class="input-group">
-                            <span class="input-group-text">₡</span>
+                            <span class="input-group-text">$</span>
                             <input type="number" name="prices[${rateType.id}]" id="price_${rateType.id}" 
-                                class="form-control" step="0.01" min="0">
+                                class="form-control" step="0.01" min="0" placeholder="Ingrese el valor en dólares">
                         </div>
                     </div>
                 `).join('')}

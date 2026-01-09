@@ -11,10 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('hotels', function (Blueprint $table) {
-            // Añadimos user_id nullable y FK a users(id). Null on delete por seguridad.
-            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
-        });
+        // Evitar error si la columna ya fue creada manualmente;
+        // sólo añadimos si no existe aún.
+        if (!Schema::hasColumn('hotels', 'user_id')) {
+            Schema::table('hotels', function (Blueprint $table) {
+                // Añadimos user_id nullable y FK a users(id). Null on delete por seguridad.
+                $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
+            });
+        }
     }
 
     /**

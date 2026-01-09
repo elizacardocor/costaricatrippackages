@@ -32,7 +32,8 @@
                             <!-- Image -->
                             <div style="height: 220px; overflow: hidden; background: #f0f0f0;">
                                 @if($hotel->images->first())
-                                    <img src="{{ asset('storage/' . $hotel->images->first()->url) }}" 
+                                    @php $imgUrl = $hotel->images->first()->url; @endphp
+                                    <img src="{{ \Illuminate\Support\Str::startsWith($imgUrl, ['http://','https://','//']) ? $imgUrl : asset('storage/' . ltrim($imgUrl, '/')) }}" 
                                          alt="{{ $hotel->name }}" 
                                          style="width: 100%; height: 100%; object-fit: cover;">
                                 @else
