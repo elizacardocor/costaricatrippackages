@@ -32,6 +32,29 @@ class SitemapController extends Controller
             'priority' => '1.0'
         ];
 
+        // Landing pages (Tours, Hotels, Transport listings)
+        $landingPages = [
+            ['es' => '/es/tours', 'en' => '/en/tours', 'changefreq' => 'weekly', 'priority' => '0.9'],
+            ['es' => '/es/hoteles', 'en' => '/en/hotels', 'changefreq' => 'weekly', 'priority' => '0.9'],
+            ['es' => '/es/transporte', 'en' => '/en/transport', 'changefreq' => 'weekly', 'priority' => '0.9'],
+            ['es' => '/es/contacto', 'en' => '/en/contact', 'changefreq' => 'monthly', 'priority' => '0.8'],
+        ];
+
+        foreach ($landingPages as $page) {
+            $urls[] = [
+                'loc' => url($page['es']),
+                'lastmod' => now()->toAtomString(),
+                'changefreq' => $page['changefreq'],
+                'priority' => $page['priority']
+            ];
+            $urls[] = [
+                'loc' => url($page['en']),
+                'lastmod' => now()->toAtomString(),
+                'changefreq' => $page['changefreq'],
+                'priority' => $page['priority']
+            ];
+        }
+
         // Tours - URLs complejas
         $tours = Tour::with('destinations')->get();
         foreach ($tours as $tour) {
@@ -83,9 +106,9 @@ class SitemapController extends Controller
             ];
         }
 
-        // Generar XML
+        // Generar XML con header de caché
         $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">' . "\n";
 
         foreach ($urls as $url) {
             $xml .= '  <url>' . "\n";
@@ -98,8 +121,11 @@ class SitemapController extends Controller
 
         $xml .= '</urlset>';
 
+        // Cache sitemap por 24 horas
         return Response::make($xml, 200, [
-            'Content-Type' => 'application/xml; charset=UTF-8'
+            'Content-Type' => 'application/xml; charset=UTF-8',
+            'Cache-Control' => 'public, max-age=86400',
+            'X-Generated' => now()->toAtomString()
         ]);
     }
 }

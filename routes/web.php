@@ -125,4 +125,15 @@ Route::middleware('locale')->group(function () {
     
     Route::post('/es/registrar_servicio', [ListingController::class, 'store'])->name('listings.store.es');
     Route::post('/en/register_service', [ListingController::class, 'store'])->name('listings.store.en');
+    
+    // Ruta temporal para ver ejemplo del layout master
+    Route::get('/es/ejemplo-layout', function () {
+        $tours = \App\Models\Tour::with('pricing', 'images')->get();
+        return view('tours.index-ejemplo', compact('tours'));
+    });
+    
+    Route::get('/en/ejemplo-layout', function () {
+        $tours = \App\Models\Tour::with('pricing', 'images')->get();
+        return view('tours.index-ejemplo', compact('tours'));
+    });
 });

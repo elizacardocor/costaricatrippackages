@@ -1,13 +1,29 @@
 User-agent: *
 Allow: /
 
+# Permitir acceso a assets (CSS, JS, Fonts)
+Allow: /build/
+Allow: /images/
+
 # Desindexar URLs simples (tenemos canonical a las complejas)
 Disallow: /es/tour/
 Disallow: /es/hotel/
 Disallow: /en/tour/
 Disallow: /en/hotel/
 
-# Permitir acceso a URLs complejas (SEO)
+# Disallow admin and sensitive paths
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /*.json$
+Disallow: /node_modules/
+
+# Crawl delay (ms)
+Crawl-delay: 1
+
+# Sitemaps
+Sitemap: https://costaricatrips.com/sitemap.xml
+Sitemap: https://www.costaricatrips.com/sitemap.xml
 Allow: /es/provincia/
 Allow: /en/province/
 

@@ -1,22 +1,18 @@
+
+
+<?php $__env->startSection('title', $hotel->name . ' - Costa Rica Trip Packages'); ?>
+
+<?php $__env->startSection('og_type', 'website'); ?>
+<?php $__env->startSection('og_title', $hotel->name . ' - Costa Rica Trip Packages'); ?>
+<?php $__env->startSection('og_description', substr($hotel->description ?? '', 0, 160)); ?>
+<?php $__env->startSection('og_image', $hotel->images->first() ? (\Illuminate\Support\Str::startsWith($hotel->images->first()->url, ['http://','https://','//']) ? $hotel->images->first()->url : asset('storage/' . ltrim($hotel->images->first()->url,'/'))) : asset('images/default-hotel.jpg')); ?>
+
+<?php $__env->startSection('twitter_title', $hotel->name); ?>
+<?php $__env->startSection('twitter_description', substr($hotel->description ?? '', 0, 160)); ?>
+<?php $__env->startSection('twitter_image', $hotel->images->first() ? (\Illuminate\Support\Str::startsWith($hotel->images->first()->url, ['http://','https://','//']) ? $hotel->images->first()->url : asset('storage/' . ltrim($hotel->images->first()->url,'/'))) : asset('images/default-hotel.jpg')); ?>
+
 <?php $__env->startSection('canonical'); ?>
 <link rel="canonical" href="<?php echo e(url($canonicalUrl)); ?>">
-<meta property="og:type" content="website">
-<meta property="og:title" content="<?php echo e($hotel->name); ?> - Costa Rica Trip Packages">
-<meta property="og:description" content="<?php echo e(substr($hotel->description, 0, 160)); ?>">
-<?php
-    $ogImg = $hotel->images->first()?->url;
-    $ogImg = $ogImg ? (\Illuminate\Support\Str::startsWith($ogImg, ['http://','https://','//']) ? $ogImg : asset('storage/' . ltrim($ogImg,'/'))) : asset('images/default-hotel.jpg');
-?>
-<meta property="og:image" content="<?php echo e($ogImg); ?>">
-<meta property="og:url" content="<?php echo e(url($canonicalUrl)); ?>">
-<meta property="og:site_name" content="Costa Rica Trip Packages">
-<meta property="og:locale" content="<?php echo e(app()->getLocale() === 'es' ? 'es_CR' : 'en_US'); ?>">
-
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="<?php echo e($hotel->name); ?>">
-<meta name="twitter:description" content="<?php echo e(substr($hotel->description, 0, 160)); ?>">
-<meta name="twitter:image" content="<?php echo e($ogImg); ?>">
-
 <!-- Schema.org JSON-LD for Hotel -->
 <script type="application/ld+json">
 {
@@ -24,7 +20,7 @@
     "@type": "Hotel",
     "@id": "<?php echo e(url($canonicalUrl)); ?>",
     "name": "<?php echo e(addslashes($hotel->name)); ?>",
-    "description": "<?php echo e(addslashes($hotel->description)); ?>",
+    "description": "<?php echo e(addslashes($hotel->description ?? '')); ?>",
     <?php
         $images = $hotel->images->pluck('url')->map(function($u){
             return \Illuminate\Support\Str::startsWith($u, ['http://','https://','//']) ? $u : asset('storage/' . ltrim($u,'/'));
@@ -46,6 +42,14 @@
 </script>
 <?php $__env->stopSection(); ?>
 
+<?php $__env->startSection('extra_styles'); ?>
+<style>
+.object-fit-cover {
+    object-fit: cover !important;
+}
+</style>
+<?php $__env->stopSection(); ?>
+
 <?php $__env->startSection('content'); ?>
 <!-- Mensaje de Éxito -->
 <?php if(session('success')): ?>
@@ -60,7 +64,7 @@
 
 <div class="container-fluid p-0">
     <!-- Hero Image Section -->
-    <div class="position-relative" style="height: 300px; overflow: hidden; margin-top: 80px;">
+    <div class="position-relative" style="height: 300px; overflow: hidden;">
         <?php if($hotel->images->first()): ?>
             <?php $hero = $hotel->images->first()->url; ?>
             <img src="<?php echo e(\Illuminate\Support\Str::startsWith($hero, ['http://','https://','//']) ? $hero : asset('storage/' . ltrim($hero,'/'))); ?>" 
@@ -116,82 +120,24 @@
                 <!-- Image Gallery -->
                 <div class="mb-5">
                     <h3 class="mb-4">Galería</h3>
-                    
-                    <!-- Main Image -->
-                    <div class="mb-4">
-                        <div style="position: relative; height: 400px; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
-                            <?php if($hotel->images->first()): ?>
-                                <?php $mainImg = $hotel->images->first()->url; ?>
-                                <img src="<?php echo e(\Illuminate\Support\Str::startsWith($mainImg, ['http://','https://','//']) ? $mainImg : asset('storage/' . ltrim($mainImg,'/'))); ?>" 
-                                     alt="<?php echo e($hotel->name); ?>" 
-                                     class="w-100 h-100" 
-                                     style="object-fit: cover;">
-                            <?php else: ?>
-                                <img src="https://via.placeholder.com/1200x500" alt="<?php echo e($hotel->name); ?>" class="w-100 h-100" style="object-fit: cover;">
-                            <?php endif; ?>
-                            <div style="position: absolute; top: 10px; left: 10px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 8px 14px; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">
-                                <i class="bi bi-image"></i> Imagen Principal
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Additional Images - Carousel Style -->
-                    <?php if($hotel->images->count() > 1): ?>
-                        <div class="mb-4">
-                            <h5 class="mb-3">
-                                <i class="bi bi-images"></i> Más Fotos del Hotel (<?php echo e($hotel->images->count() - 1); ?>)
-                            </h5>
-                            <div id="imageCarousel" class="carousel slide" data-bs-ride="false">
-                                <div class="carousel-inner">
-                                    <?php $__currentLoopData = $hotel->images->skip(1); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <div class="carousel-item <?php echo e($index === 0 ? 'active' : ''); ?>">
-                                                <?php $imgUrl = $image->url; ?>
-                                                <img src="<?php echo e(\Illuminate\Support\Str::startsWith($imgUrl, ['http://','https://','//']) ? $imgUrl : asset('storage/' . ltrim($imgUrl,'/'))); ?>" 
-                                                    alt="<?php echo e($image->alt_text ?? $hotel->name); ?>" 
-                                                    class="d-block w-100 rounded" 
-                                                    style="height: 300px; object-fit: cover;">
-                                        </div>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                </div>
-                                <?php if($hotel->images->count() > 2): ?>
-                                    <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev" style="top: 50%; transform: translateY(-50%); left: 10px; width: auto; background: none; border: none;">
-                                        <span style="background: rgba(0,0,0,0.5); padding: 10px 12px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                            <i class="bi bi-chevron-left" style="color: white; font-size: 1.2rem;"></i>
-                                        </span>
-                                    </button>
-                                    <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next" style="top: 50%; transform: translateY(-50%); right: 10px; width: auto; background: none; border: none;">
-                                        <span style="background: rgba(0,0,0,0.5); padding: 10px 12px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                            <i class="bi bi-chevron-right" style="color: white; font-size: 1.2rem;"></i>
-                                        </span>
-                                    </button>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    <?php endif; ?>
-
-                    <!-- Image Grid Thumbnails -->
-                    <?php if($hotel->images->count() > 2): ?>
-                        <div class="row g-2 mt-3">
-                            <div class="col-12">
-                                <h6 style="color: #333; font-weight: 600; margin-bottom: 1rem;">Galería de Fotos</h6>
-                            </div>
-                            <?php $__currentLoopData = $hotel->images->skip(1)->take(5); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <div class="col-md-4 col-sm-6">
-                                    <div style="position: relative; height: 150px; border-radius: 8px; overflow: hidden; cursor: pointer; transition: all 0.3s ease;" 
-                                         onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 8px 16px rgba(0,0,0,0.2)'" 
-                                         onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
-                                        <?php $thumb = $image->url; ?>
-                                        <img src="<?php echo e(\Illuminate\Support\Str::startsWith($thumb, ['http://','https://','//']) ? $thumb : asset('storage/' . ltrim($thumb,'/'))); ?>" 
-                                            alt="<?php echo e($image->alt_text ?? $hotel->name); ?>" 
-                                            class="img-fluid" 
-                                            style="height: 100%; width: 100%; object-fit: cover;">
+                    <?php if($hotel->images->count() > 0): ?>
+                        <div class="row g-3">
+                            <?php $__currentLoopData = $hotel->images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <div class="col-md-6 col-lg-4">
+                                    <div style="position: relative; height: 240px; overflow: hidden; border-radius: 12px; cursor: pointer; transition: transform 0.3s;"
+                                         onmouseover="this.style.transform='scale(1.05)'" 
+                                         onmouseout="this.style.transform='scale(1)'">
+                                        <?php $imgUrl = $image->url; ?>
+                                        <img src="<?php echo e(\Illuminate\Support\Str::startsWith($imgUrl, ['http://','https://','//']) ? $imgUrl : asset('storage/' . ltrim($imgUrl,'/'))); ?>" 
+                                             alt="<?php echo e($image->alt_text ?? $hotel->name); ?>" 
+                                             class="img-fluid" 
+                                             style="width: 100%; height: 100%; object-fit: cover;">
                                     </div>
                                 </div>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </div>
-                    <?php endif; ?>
-                </div>
-
+                    <?php else: ?>
+                        <p class="text-muted"><?php echo e(__('No hay imágenes disponibles')); ?></p>
                 <!-- Amenities -->
                 <div class="mb-5">
                     <h3 class="mb-4">Amenidades del Hotel</h3>
@@ -199,23 +145,10 @@
                         <div class="row g-3">
                             <?php $__currentLoopData = $hotel->amenities; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $amenity): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <div class="col-md-6">
-                                    <div style="padding: 1rem; background: linear-gradient(135deg, #f8f9ff, #f0f1ff); border-radius: 10px; border-left: 4px solid #667eea; transition: all 0.3s ease; cursor: pointer;" 
-                                         onmouseover="this.style.boxShadow='0 8px 16px rgba(102, 126, 234, 0.15)'; this.style.transform='translateY(-2px)'" 
-                                         onmouseout="this.style.boxShadow='none'; this.style.transform='translateY(0)'">
+                                    <div class="p-3" style="background: linear-gradient(135deg, #f8f9ff, #f0f1ff); border-radius: 10px; border-left: 4px solid #667eea;">
                                         <div class="d-flex align-items-center gap-3">
-                                            <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;">
-                                                <?php
-                                                    $icons = [
-                                                        'WiFi' => 'bi-wifi',
-                                                        'Piscina' => 'bi-water',
-                                                        'Estacionamiento' => 'bi-car-front',
-                                                        'AC' => 'bi-snow',
-                                                        'Desayuno' => 'bi-cup-hot',
-                                                        'Recepción 24h' => 'bi-clock',
-                                                    ];
-                                                    $icon = $icons[$amenity->name] ?? 'bi-check-circle';
-                                                ?>
-                                                <i class="bi <?php echo e($icon); ?>"></i>
+                                            <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+                                                <i class="bi bi-check-circle"></i>
                                             </div>
                                             <div>
                                                 <h6 class="mb-0" style="color: #333; font-weight: 600;"><?php echo e($amenity->name); ?></h6>
@@ -232,31 +165,12 @@
                         </div>
                     <?php endif; ?>
                 </div>
-
-                <!-- Hotel Info -->
-                <div class="mb-5">
-                    <h3>Información</h3>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <div class="card border-0 bg-light p-3">
-                                <small class="text-muted">Número de Habitaciones</small>
-                                <h5 class="mb-0"><?php echo e($hotel->rooms_count); ?></h5>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card border-0 bg-light p-3">
-                                <small class="text-muted">Ubicación</small>
-                                <h5 class="mb-0"><?php echo e($hotel->destinations->first()?->name ?? 'N/A'); ?></h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- Sidebar -->
             <div class="col-lg-4">
                 <!-- Price Card -->
-                <div class="card position-sticky border-0" style="top: 20px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); background: #fff;">
+                <div class="card position-sticky border-0" style="top: 20px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
                     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.25rem 1rem;">
                         <small style="opacity: 0.9; font-size: 0.75rem;">Desde</small>
                         <?php
@@ -270,33 +184,102 @@
                     </div>
 
                     <div class="card-body" style="padding: 1.25rem;">
-                        <!-- Pricing by Season -->
-                        <?php if($hotel->pricing()->count() > 0): ?>
-                            <div class="mb-3">
-                                <h6 class="mb-2" style="color: #333; font-weight: 600; font-size: 0.9rem;">
-                                    <i class="bi bi-calendar3"></i> Precios
-                                </h6>
-                                <div style="background: linear-gradient(135deg, #f8f9ff, #f0f1ff); padding: 0.75rem; border-radius: 8px; font-size: 0.85rem;">
-                                    <?php $__currentLoopData = $hotel->pricing()->orderBy('rate_type_id')->get(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $price): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <?php
-                                            $rateType = \App\Models\RateType::find($price->rate_type_id);
-                                        ?>
-                                        <div class="d-flex justify-content-between align-items-center mb-1 pb-1" style="border-bottom: 1px solid #e0e0e0;">
-                                            <span style="color: #555;">
-                                                <?php echo e($rateType?->name ?? 'Tarifa'); ?>
+                        <!-- Precio de la Temporada Actual -->
+                        <?php
+                            $today = \Carbon\Carbon::today();
+                            
+                            // Encontrar la temporada actual (excluyendo fin de semana)
+                            $currentSeason = \App\Models\RateTypeSeason::with('rateType')
+                                ->where('start_date', '<=', $today)
+                                ->where('end_date', '>=', $today)
+                                ->whereHas('rateType', function($q) {
+                                    $q->where('slug', '!=', 'weekend');
+                                })
+                                ->first();
+                            
+                            // Si es fin de semana (sábado o domingo), verificar precio de fin de semana
+                            $isWeekend = $today->isWeekend();
+                            
+                            if ($isWeekend) {
+                                $weekendSeason = \App\Models\RateTypeSeason::with('rateType')
+                                    ->whereHas('rateType', function($q) {
+                                        $q->where('slug', 'weekend');
+                                    })
+                                    ->where('start_date', '<=', $today)
+                                    ->where('end_date', '>=', $today)
+                                    ->first();
+                                    
+                                if ($weekendSeason) {
+                                    $currentSeason = $weekendSeason;
+                                }
+                            }
+                            
+                            // Obtener el precio correspondiente
+                            $currentPrice = null;
+                            $seasonName = 'Temporada Regular';
+                            $seasonIcon = '📅';
+                            $seasonColor = '#667eea';
+                            $dateRange = '';
+                            
+                            if ($currentSeason) {
+                                $currentPrice = $hotel->pricing()
+                                    ->where('rate_type_id', $currentSeason->rate_type_id)
+                                    ->first();
+                                    
+                                $seasonName = $currentSeason->rateType->name;
+                                $dateRange = \Carbon\Carbon::parse($currentSeason->start_date)->format('d M') . ' - ' . 
+                                            \Carbon\Carbon::parse($currentSeason->end_date)->format('d M Y');
+                                
+                                // Iconos y colores por temporada
+                                $icons = [
+                                    'low-season' => ['icon' => '🟢', 'color' => '#10b981'],
+                                    'high-season' => ['icon' => '🟡', 'color' => '#f59e0b'],
+                                    'peak-season' => ['icon' => '🔴', 'color' => '#ef4444'],
+                                    'weekend' => ['icon' => '⭐', 'color' => '#8b5cf6'],
+                                ];
+                                $config = $icons[$currentSeason->rateType->slug] ?? ['icon' => '📅', 'color' => '#667eea'];
+                                $seasonIcon = $config['icon'];
+                                $seasonColor = $config['color'];
+                            }
+                            
+                            // Si no hay precio para temporada actual, usar el más bajo
+                            if (!$currentPrice) {
+                                $currentPrice = $hotel->pricing()->orderBy('price', 'asc')->first();
+                            }
+                            
+                            $priceAmount = $currentPrice ? $currentPrice->price : 100;
+                        ?>
+                        
+                        <div class="mb-3" style="background: linear-gradient(135deg, <?php echo e($seasonColor); ?>15, <?php echo e($seasonColor); ?>05); padding: 1rem; border-radius: 10px; border: 2px solid <?php echo e($seasonColor); ?>;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5rem; margin-bottom: 0.25rem;"><?php echo e($seasonIcon); ?></div>
+                                <div style="font-size: 0.8rem; color: #666; margin-bottom: 0.5rem; font-weight: 600;">
+                                    <?php echo e($seasonName); ?>
 
-                                            </span>
-                                            <strong style="color: #667eea;">$<?php echo e(number_format($price->price, 2)); ?></strong>
-                                        </div>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </div>
+                                <div style="font-size: 2rem; font-weight: 700; color: <?php echo e($seasonColor); ?>; margin-bottom: 0.25rem;">
+                                    $<?php echo e(number_format($priceAmount, 0)); ?>
+
+                                    <small style="font-size: 0.4em; opacity: 0.8;">/noche</small>
+                                </div>
+                                <?php if($dateRange): ?>
+                                    <div style="font-size: 0.75rem; color: #666; margin-top: 0.5rem;">
+                                        <i class="bi bi-calendar3"></i> <?php echo e($dateRange); ?>
+
+                                    </div>
+                                <?php endif; ?>
+                                <div style="font-size: 0.7rem; color: #999; margin-top: 0.5rem;">
+                                    <i class="bi bi-info-circle"></i> Precio para <?php echo e($today->format('d M Y')); ?>
+
+                                    <?php if($isWeekend): ?>
+                                        (Fin de Semana)
+                                    <?php endif; ?>
                                 </div>
                             </div>
-                        <?php endif; ?>
+                        </div>
 
                         <!-- Booking Button -->
-                        <button class="btn w-100 mb-2" style="background: linear-gradient(135deg, #1eaa60, #15c25a); color: white; font-weight: 600; padding: 0.65rem; border-radius: 8px; border: none; transition: all 0.3s ease; box-shadow: 0 2px 6px rgba(26, 170, 96, 0.15); font-size: 0.9rem;" 
-                                onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(26, 170, 96, 0.25)'"
-                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 6px rgba(26, 170, 96, 0.15)'">
+                        <button class="btn w-100 mb-2" style="background: linear-gradient(135deg, #1eaa60, #15c25a); color: white; font-weight: 600; padding: 0.65rem; border-radius: 8px;">
                             <i class="bi bi-calendar-check"></i> Reservar
                         </button>
 
@@ -314,8 +297,9 @@
                             <?php if($hotel->email): ?>
                                 <div class="mb-1">
                                     <small style="color: #666; display: block;">Email</small>
-                                    <a href="mailto:<?php echo e($hotel->email); ?>" style="color: #667eea; text-decoration: none; font-weight: 600; word-break: break-all; display: block; max-width: 100%;">
-                                        <?php echo e(substr($hotel->email, 0, 25)); ?>...
+                                    <a href="mailto:<?php echo e($hotel->email); ?>" style="color: #667eea; text-decoration: none; font-weight: 600;">
+                                        <?php echo e($hotel->email); ?>
+
                                     </a>
                                 </div>
                             <?php endif; ?>
@@ -325,42 +309,7 @@
             </div>
         </div>
     </div>
-
-    <!-- Related Hotels Section -->
-    <div class="bg-light py-5">
-        <div class="container">
-            <h3 class="mb-4">Otros Hoteles en <?php echo e($hotel->destinations->first()?->name ?? 'Esta Área'); ?></h3>
-            <div class="row g-4">
-                <?php
-                    $otherHotels = \App\Models\Hotel::where('id', '!=', $hotel->id)->limit(3)->get();
-                ?>
-                <?php $__empty_1 = true; $__currentLoopData = $otherHotels; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $otherHotel): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                    <div class="col-md-4">
-                        <div class="card shadow-sm">
-                            <img src="<?php echo e($otherHotel->images->first() ? asset('storage/' . $otherHotel->images->first()->url) : 'https://via.placeholder.com/400x250'); ?>" class="card-img-top" alt="<?php echo e($otherHotel->name); ?>">
-                            <div class="card-body">
-                                <h5 class="card-title"><?php echo e($otherHotel->name); ?></h5>
-                                <p class="card-text text-muted"><?php echo e($otherHotel->rating); ?> ★ (<?php echo e($otherHotel->reviews->count()); ?> reseñas)</p>
-                                <p class="h5 mb-3">$<?php echo e(number_format($otherHotel->base_price ?? 100, 0)); ?><small>/noche</small></p>
-                                <a href="/<?php echo e(app()->getLocale()); ?>/hotel/<?php echo e($otherHotel->slug); ?>" class="btn btn-sm btn-outline-primary">Ver Detalles</a>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                    <div class="col-12">
-                        <p class="text-muted text-center">No hay otros hoteles disponibles</p>
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
-    </div>
 </div>
-
-<style>
-.object-fit-cover {
-    object-fit: cover !important;
-}
-</style>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /mnt/c/Users/Elizabeth/costaricatrippackages/resources/views/hotels/show.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /mnt/c/Users/Elizabeth/costaricatrippackages/resources/views/hotels/show.blade.php ENDPATH**/ ?>

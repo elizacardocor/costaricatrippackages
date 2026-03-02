@@ -1,30 +1,16 @@
 {
-  "_DashboardMUI-BgWir8s1.js": {
-    "file": "assets/DashboardMUI-BgWir8s1.js",
-    "name": "DashboardMUI"
-  },
-  "resources/css/app.css": {
-    "file": "assets/app-l0sNRNKZ.js",
-    "name": "app",
-    "src": "resources/css/app.css",
+  "resources/css/layout.css": {
+    "file": "assets/layout-BOPydklY.css",
+    "src": "resources/css/layout.css",
     "isEntry": true
   },
-  "resources/js/app.jsx": {
-    "file": "assets/app-C6l823ms.js",
-    "name": "app",
-    "src": "resources/js/app.jsx",
-    "isEntry": true,
-    "imports": [
-      "_DashboardMUI-BgWir8s1.js"
-    ]
-  },
   "resources/js/dashboard-mui.jsx": {
-    "file": "assets/dashboard-mui-B9EAJ24o.js",
+    "file": "assets/dashboard-mui-kqJddC30.js",
     "name": "dashboard-mui",
     "src": "resources/js/dashboard-mui.jsx",
     "isEntry": true,
-    "imports": [
-      "_DashboardMUI-BgWir8s1.js"
+    "css": [
+      "assets/dashboard-mui-Dv_HR0c2.css"
     ]
   }
 }

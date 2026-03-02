@@ -1,35 +1,82 @@
+<?php $__env->startSection('title', app()->getLocale() === 'es' ? 'Registra tu Servicio - Costa Rica Trip Packages' : 'Register Your Service - Costa Rica Trip Packages'); ?>
+<?php $__env->startSection('meta_description', app()->getLocale() === 'es' ? 'Registra tu hotel, tour, transporte u otro servicio turístico en nuestra plataforma' : 'Register your hotel, tour, transportation or other tourism service on our platform'); ?>
+
+<?php $__env->startSection('extra_styles'); ?>
 <style>
     /* Estilos personalizados para el formulario de registro */
     .card {
         border: none;
         border-radius: 12px;
         overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    /* Formulario */
+    #listingForm {
+        border: 2px solid #8B0000;
+        padding: 2rem;
+        border-radius: 8px;
+    }
+
+    /* Columnas dentro del formulario - ocupar 80% */
+    #listingForm .col-md-6 {
+        min-width: 40%;
+        max-width: 45%;
+        flex-basis: 45%;
+    }
+
+    #listingForm .row {
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Label e input en la misma línea */
+    #listingForm .col-md-6 .mb-3 {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #listingForm .col-md-6 .form-label {
+        margin-bottom: 0.5rem;
+    }
+
+    #listingForm .col-md-6 .form-control,
+    #listingForm .col-md-6 .form-select,
+    #listingForm .col-md-6 .input-group {
+        width: 100%;
     }
     
     .card-header {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         padding: 2rem;
+        color: white;
     }
     
     .card-header h2 {
         font-weight: 700;
         font-size: 1.8rem;
         margin-bottom: 0.5rem;
+        color: white;
     }
     
     .card-header p {
         font-size: 0.95rem;
         opacity: 0.9;
+        color: white;
     }
     
     .card-body {
         padding: 2.5rem;
+        background-color: #ffffff;
     }
     
     /* Títulos de sección */
     .section-title {
         margin-top: 2rem;
         margin-bottom: 1.5rem;
+        border-top: 2px solid #8B0000;
+        padding-top: 1rem;
     }
     
     .section-title h4 {
@@ -41,8 +88,44 @@
     
     .section-title hr {
         border: none;
-        border-top: 2px solid #667eea;
+        border-top: 2px solid #8B0000;
         margin: 0.5rem 0 0 0;
+    }
+
+    /* Campos dinámicos */
+    .dynamic-fields {
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid #8B0000;
+    }
+
+    .form-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-section h5 {
+        color: #495057;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 0.5rem;
+    }
+
+    /* Campos de operador */
+    .operator-fields {
+        background-color: #fff3cd;
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        margin-top: 1rem;
+        border-left: 4px solid #ffc107;
+    }
+
+    .operator-fields h6 {
+        color: #856404;
+        font-weight: 600;
+        margin-bottom: 1rem;
     }
     
     /* Formularios */
@@ -55,15 +138,24 @@
     
     .form-control, .form-select {
         border-radius: 8px;
-        border: 1.5px solid #e0e0e0;
+        border: 2px solid transparent;
         padding: 0.75rem 1rem;
         font-size: 0.95rem;
         transition: all 0.3s ease;
+        background-color: #f8f9fa;
+        background-image: linear-gradient(#f8f9fa, #f8f9fa), linear-gradient(135deg, #b0b0b0 0%, #d0d0d0 100%);
+        background-origin: border-box;
+        background-clip: padding-box, border-box;
+        width: 80%;
     }
     
     .form-control:focus, .form-select:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+        border: 2px solid transparent;
+        background-color: #ffffff;
+        background-image: linear-gradient(#ffffff, #ffffff), linear-gradient(135deg, #808080 0%, #b0b0b0 100%);
+        background-origin: border-box;
+        background-clip: padding-box, border-box;
+        box-shadow: none;
     }
     
     .form-control.is-invalid, .form-select.is-invalid {
@@ -78,18 +170,32 @@
         resize: vertical;
         min-height: 100px;
     }
+
+    /* Input group */
+    .input-group-text {
+        background-color: #f8f9fa;
+        border: none;
+        color: #495057;
+        font-weight: 600;
+        width: 80%;
+    }
     
     /* Alertas */
     .alert {
         border: none;
         border-radius: 8px;
         border-left: 4px solid;
+        padding: 1rem 1.25rem;
     }
     
     .alert-info {
-        background-color: #e7f3ff;
-        border-left-color: #667eea;
-        color: #004085;
+        background-color: #ffe8e8;
+        border-left-color: #8B0000;
+        color: #6B0000;
+    }
+
+    .alert-info strong {
+        color: #8B0000;
     }
     
     .alert-danger {
@@ -101,6 +207,11 @@
         margin-bottom: 0;
         padding-left: 1.5rem;
     }
+
+    .alert-sm {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
     
     /* Radio y Checkboxes */
     .form-check {
@@ -108,15 +219,15 @@
         padding: 0.75rem 1rem;
         background-color: #f8f9fa;
         border-radius: 8px;
-        border: 1px solid #dee2e6;
+        border: 1px solid #8B0000;
         transition: all 0.3s ease;
         cursor: pointer;
     }
 
     .form-check:hover {
-        background-color: #f0f1ff;
-        border-color: #667eea;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+        background-color: #ffe8e8;
+        border-color: #8B0000;
+        box-shadow: 0 4px 12px rgba(139, 0, 0, 0.1);
     }
     
     .form-check-input {
@@ -124,20 +235,20 @@
         height: 1.5em;
         border-radius: 6px;
         cursor: pointer;
-        border: 2px solid #ccc;
+        border: 2px solid #8B0000;
         transition: all 0.3s ease;
         margin-top: 0.25em;
     }
     
     .form-check-input:hover {
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        border-color: #8B0000;
+        box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
     }
     
     .form-check-input:checked {
-        background-color: #667eea;
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        background-color: #8B0000;
+        border-color: #8B0000;
+        box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.2);
     }
     
     .form-check-label {
@@ -146,6 +257,35 @@
         font-size: 1rem;
         font-weight: 500;
         color: #333;
+    }
+
+    /* Botones de grupo (radio buttons) */
+    .btn-group {
+        width: 100%;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .btn-outline-primary {
+        border: 1.5px solid #8B0000;
+        color: #8B0000;
+        font-weight: 600;
+        padding: 0.85rem 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-primary:hover {
+        background-color: #8B0000;
+        color: white;
+        transform: scale(1.02);
+    }
+
+    .btn-check:checked + .btn-outline-primary {
+        background-color: #8B0000;
+        border-color: #8B0000;
+        color: white;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
     }
     
     /* Botones */
@@ -158,35 +298,57 @@
     }
     
     .btn-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #8B0000 0%, #A52A2A 50%, #8B0000 100%);
+        color: white;
     }
     
     .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 10px 20px rgba(139, 0, 0, 0.3);
+        color: white;
+    }
+
+    .btn-secondary {
+        background: linear-gradient(135deg, #8B0000 0%, #A52A2A 50%, #8B0000 100%);
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(139, 0, 0, 0.3);
+        color: white;
     }
 
     /* Input File */
     .form-control[type="file"] {
         padding: 1rem 1.25rem;
-        border: 2px dashed #667eea;
-        background-color: #f8f9ff;
+        border: 2px dashed transparent;
+        background-color: #f8f9fa;
+        background-image: linear-gradient(#f8f9fa, #f8f9fa), linear-gradient(135deg, #b0b0b0 0%, #d0d0d0 100%);
+        background-origin: border-box;
+        background-clip: padding-box, border-box;
         border-radius: 8px;
         cursor: pointer;
         transition: all 0.3s ease;
         font-weight: 500;
+        width: 80%;
     }
 
     .form-control[type="file"]:hover {
-        background-color: #f0f1ff;
-        border-color: #764ba2;
-        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.15);
+        background-color: #f5f5f5;
+        background-image: linear-gradient(#f5f5f5, #f5f5f5), linear-gradient(135deg, #808080 0%, #a0a0a0 100%);
+        background-origin: border-box;
+        background-clip: padding-box, border-box;
+        box-shadow: 0 6px 16px rgba(139, 0, 0, 0.15);
     }
 
     .form-control[type="file"]:focus {
-        border-color: #667eea;
+        border-color: transparent;
         background-color: #ffffff;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        background-image: linear-gradient(#ffffff, #ffffff), linear-gradient(135deg, #808080 0%, #b0b0b0 100%);
+        background-origin: border-box;
+        background-clip: padding-box, border-box;
+        box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
     }
 
     /* Botones secundarios (Agregar imagen, Eliminar) */
@@ -199,7 +361,7 @@
     }
 
     #addImageBtn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #8B0000 0%, #A52A2A 50%, #8B0000 100%);
         color: white;
         width: 100%;
         font-size: 1rem;
@@ -209,7 +371,7 @@
 
     #addImageBtn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 10px 25px rgba(139, 0, 0, 0.3);
         color: white;
         text-decoration: none;
     }
@@ -218,17 +380,21 @@
         transform: translateY(0);
     }
 
+    #addImageBtn i {
+        margin-right: 0.5rem;
+    }
+
     .remove-image-btn {
-        background-color: #dc3545;
+        background: linear-gradient(135deg, #A52A2A 0%, #8B0000 100%);
         color: white;
         padding: 0.5rem 0.75rem;
         border: none;
     }
 
     .remove-image-btn:hover {
-        background-color: #c82333;
+        background: linear-gradient(135deg, #8B0000 0%, #A52A2A 100%);
         transform: scale(1.05);
-        box-shadow: 0 6px 12px rgba(220, 53, 69, 0.3);
+        box-shadow: 0 6px 12px rgba(139, 0, 0, 0.3);
         color: white;
     }
 
@@ -237,26 +403,15 @@
         background-color: #f8f9fa;
         padding: 1rem;
         border-radius: 8px;
-        border: 1px solid #dee2e6;
+        border: 1px solid #8B0000;
         transition: all 0.3s ease;
+        margin-bottom: 0.75rem;
     }
 
     .image-input-group:hover {
-        background-color: #f0f1ff;
-        border-color: #667eea;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
-    }
-        color: white;
-    }
-    
-    .btn-outline-danger {
-        border: 1px solid #dc3545;
-        color: #dc3545;
-    }
-    
-    .btn-outline-danger:hover {
-        background-color: #dc3545;
-        color: white;
+        background-color: #ffe8e8;
+        border-color: #A52A2A;
+        box-shadow: 0 4px 12px rgba(139, 0, 0, 0.1);
     }
     
     /* Contenedor de botones */
@@ -268,12 +423,9 @@
         padding: 1rem 2rem;
         font-size: 1.05rem;
     }
-    
-    /* Input de imágenes */
-    .image-input-group {
-        padding: 0.5rem;
-        background-color: #f8f9fa;
-        border-radius: 8px;
+
+    .btn-lg i {
+        margin-right: 0.5rem;
     }
     
     /* Espaciado */
@@ -290,6 +442,35 @@
         font-weight: 700;
         color: #667eea;
     }
+
+    /* Small text */
+    .text-muted {
+        color: #6c757d !important;
+        font-size: 0.875rem;
+    }
+
+    /* Amenities list */
+    .amenities-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 10px;
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #8B0000;
+    }
+
+    .amenities-list .form-check {
+        margin: 0;
+        padding: 0.5rem;
+    }
+    
+    /* Contenedor del formulario */
+    .col-md-10 {
+        min-width: 80%;
+    }
     
     /* Responsive */
     @media (max-width: 768px) {
@@ -304,10 +485,26 @@
         .card-header h2 {
             font-size: 1.5rem;
         }
+
+        .btn-lg {
+            padding: 0.85rem 1.5rem;
+            font-size: 1rem;
+        }
+
+        .dynamic-fields {
+            padding: 1rem;
+        }
+
+        #listingForm {
+            padding: 1.5rem;
+            border: 0.5px solid #8B0000;
+        }
     }
 </style>
+<?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('content'); ?>
+<div class="content-box">
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-10">
@@ -513,40 +710,6 @@ unset($__errorArgs, $__bag); ?>
     </div>
 </div>
 
-<style>
-    .section-title {
-        border-top: 2px solid #007bff;
-        padding-top: 1rem;
-    }
-
-    .dynamic-fields {
-        background-color: #f8f9fa;
-        padding: 1.5rem;
-        border-radius: 0.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .form-section {
-        margin-bottom: 1.5rem;
-    }
-
-    .form-section h5 {
-        color: #495057;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        border-bottom: 1px solid #dee2e6;
-        padding-bottom: 0.5rem;
-    }
-
-    .operator-fields {
-        background-color: #fff3cd;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        margin-top: 1rem;
-        border-left: 4px solid #ffc107;
-    }
-</style>
-
 <script>
     const rateTypes = <?php echo json_encode($rateTypes, 15, 512) ?>;
 
@@ -702,6 +865,33 @@ unset($__errorArgs, $__bag); ?>
                         <input type="number" name="tour_commission" id="tour_commission" class="form-control" step="0.01" min="0" max="100" placeholder="0.00">
                     </div>
 
+                    <div class="mb-3">
+                        <label for="tour_image" class="form-label"><?php echo e(__('Imagen Principal')); ?> *</label>
+                        <input type="file" name="tour_image" id="tour_image" class="form-control" accept="image/*" required>
+                        <small class="text-muted"><?php echo e(__('Resolución recomendada: 1200x800px. Se comprimirá automáticamente.')); ?></small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold"><?php echo e(__('Imágenes Adicionales (Hasta 9)')); ?></label>
+                        <div class="alert alert-info alert-sm" role="alert">
+                            <strong><?php echo e(__('Mismos requisitos que la imagen principal.')); ?></strong><br>
+                            <?php echo e(__('Sugerencia: sube fotos de los paisajes, actividades, paradas y puntos de interés para mejor presentación.')); ?>
+
+                        </div>
+                        
+                        <div id="tourAdditionalImagesContainer">
+                            <!-- Los inputs se agregan dinámicamente aquí -->
+                        </div>
+                        
+                        <button type="button" class="addTourImageBtn btn btn-primary mt-2">
+                            <i class="bi bi-cloud-upload"></i> <?php echo e(__('Agregar más imágenes')); ?>
+
+                        </button>
+                        <small class="d-block mt-2 text-muted">
+                            <i class="bi bi-info-circle"></i> <?php echo e(__('Imágenes agregadas:')); ?> <strong><span class="tourImageCount">0</span>/9</strong>
+                        </small>
+                    </div>
+
                     <!-- ¿Eres operador de tours? -->
                     <div class="mb-3">
                         <label class="form-label"><?php echo e(__('¿Eres operador de tours registrado?')); ?> *</label>
@@ -767,21 +957,55 @@ unset($__errorArgs, $__bag); ?>
                         <label for="transport_commission" class="form-label"><?php echo e(__('Comisión (%)')); ?></label>
                         <input type="number" name="transport_commission" id="transport_commission" class="form-control" step="0.01" min="0" max="100" placeholder="0.00">
                     </div>
+
+                    <div class="mb-3">
+                        <label for="transport_image" class="form-label"><?php echo e(__('Imagen Principal')); ?> *</label>
+                        <input type="file" name="transport_image" id="transport_image" class="form-control" accept="image/*" required>
+                        <small class="text-muted"><?php echo e(__('Resolución recomendada: 1200x800px. Se comprimirá automáticamente.')); ?></small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold"><?php echo e(__('Imágenes Adicionales (Hasta 9)')); ?></label>
+                        <div class="alert alert-info alert-sm" role="alert">
+                            <strong><?php echo e(__('Mismos requisitos que la imagen principal.')); ?></strong><br>
+                            <?php echo e(__('Sugerencia: sube fotos de los vehículos, interiores, servicio y destinos para mejor presentación.')); ?>
+
+                        </div>
+                        
+                        <div id="transportAdditionalImagesContainer">
+                            <!-- Los inputs se agregan dinámicamente aquí -->
+                        </div>
+                        
+                        <button type="button" class="addTransportImageBtn btn btn-primary mt-2">
+                            <i class="bi bi-cloud-upload"></i> <?php echo e(__('Agregar más imágenes')); ?>
+
+                        </button>
+                        <small class="d-block mt-2 text-muted">
+                            <i class="bi bi-info-circle"></i> <?php echo e(__('Imágenes agregadas:')); ?> <strong><span class="transportImageCount">0</span>/9</strong>
+                        </small>
+                    </div>
                 </div>
             `;
         }
 
         // Mostrar campos de precios
         priceFields.innerHTML = `
+            <div class="alert alert-info mb-3">
+                <i class="bi bi-info-circle"></i> <strong><?php echo e(__('Importante:')); ?></strong> <?php echo e(__('Debe ingresar precios para todas las temporadas. Esto permite ajustar precios según la época del año.')); ?>
+
+            </div>
             <div class="row">
                 ${rateTypes.map(rateType => `
                     <div class="col-md-6 mb-3">
-                        <label for="price_${rateType.id}" class="form-label"><?php echo e(__('Precio')); ?> - ${rateType.name || rateType.type}</label>
+                        <label for="price_${rateType.id}" class="form-label">
+                            <?php echo e(__('Precio')); ?> - ${rateType.name || rateType.type} *
+                        </label>
                         <div class="input-group">
                             <span class="input-group-text">$</span>
                             <input type="number" name="prices[${rateType.id}]" id="price_${rateType.id}" 
-                                class="form-control" step="0.01" min="0" placeholder="Ingrese el valor en dólares">
+                                class="form-control" step="0.01" min="0.01" placeholder="Ingrese el valor en dólares" required>
                         </div>
+                        <small class="text-muted"><?php echo e(__('Precio por persona en USD')); ?></small>
                     </div>
                 `).join('')}
             </div>
@@ -821,73 +1045,117 @@ unset($__errorArgs, $__bag); ?>
     /**
      * Manejo dinámico de imágenes adicionales usando delegación de eventos
      */
-    let imageCount = 0;
+    let hotelImageCount = 0;
+    let tourImageCount = 0;
+    let transportImageCount = 0;
 
-    // Delegación de eventos para el botón "Agregar Imagen"
+    // Delegación de eventos para botones "Agregar Imagen"
     document.addEventListener('click', function(e) {
+        // Hotel images
         if (e.target.closest('#addImageBtn')) {
             e.preventDefault();
             e.stopPropagation();
-            
-            const container = document.getElementById('additionalImagesContainer');
-            if (!container) {
-                console.error('Contenedor de imágenes no encontrado');
-                return;
-            }
-
-            console.log('Botón agregar imagen clickeado');
-            
-            if (imageCount >= 9) {
-                alert('<?php echo e(__("Máximo 9 imágenes adicionales permitidas")); ?>');
-                return false;
-            }
-
-            imageCount++;
-            const imageId = `hotel_image_${imageCount}`;
-            
-            console.log('Agregando imagen #' + imageCount);
-            
-            const inputGroup = document.createElement('div');
-            inputGroup.className = 'input-group mb-2 image-input-group';
-            inputGroup.id = `group_${imageId}`;
-            inputGroup.innerHTML = `
-                <input type="file" name="hotel_images[]" id="${imageId}" class="form-control" accept="image/*">
-                <button type="button" class="btn btn-outline-danger btn-sm remove-image-btn">
-                    <i class="bi bi-trash"></i>
-                </button>
-            `;
-
-            container.appendChild(inputGroup);
-            updateImageCount();
-            
+            addImage('hotel', 'hotel', 'hotel_images');
             return false;
         }
 
-        // Delegación para botón de eliminar
+        // Tour images
+        if (e.target.closest('.addTourImageBtn')) {
+            e.preventDefault();
+            e.stopPropagation();
+            addImage('tour', 'tourAdditionalImagesContainer', 'tour_images');
+            return false;
+        }
+
+        // Transport images
+        if (e.target.closest('.addTransportImageBtn')) {
+            e.preventDefault();
+            e.stopPropagation();
+            addImage('transport', 'transportAdditionalImagesContainer', 'transport_images');
+            return false;
+        }
+
+        // Delegación para botones de eliminar
         if (e.target.closest('.remove-image-btn')) {
             e.preventDefault();
             e.stopPropagation();
             
             const inputGroup = e.target.closest('.image-input-group');
+            const serviceType = inputGroup.dataset.serviceType;
+            
             if (inputGroup) {
-                console.log('Botón eliminar clickeado');
                 inputGroup.remove();
-                imageCount--;
-                updateImageCount();
+                if (serviceType === 'hotel') hotelImageCount--;
+                else if (serviceType === 'tour') tourImageCount--;
+                else if (serviceType === 'transport') transportImageCount--;
+                updateImageCount(serviceType);
             }
             
             return false;
         }
     });
 
-    function updateImageCount() {
-        const countSpan = document.getElementById('imageCount');
-        if (countSpan) {
-            countSpan.textContent = imageCount;
-            console.log('Count actualizado a: ' + imageCount);
+    function addImage(serviceType, containerId, inputName) {
+        const container = document.getElementById(containerId);
+        if (!container) {
+            console.error('Contenedor de imágenes no encontrado para: ' + serviceType);
+            return;
+        }
+
+        let currentCount;
+        if (serviceType === 'hotel') {
+            currentCount = hotelImageCount;
+        } else if (serviceType === 'tour') {
+            currentCount = tourImageCount;
+        } else if (serviceType === 'transport') {
+            currentCount = transportImageCount;
+        }
+
+        if (currentCount >= 9) {
+            alert('<?php echo e(__("Máximo 9 imágenes adicionales permitidas")); ?>');
+            return false;
+        }
+
+        if (serviceType === 'hotel') hotelImageCount++;
+        else if (serviceType === 'tour') tourImageCount++;
+        else if (serviceType === 'transport') transportImageCount++;
+
+        const imageId = `${serviceType}_image_${currentCount + 1}`;
+        
+        const inputGroup = document.createElement('div');
+        inputGroup.className = 'input-group mb-2 image-input-group';
+        inputGroup.id = `group_${imageId}`;
+        inputGroup.dataset.serviceType = serviceType;
+        inputGroup.innerHTML = `
+            <input type="file" name="${inputName}[]" id="${imageId}" class="form-control" accept="image/*">
+            <button type="button" class="btn btn-outline-danger btn-sm remove-image-btn">
+                <i class="bi bi-trash"></i>
+            </button>
+        `;
+
+        container.appendChild(inputGroup);
+        updateImageCount(serviceType);
+        
+        return false;
+    }
+
+    function updateImageCount(serviceType) {
+        let count;
+        if (serviceType === 'hotel') {
+            count = hotelImageCount;
+            const countSpan = document.getElementById('imageCount');
+            if (countSpan) countSpan.textContent = count;
+        } else if (serviceType === 'tour') {
+            count = tourImageCount;
+            const countSpans = document.querySelectorAll('.tourImageCount');
+            countSpans.forEach(span => span.textContent = count);
+        } else if (serviceType === 'transport') {
+            count = transportImageCount;
+            const countSpans = document.querySelectorAll('.transportImageCount');
+            countSpans.forEach(span => span.textContent = count);
         }
     }
 </script>
-<?php $__env->stopSection(); ?>
+        </div><!-- End Content Box -->
 
-<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /mnt/c/Users/Elizabeth/costaricatrippackages/resources/views/listings/create.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /mnt/c/Users/Elizabeth/costaricatrippackages/resources/views/listings/create.blade.php ENDPATH**/ ?>

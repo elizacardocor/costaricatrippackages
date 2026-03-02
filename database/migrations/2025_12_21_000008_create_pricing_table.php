@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('pricing', function (Blueprint $table) {
             $table->id();
-            $table->enum('service_type', ['hotel', 'tour', 'transport']);
+            $table->string('service_type');
             $table->unsignedBigInteger('service_id');
             $table->foreignId('rate_type_id')->constrained('rate_types')->onDelete('cascade');
             $table->enum('pricing_model', ['fixed', 'hourly', 'per_km', 'per_day', 'per_person'])->default('fixed');
-            $table->decimal('price', 10, 2)->default(0);
+            $table->decimal('price', 10, 2);
             $table->decimal('min_hours', 5, 2)->nullable();
             $table->decimal('min_km', 8, 2)->nullable();
             $table->decimal('max_km', 8, 2)->nullable();

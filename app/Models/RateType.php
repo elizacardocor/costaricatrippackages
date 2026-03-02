@@ -19,4 +19,9 @@ class RateType extends Model
     {
         return $this->hasMany(Pricing::class);
     }
+
+    public function seasons()
+    {
+        return $this->hasMany(RateTypeSeason::class);
+    }
 }

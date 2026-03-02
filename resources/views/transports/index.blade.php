@@ -1,7 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.master')
+
+@section('title', app()->getLocale() === 'es' ? 'Servicios de Transporte' : 'Transport Services')
 
 @section('content')
-<div style="margin-top: 80px;">
+<div class="content-box">
     <!-- Header Section -->
     <div style="background: linear-gradient(135deg, #FF9500 0%, #F57C00 100%); color: white; padding: 3rem 2rem; text-align: center;">
         <div class="container">
@@ -129,5 +131,5 @@
             </a>
         </div>
     </div>
-</div>
+</div><!-- End Content Box -->
 @endsection

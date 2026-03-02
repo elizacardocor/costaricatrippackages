@@ -89,6 +89,6 @@ class Tour extends Model
 
     public function pricing()
     {
-        return $this->morphMany(Pricing::class, 'service');
+        return $this->morphMany(Pricing::class, 'service', 'service_type', 'service_id');
     }
 }

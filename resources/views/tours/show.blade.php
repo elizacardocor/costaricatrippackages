@@ -1,4 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.master')
+
+@section('title', $tour->name . ' - Costa Rica Trip Packages')
+@section('meta_description', substr($tour->description, 0, 160))
 
 @section('canonical')
 <link rel="canonical" href="{{ url($canonicalUrl) }}">
@@ -41,6 +44,7 @@
 @endsection
 
 @section('content')
+<div class="content-box">
 <!-- Mensaje de Éxito -->
 @if(session('success'))
     <div class="container mt-3">
@@ -53,7 +57,7 @@
 
 <div class="container-fluid p-0">
     <!-- Hero Image Section -->
-    <div class="position-relative" style="height: 300px; overflow: hidden; margin-top: 80px;">
+    <div class="position-relative" style="height: 300px; overflow: hidden;">
         <img src="{{ $tour->images->first() ? asset('storage/' . $tour->images->first()->url) : 'https://via.placeholder.com/1200x500' }}" 
              alt="{{ $tour->name }}" 
              class="w-100 h-100 object-fit-cover"
@@ -124,13 +128,24 @@
                 <!-- Image Gallery -->
                 <div class="mb-5">
                     <h3 class="mb-4">Galería</h3>
-                    <div class="row g-3">
-                        @foreach ($tour->images as $image)
-                            <div class="col-md-6">
-                                <img src="{{ asset('storage/' . $image->url) }}" alt="{{ $tour->name }}" class="img-fluid rounded" style="height: 300px; object-fit: cover; width: 100%;">
-                            </div>
-                        @endforeach
-                    </div>
+                    @if($tour->images->count() > 0)
+                        <div class="row g-3">
+                            @foreach ($tour->images as $image)
+                                <div class="col-md-6 col-lg-4">
+                                    <div style="position: relative; height: 240px; overflow: hidden; border-radius: 12px; cursor: pointer; transition: transform 0.3s;"
+                                         onmouseover="this.style.transform='scale(1.05)'" 
+                                         onmouseout="this.style.transform='scale(1)'">
+                                        <img src="{{ asset('storage/' . $image->url) }}" 
+                                             alt="{{ $tour->name }}" 
+                                             class="img-fluid" 
+                                             style="width: 100%; height: 100%; object-fit: cover;">
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-muted">{{ __('No hay imágenes disponibles') }}</p>
+                    @endif
                 </div>
 
                 <!-- What's Included -->
@@ -167,12 +182,95 @@
                 <!-- Price Card -->
                 <div class="card shadow-lg position-sticky" style="top: 20px;">
                     <div class="card-body">
+                        <!-- Precio de la Temporada Actual -->
+                        @php
+                            $today = \Carbon\Carbon::today();
+                            
+                            // Encontrar la temporada actual (excluyendo fin de semana)
+                            $currentSeason = \App\Models\RateTypeSeason::with('rateType')
+                                ->where('start_date', '<=', $today)
+                                ->where('end_date', '>=', $today)
+                                ->whereHas('rateType', function($q) {
+                                    $q->where('slug', '!=', 'weekend');
+                                })
+                                ->first();
+                            
+                            // Si es fin de semana (sábado o domingo), verificar precio de fin de semana
+                            $isWeekend = $today->isWeekend();
+                            
+                            if ($isWeekend) {
+                                $weekendSeason = \App\Models\RateTypeSeason::with('rateType')
+                                    ->whereHas('rateType', function($q) {
+                                        $q->where('slug', 'weekend');
+                                    })
+                                    ->where('start_date', '<=', $today)
+                                    ->where('end_date', '>=', $today)
+                                    ->first();
+                                    
+                                if ($weekendSeason) {
+                                    $currentSeason = $weekendSeason;
+                                }
+                            }
+                            
+                            // Obtener el precio correspondiente
+                            $currentPrice = null;
+                            $seasonName = 'Temporada Regular';
+                            $seasonIcon = '📅';
+                            $seasonColor = '#667eea';
+                            $dateRange = '';
+                            
+                            if ($currentSeason) {
+                                $currentPrice = $tour->pricing()
+                                    ->where('rate_type_id', $currentSeason->rate_type_id)
+                                    ->first();
+                                    
+                                $seasonName = $currentSeason->rateType->name;
+                                $dateRange = \Carbon\Carbon::parse($currentSeason->start_date)->format('d M') . ' - ' . 
+                                            \Carbon\Carbon::parse($currentSeason->end_date)->format('d M Y');
+                                
+                                // Iconos y colores por temporada
+                                $icons = [
+                                    'low-season' => ['icon' => '🟢', 'color' => '#10b981'],
+                                    'high-season' => ['icon' => '🟡', 'color' => '#f59e0b'],
+                                    'peak-season' => ['icon' => '🔴', 'color' => '#ef4444'],
+                                    'weekend' => ['icon' => '⭐', 'color' => '#8b5cf6'],
+                                ];
+                                $config = $icons[$currentSeason->rateType->slug] ?? ['icon' => '📅', 'color' => '#667eea'];
+                                $seasonIcon = $config['icon'];
+                                $seasonColor = $config['color'];
+                            }
+                            
+                            // Si no hay precio para temporada actual, usar el más bajo
+                            if (!$currentPrice) {
+                                $currentPrice = $tour->pricing()->orderBy('price', 'asc')->first();
+                            }
+                            
+                            $priceAmount = $currentPrice ? $currentPrice->price : 100;
+                        @endphp
+                        
+                        <div class="mb-3" style="background: linear-gradient(135deg, {{ $seasonColor }}15, {{ $seasonColor }}05); padding: 1rem; border-radius: 10px; border: 2px solid {{ $seasonColor }};">
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">{{ $seasonIcon }}</div>
+                                <div style="font-size: 0.8rem; color: #666; margin-bottom: 0.5rem; font-weight: 600;">
+                                    {{ $seasonName }}
+                                </div>
+                                <div style="font-size: 2rem; font-weight: 700; color: {{ $seasonColor }}; margin-bottom: 0.25rem;">
+                                    ${{ number_format($priceAmount, 0) }}
+                                </div>
+                                @if($dateRange)
+                                    <div style="font-size: 0.75rem; color: #666;">
+                                        {{ $dateRange }}
+                                    </div>
+                                @endif
+                                <div style="font-size: 0.75rem; color: #999; margin-top: 0.5rem;">
+                                    Precio para {{ $today->format('d M Y') }}
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="mb-4">
-                            <small class="text-muted">Precio por Persona</small>
-                            <h2 class="mb-0" style="color: #1eaa60;">
-                                ${{ number_format($tour->base_price ?? 199, 0) }}
-                            </h2>
-                            <small class="text-muted">{{ $tour->duration }} horas</small>
+                            <small class="text-muted">por Persona</small>
+                            <small class="text-muted d-block">{{ $tour->duration }} horas</small>
                         </div>
 
                         <!-- Booking Button -->
@@ -239,6 +337,7 @@
         </div>
     </div>
 </div>
+</div><!-- End Content Box -->
 
 <style>
 .object-fit-cover {

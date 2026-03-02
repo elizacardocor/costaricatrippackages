@@ -54,6 +54,29 @@
         .testimonial { background: white; padding: 2rem; border-radius: 10px; border-left: 4px solid var(--primary); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .testimonial-text { font-style: italic; color: var(--gray); margin-bottom: 1rem; }
         .cta-section { background: linear-gradient(135deg, #FF6B35 0%, var(--primary) 40%, #FF6B35 100%); color: white; padding: 4rem 2rem; text-align: center; }
+
+        /* Content Box */
+        @media (min-width: 1024px) {
+            .content-box {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1),
+                            0 2px 8px rgba(0, 0, 0, 0.08);
+                margin: 1rem 20px;
+                width: calc(100% - 40px);
+                overflow: hidden;
+            }
+        }
+
+        @media (max-width: 1023px) {
+            .content-box {
+                box-shadow: none;
+                border-radius: 0;
+                margin: 0;
+                width: 100%;
+            }
+        }
+
         footer { background: var(--dark); color: white; padding: 2rem; text-align: center; }
         @media (max-width: 768px) { .hero { height: 400px; } .hero h1 { font-size: 1.8rem; } }
     </style>
@@ -72,6 +95,8 @@
             </ul>
         </div>
     </nav>
+
+    <div class="content-box">
 
     <section class="hero">
         <div class="hero-content">
@@ -191,6 +216,8 @@
             <a href="#transport" class="cta-button">{{ __('landings.book_now') }}</a>
         </div>
     </section>
+
+    </div><!-- End Content Box -->
 
     <footer>
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">

@@ -1,7 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.master')
+
+@section('title', app()->getLocale() === 'es' ? 'Hoteles en Costa Rica' : 'Hotels in Costa Rica')
 
 @section('content')
-<div style="margin-top: 80px;">
+<div class="content-box">
     <!-- Header Section -->
     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem 2rem; text-align: center;">
         <div class="container">
@@ -30,7 +32,7 @@
                              onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)'">
                             
                             <!-- Image -->
-                            <div style="height: 220px; overflow: hidden; background: #f0f0f0;">
+                            <div style="height: 220px; overflow: hidden; background: #f0f0f0; position: relative;">
                                 @if($hotel->images->first())
                                     @php $imgUrl = $hotel->images->first()->url; @endphp
                                     <img src="{{ \Illuminate\Support\Str::startsWith($imgUrl, ['http://','https://','//']) ? $imgUrl : asset('storage/' . ltrim($imgUrl, '/')) }}" 
@@ -142,5 +144,5 @@
             </a>
         </div>
     </div>
-</div>
+</div><!-- End Content Box -->
 @endsection

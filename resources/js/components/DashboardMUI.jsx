@@ -1,44 +1,6 @@
 import React, { useState } from 'react';
-import {
-    Box,
-    Drawer,
-    AppBar,
-    Toolbar,
-    Typography,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    Card,
-    CardContent,
-    Grid,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Avatar,
-    Chip,
-    IconButton
-} from '@mui/material';
-import {
-    Dashboard as DashboardIcon,
-    TravelExplore,
-    People,
-    Settings,
-    Menu as MenuIcon,
-    AttachMoney,
-    TrendingUp,
-    NotificationsNone
-} from '@mui/icons-material';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-const drawerWidth = 240;
-
-// Datos de ejemplo
 const salesData = [
     { mes: 'Ene', ventas: 4000 },
     { mes: 'Feb', ventas: 3000 },
@@ -57,191 +19,131 @@ const tourPackages = [
 ];
 
 export default function DashboardMUI() {
-    const [mobileOpen, setMobileOpen] = useState(false);
-
-    const handleDrawerToggle = () => {
-        setMobileOpen(!mobileOpen);
-    };
-
-    const drawer = (
-        <div>
-            <Toolbar>
-                <Typography variant="h6" noWrap component="div" sx={{ color: '#1976d2', fontWeight: 'bold' }}>
-                    MUI Dashboard
-                </Typography>
-            </Toolbar>
-            <List>
-                {[
-                    { text: 'Dashboard', icon: <DashboardIcon /> },
-                    { text: 'Paquetes', icon: <TravelExplore /> },
-                    { text: 'Clientes', icon: <People /> },
-                    { text: 'Configuración', icon: <Settings /> },
-                ].map((item) => (
-                    <ListItem key={item.text} disablePadding>
-                        <ListItemButton>
-                            <ListItemIcon sx={{ color: '#1976d2' }}>
-                                {item.icon}
-                            </ListItemIcon>
-                            <ListItemText primary={item.text} />
-                        </ListItemButton>
-                    </ListItem>
-                ))}
-            </List>
-        </div>
-    );
+    const [showMenu, setShowMenu] = useState(true);
 
     return (
-        <Box sx={{ display: 'flex', backgroundColor: '#f5f5f5', minHeight: '100vh' }}>
-            {/* AppBar */}
-            <AppBar
-                position="fixed"
-                sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, backgroundColor: '#fff', color: '#000' }}
-            >
-                <Toolbar>
-                    <IconButton
-                        color="inherit"
-                        edge="start"
-                        onClick={handleDrawerToggle}
-                        sx={{ mr: 2, display: { sm: 'none' } }}
-                    >
-                        <MenuIcon />
-                    </IconButton>
-                    <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-                        Costa Rica Trip Packages
-                    </Typography>
-                    <IconButton color="inherit">
-                        <NotificationsNone />
-                    </IconButton>
-                    <Avatar sx={{ ml: 2, bgcolor: '#1976d2' }}>A</Avatar>
-                </Toolbar>
-            </AppBar>
-
-            {/* Drawer */}
-            <Box
-                component="nav"
-                sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-            >
-                <Drawer
-                    variant="temporary"
-                    open={mobileOpen}
-                    onClose={handleDrawerToggle}
-                    ModalProps={{ keepMounted: true }}
-                    sx={{
-                        display: { xs: 'block', sm: 'none' },
-                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-                    }}
-                >
-                    {drawer}
-                </Drawer>
-                <Drawer
-                    variant="permanent"
-                    sx={{
-                        display: { xs: 'none', sm: 'block' },
-                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-                    }}
-                    open
-                >
-                    {drawer}
-                </Drawer>
-            </Box>
+        <div className="d-flex" style={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
+            {/* Sidebar */}
+            <nav className="bg-light border-end p-3" style={{ width: showMenu ? '240px' : '0', transition: 'width 0.3s', overflow: 'hidden' }}>
+                <h5 className="text-primary fw-bold mb-4">Dashboard</h5>
+                <ul className="list-unstyled">
+                    <li className="mb-3"><a href="#" className="text-dark text-decoration-none">📊 Dashboard</a></li>
+                    <li className="mb-3"><a href="#" className="text-dark text-decoration-none">✈️ Paquetes</a></li>
+                    <li className="mb-3"><a href="#" className="text-dark text-decoration-none">👥 Clientes</a></li>
+                    <li className="mb-3"><a href="#" className="text-dark text-decoration-none">⚙️ Configuración</a></li>
+                </ul>
+            </nav>
 
             {/* Main Content */}
-            <Box
-                component="main"
-                sx={{ 
-                    flexGrow: 1, 
-                    p: { xs: 2, sm: 3 }, 
-                    width: { sm: `calc(100% - ${drawerWidth}px)` },
-                    backgroundColor: '#f5f5f5',
-                    minHeight: '100vh'
-                }}
-            >
-                <Toolbar />
+            <div className="flex-grow-1 p-4" style={{ width: '100%' }}>
+                {/* Top Bar */}
+                <div className="bg-white p-3 rounded mb-4 d-flex justify-content-between align-items-center">
+                    <h2 className="mb-0">Dashboard Costa Rica Trips</h2>
+                    <button 
+                        className="btn btn-outline-secondary btn-sm"
+                        onClick={() => setShowMenu(!showMenu)}
+                    >
+                        ☰ Menu
+                    </button>
+                </div>
 
-                {/* Stats Cards */}
-                <Grid container spacing={{ xs: 2, md: 3 }} sx={{ mb: 3 }}>
-                    {[
-                        { title: 'Ventas Totales', value: '$24,500', icon: <AttachMoney />, color: '#4caf50' },
-                        { title: 'Paquetes Activos', value: '12', icon: <TravelExplore />, color: '#2196f3' },
-                        { title: 'Clientes', value: '248', icon: <People />, color: '#ff9800' },
-                        { title: 'Crecimiento', value: '+23%', icon: <TrendingUp />, color: '#9c27b0' },
-                    ].map((stat, index) => (
-                        <Grid item xs={12} sm={6} md={3} key={index}>
-                            <Card>
-                                <CardContent>
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <div>
-                                            <Typography color="textSecondary" gutterBottom variant="body2">
-                                                {stat.title}
-                                            </Typography>
-                                            <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
-                                                {stat.value}
-                                            </Typography>
-                                        </div>
-                                        <Avatar sx={{ bgcolor: stat.color, width: 56, height: 56 }}>
-                                            {stat.icon}
-                                        </Avatar>
-                                    </Box>
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                    ))}
-                </Grid>
+                {/* Stats Row */}
+                <div className="row mb-4">
+                    <div className="col-md-3">
+                        <div className="card text-center">
+                            <div className="card-body">
+                                <h6 className="card-title text-muted">Ventas Totales</h6>
+                                <h3 className="text-success">$25,500</h3>
+                                <small className="text-success">↑ 12% vs mes anterior</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-md-3">
+                        <div className="card text-center">
+                            <div className="card-body">
+                                <h6 className="card-title text-muted">Tours Activos</h6>
+                                <h3 className="text-primary">24</h3>
+                                <small className="text-primary">5 nuevos esta semana</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-md-3">
+                        <div className="card text-center">
+                            <div className="card-body">
+                                <h6 className="card-title text-muted">Reservas</h6>
+                                <h3 className="text-warning">156</h3>
+                                <small className="text-warning">23 pendientes</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-md-3">
+                        <div className="card text-center">
+                            <div className="card-body">
+                                <h6 className="card-title text-muted">Clientes</h6>
+                                <h3 className="text-info">487</h3>
+                                <small className="text-info">+32 este mes</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                {/* Chart */}
-                <Paper sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
-                    <Typography variant="h6" gutterBottom>
-                        Ventas Mensuales
-                    </Typography>
-                    <ResponsiveContainer width="100%" height={300}>
-                        <LineChart data={salesData}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="mes" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend />
-                            <Line type="monotone" dataKey="ventas" stroke="#1976d2" strokeWidth={2} />
-                        </LineChart>
-                    </ResponsiveContainer>
-                </Paper>
-
-                {/* Table */}
-                <Paper sx={{ p: { xs: 2, sm: 3 } }}>
-                    <Typography variant="h6" gutterBottom>
-                        Paquetes Turísticos
-                    </Typography>
-                    <TableContainer sx={{ overflowX: 'auto' }}>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell><strong>ID</strong></TableCell>
-                                    <TableCell><strong>Nombre</strong></TableCell>
-                                    <TableCell><strong>Precio</strong></TableCell>
-                                    <TableCell><strong>Estado</strong></TableCell>
-                                    <TableCell><strong>Reservas</strong></TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {tourPackages.map((pkg) => (
-                                    <TableRow key={pkg.id} hover>
-                                        <TableCell>{pkg.id}</TableCell>
-                                        <TableCell>{pkg.nombre}</TableCell>
-                                        <TableCell>{pkg.precio}</TableCell>
-                                        <TableCell>
-                                            <Chip 
-                                                label={pkg.estado} 
-                                                color={pkg.estado === 'Activo' ? 'success' : 'default'}
-                                                size="small"
-                                            />
-                                        </TableCell>
-                                        <TableCell>{pkg.reservas}</TableCell>
-                                    </TableRow>
+                {/* Tours Table */}
+                <div className="card mb-4">
+                    <div className="card-header bg-light">
+                        <h5 className="mb-0">Paquetes Turísticos</h5>
+                    </div>
+                    <div className="card-body">
+                        <table className="table table-hover">
+                            <thead className="table-light">
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Precio</th>
+                                    <th>Estado</th>
+                                    <th>Reservas</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {tourPackages.map((tour) => (
+                                    <tr key={tour.id}>
+                                        <td>{tour.nombre}</td>
+                                        <td className="fw-bold text-success">{tour.precio}</td>
+                                        <td>
+                                            <span className={`badge ${tour.estado === 'Activo' ? 'bg-success' : 'bg-warning'}`}>
+                                                {tour.estado}
+                                            </span>
+                                        </td>
+                                        <td>{tour.reservas}</td>
+                                    </tr>
                                 ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Paper>
-            </Box>
-        </Box>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {/* Chart Section */}
+                <div className="card">
+                    <div className="card-header bg-light">
+                        <h5 className="mb-0">Ventas por Mes</h5>
+                    </div>
+                    <div className="card-body">
+                        <div style={{ height: '300px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around', paddingBottom: '20px', borderBottom: '1px solid #ddd' }}>
+                            {salesData.map((data, idx) => (
+                                <div key={idx} style={{ textAlign: 'center' }}>
+                                    <div style={{
+                                        width: '40px',
+                                        height: `${(data.ventas / 60) * 2}px`,
+                                        backgroundColor: '#0d6efd',
+                                        margin: '0 auto',
+                                        borderRadius: '4px 4px 0 0'
+                                    }}></div>
+                                    <small className="mt-2 d-block">{data.mes}</small>
+                                    <small className="text-muted">${data.ventas}</small>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 }

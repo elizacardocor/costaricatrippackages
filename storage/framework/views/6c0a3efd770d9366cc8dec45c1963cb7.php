@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="<?php echo e(app()->getLocale()); ?>">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <meta name="description" content="<?php echo $__env->yieldContent('meta_description', 'Costa Rica Trip Packages - Tours y Paquetes Turísticos'); ?>">
+    <meta name="keywords" content="<?php echo $__env->yieldContent('meta_keywords', 'tours Costa Rica, paquetes turísticos, aventuras, volcanes'); ?>">
+    <meta name="author" content="Costa Rica Trip Packages">
+    <meta name="language" content="<?php echo e(app()->getLocale() === 'es' ? 'Spanish' : 'English'); ?>">
+    
+    <!-- Open Graph Tags -->
+    <meta property="og:type" content="<?php echo $__env->yieldContent('og_type', 'website'); ?>">
+    <meta property="og:title" content="<?php echo $__env->yieldContent('og_title', 'Costa Rica Trip Packages'); ?>">
+    <meta property="og:description" content="<?php echo $__env->yieldContent('og_description', 'Descubre los mejores tours y paquetes turísticos'); ?>">
+    <meta property="og:image" content="<?php echo $__env->yieldContent('og_image', asset('images/og-image.jpg')); ?>">
+    <meta property="og:url" content="<?php echo e(url()->current()); ?>">
+    <meta property="og:site_name" content="Costa Rica Trip Packages">
+    <meta property="og:locale" content="<?php echo e(app()->getLocale() === 'es' ? 'es_CR' : 'en_US'); ?>">
+    
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?php echo $__env->yieldContent('twitter_title', 'Costa Rica Trip Packages'); ?>">
+    <meta name="twitter:description" content="<?php echo $__env->yieldContent('twitter_description', 'Descubre los mejores tours'); ?>">
+    <meta name="twitter:image" content="<?php echo $__env->yieldContent('twitter_image', asset('images/og-image.jpg')); ?>">
+    
+    <?php if(config('app.env') !== 'production'): ?>
+    <meta name="robots" content="noindex, nofollow">
+    <?php else: ?>
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <?php endif; ?>
+    
+    <title><?php echo $__env->yieldContent('title', 'Costa Rica Trip Packages'); ?></title>
+    
+    <!-- Performance: Preload critical resources -->
+    <link rel="preload" as="image" href="<?php echo e(asset('images/parqManuelAntonio/playa-parque-nacional-manuel-antonio.jpg')); ?>" media="(min-width: 1024px)">
+    <link rel="preload" as="style" href="<?php echo e(asset('fonts/fontawesome-custom.css')); ?>">
+    
+    <!-- Canonical URL -->
+    <?php echo $__env->yieldContent('canonical'); ?>
+    
+    <!-- Hreflang -->
+    <?php echo $__env->yieldContent('hreflang'); ?>
+    
+    <!-- Preconnect to external resources for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome - Optimized Local Version -->
+    <link rel="stylesheet" href="<?php echo e(asset('fonts/fontawesome-custom.css')); ?>">
+    
+    <!-- Layout CSS compilado con Vite -->
+    <?php echo app('Illuminate\Foundation\Vite')(['resources/css/layout.css']); ?>
+    
+    <!-- WhatsApp Float Button Styles -->
+    <style>
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: #25D366;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .whatsapp-float:hover {
+            background: #20BA5A;
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(37, 211, 102, 0.6);
+            color: white;
+        }
+
+        .whatsapp-float i {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .whatsapp-float {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+    </style>
+    
+    <?php echo $__env->yieldPushContent('styles'); ?>
+    <?php echo $__env->yieldContent('extra_styles'); ?>
+</head>
+<body>
+    <!-- Top Header Bar -->
+    <div class="top-header">
+        <div class="top-header-container">
+            <div class="top-header-left">
+                <a href="tel:+50624790020" class="top-header-item">
+                    <i class="fas fa-phone"></i>
+                    <span>+506 2479-0020</span>
+                </a>
+                <a href="mailto:info@costaricatrips.com" class="top-header-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>Email Us</span>
+                </a>
+            </div>
+            <div class="top-header-right">
+                <div class="top-header-item">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span>Exchange Rate: ₡497.72</span>
+                </div>
+                <a href="/dashboard" class="top-header-item agency-login">
+                    <i class="fas fa-user-lock"></i>
+                    <span>AGENCY LOGIN</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="<?php echo e(app()->getLocale() === 'es' ? '/es/' : '/en/'); ?>" class="logo">
+                <img src="<?php echo e(asset('images/tripsCostaRicaColombiaViajes.jpg')); ?>" alt="Costa Rica Trips Tours" class="logo-image">
+            </a>
+            <button class="nav-toggle" id="navToggle">☰</button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="<?php echo e(app()->getLocale() === 'es' ? '/es/' : '/en/'); ?>"><?php echo e(app()->getLocale() === 'es' ? 'Inicio' : 'Home'); ?></a></li>
+                <li><a href="<?php echo e(app()->getLocale() === 'es' ? '/es/tours' : '/en/tours'); ?>">Tours</a></li>
+                <!-- <li><a href="<?php echo e(app()->getLocale() === 'es' ? '/es/hoteles' : '/en/hotels'); ?>"><?php echo e(app()->getLocale() === 'es' ? 'Hoteles' : 'Hotels'); ?></a></li> -->
+                <!-- <li><a href="<?php echo e(app()->getLocale() === 'es' ? '/es/transporte' : '/en/transport'); ?>"><?php echo e(app()->getLocale() === 'es' ? 'Transporte' : 'Transport'); ?></a></li> -->
+                <li><a href="<?php echo e(app()->getLocale() === 'es' ? '/es/contacto' : '/en/contact'); ?>"><?php echo e(app()->getLocale() === 'es' ? 'Contacto' : 'Contact'); ?></a></li>
+                <!-- <li><a href="/dashboard" style="color: #8B0000;">Dashboard</a></li> -->
+                <li>
+                    <?php
+                        $currentPath = request()->path();
+                        
+                        // Mapeo de rutas ES -> EN
+                        $routeMap = [
+                            'es/contacto' => 'en/contact',
+                            'en/contact' => 'es/contacto',
+                            // 'es/hoteles' => 'en/hotels',       // Comentado para usar en futuro
+                            // 'en/hotels' => 'es/hoteles',       // Comentado para usar en futuro
+                            // 'es/transporte' => 'en/transport', // Comentado para usar en futuro
+                            // 'en/transport' => 'es/transporte', // Comentado para usar en futuro
+                        ];
+                        
+                        // Verificar si hay un mapeo específico
+                        if (isset($routeMap[$currentPath])) {
+                            $newPath = $routeMap[$currentPath];
+                        } else {
+                            // Para otras rutas, simplemente cambiar el idioma
+                            $newPath = app()->getLocale() === 'es' 
+                                ? str_replace('es/', 'en/', $currentPath)
+                                : str_replace('en/', 'es/', $currentPath);
+                        }
+                    ?>
+                    <a href="<?php echo e('/' . $newPath); ?>" style="color: #8B0000; font-weight: 600;">
+                        <?php echo e(app()->getLocale() === 'es' ? '🇬🇧 EN' : '🇪🇸 ES'); ?>
+
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <?php echo $__env->yieldContent('content'); ?>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3><?php echo e(app()->getLocale() === 'es' ? 'Síguenos' : 'Follow Us'); ?></h3>
+                <div class="social-links">
+                    <a href="https://facebook.com/costaricatrips" target="_blank" class="social-icon facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://instagram.com/costaricatrips" target="_blank" class="social-icon instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://youtube.com/@costaricatrips" target="_blank" class="social-icon youtube">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="https://twitter.com/costaricatrips" target="_blank" class="social-icon twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3><?php echo e(app()->getLocale() === 'es' ? 'Contáctanos' : 'Contact Us'); ?></h3>
+                <div class="contact-icons">
+                    <a href="https://wa.me/50624790020" target="_blank" class="contact-icon whatsapp" title="WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="https://m.me/costaricatrips" target="_blank" class="contact-icon messenger" title="Messenger">
+                        <i class="fab fa-facebook-messenger"></i>
+                    </a>
+                    <a href="tel:+50624790020" class="contact-icon phone" title="<?php echo e(app()->getLocale() === 'es' ? 'Llamar' : 'Call'); ?>">
+                        <i class="fas fa-phone"></i>
+                    </a>
+                    <a href="mailto:info@costaricatrips.com" class="contact-icon email" title="Email">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3><?php echo e(app()->getLocale() === 'es' ? 'Métodos de Pago Seguros' : 'Secure Payment Methods'); ?></h3>
+                <div class="payment-icons">
+                    <i class="fab fa-cc-paypal"></i>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <?php echo e(date('Y')); ?> Costa Rica Trip Packages. <?php echo e(app()->getLocale() === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'); ?></p>
+            <p class="footer-security">
+                <?php echo e(app()->getLocale() === 'es' ? 'Este sitio está protegido por reCAPTCHA y se aplican la' : 'This site is protected by reCAPTCHA and the Google'); ?> 
+                <a href="https://policies.google.com/privacy" target="_blank"><?php echo e(app()->getLocale() === 'es' ? 'Política de Privacidad' : 'Privacy Policy'); ?></a> 
+                <?php echo e(app()->getLocale() === 'es' ? 'y los' : 'and'); ?> 
+                <a href="https://policies.google.com/terms" target="_blank"><?php echo e(app()->getLocale() === 'es' ? 'Términos de Servicio' : 'Terms of Service'); ?></a> 
+                <?php echo e(app()->getLocale() === 'es' ? 'de Google.' : 'apply.'); ?>
+
+            </p>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/50624790020" target="_blank" class="whatsapp-float" title="WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Scripts -->
+    <script defer>
+        // Mobile menu toggle
+        const navToggle = document.getElementById('navToggle');
+        const navMenu = document.getElementById('navMenu');
+
+        if (navToggle && navMenu) {
+            navToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!navToggle.contains(e.target) && !navMenu.contains(e.target)) {
+                    navMenu.classList.remove('active');
+                }
+            });
+        }
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (navbar) {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            }
+        });
+    </script>
+    
+    <?php echo $__env->yieldPushContent('scripts'); ?>
+    <?php echo $__env->yieldContent('extra_scripts'); ?>
+</body>
+</html>
+<?php /**PATH /mnt/c/Users/Elizabeth/costaricatrippackages/resources/views/layouts/master.blade.php ENDPATH**/ ?>

@@ -65,6 +65,18 @@ class ListingController extends Controller
             'contact_address' => 'nullable|string|max:255',
         ]);
 
+        // Validación de precios por temporada (requeridos)
+        $rateTypes = RateType::all();
+        $priceRules = [];
+        foreach ($rateTypes as $rateType) {
+            $priceRules['prices.' . $rateType->id] = 'required|numeric|min:0.01';
+        }
+        $request->validate($priceRules, [
+            'prices.*.required' => 'El precio es requerido para todas las temporadas',
+            'prices.*.numeric' => 'El precio debe ser un número válido',
+            'prices.*.min' => 'El precio debe ser mayor a 0',
+        ]);
+
         try {
             // Crear o obtener usuario: registramos solo name, email y una
             // contraseña genérica hasheada; `email_verified_at` se mantiene null.
@@ -95,6 +107,13 @@ class ListingController extends Controller
             }
 
             \Log::info('Service creado:', ['service_id' => $service->id, 'service_type' => $serviceType]);
+
+            // Guardar imágenes según el tipo de servicio
+            if ($serviceType === 'tour') {
+                $this->saveTourImages($service, $request, $destinationId);
+            } elseif ($serviceType === 'transport') {
+                $this->saveTransportImages($service, $request, $destinationId);
+            }
 
             // Guardar precios por temporada
             $this->savePrices($serviceType, $service->id, $request);
@@ -291,6 +310,9 @@ class ListingController extends Controller
             'tour_capacity' => 'nullable|integer',
             'tour_commission' => 'nullable|numeric|min:0|max:100',
             'is_tour_operator' => 'required|in:yes,no',
+            'tour_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'tour_images' => 'nullable|array|max:9',
+            'tour_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
 
         // Crear o obtener tour operator
@@ -371,6 +393,9 @@ class ListingController extends Controller
             'transport_vehicles' => 'nullable|integer',
             'transport_capacity' => 'nullable|integer',
             'transport_commission' => 'nullable|numeric|min:0|max:100',
+            'transport_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'transport_images' => 'nullable|array|max:9',
+            'transport_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
 
         $transport = Transport::create([
@@ -407,6 +432,14 @@ class ListingController extends Controller
             $priceData = $request->input('prices');
             \Log::info('Precio data:', ['data' => $priceData, 'type' => gettype($priceData)]);
             
+            // Mapear serviceType a nombre completo de clase
+            $classMap = [
+                'hotel' => 'App\Models\Hotel',
+                'tour' => 'App\Models\Tour',
+                'transport' => 'App\Models\Transport',
+            ];
+            $serviceClass = $classMap[$serviceType] ?? 'App\Models\\' . ucfirst($serviceType);
+            
             foreach ($priceData as $rateTypeId => $price) {
                 \Log::info('Processing price', [
                     'rateTypeId' => $rateTypeId,
@@ -423,7 +456,7 @@ class ListingController extends Controller
 
                     $inserted = \DB::table('pricing')->updateOrInsert(
                         [
-                            'service_type' => $serviceType,
+                            'service_type' => $serviceClass,
                             'service_id' => $serviceId,
                             'rate_type_id' => $rateTypeId,
                         ],
@@ -551,6 +584,216 @@ class ListingController extends Controller
         }
         
         \Log::info('=== SAVE HOTEL IMAGES END ===');
+    }
+
+    /**
+     * Guardar imágenes del tour
+     */
+    private function saveTourImages($tour, $request, $destinationId)
+    {
+        \Log::info('=== SAVE TOUR IMAGES START ===');
+        \Log::info('saveTourImages called', [
+            'tour_id' => $tour->id,
+            'has_main_image' => $request->hasFile('tour_image'),
+            'has_additional' => $request->hasFile('tour_images'),
+            'additional_count' => count($request->file('tour_images') ?? []),
+        ]);
+
+        $images = [];
+        $order = 1;
+
+        // Obtener datos para construir nombres SEO
+        $destination = \App\Models\Destination::find($destinationId);
+        $province = $destination?->province;
+        
+        $tourName = $tour->name;
+        $provinceName = $province?->name ?? 'Costa Rica';
+        $destinationName = $destination?->name ?? 'General';
+        $description = $request->input('tour_description') ?? '';
+        
+        // Extraer palabras clave de la descripción
+        $descriptionWords = collect(preg_split('/\s+/', strtolower($description)))
+            ->filter(fn($w) => strlen($w) > 4)
+            ->take(3)
+            ->values()
+            ->toArray();
+
+        // Imagen principal
+        if ($request->hasFile('tour_image')) {
+            \Log::info('Processing main tour image');
+            $image = $request->file('tour_image');
+            $fileName = $this->generateImageName($tourName, $provinceName, $destinationName, $descriptionWords, 1);
+            $filePath = $this->compressAndStoreImage($image, 'tours', $fileName, isMainImage: true);
+            
+            \Log::info('Main tour image saved', ['path' => $filePath, 'fileName' => $fileName]);
+            
+            $altText = "$tourName en $destinationName, $provinceName - Tour de Costa Rica";
+            
+            $images[] = [
+                'tour_id' => $tour->id,
+                'url' => $filePath,
+                'alt_text' => $altText,
+                'order' => $order++,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        // Imágenes adicionales
+        if ($request->hasFile('tour_images')) {
+            $additionalImages = $request->file('tour_images');
+            \Log::info('Processing additional tour images', ['count' => count($additionalImages)]);
+            
+            foreach ($additionalImages as $index => $image) {
+                if ($image) {
+                    \Log::info('Processing additional tour image', ['index' => $index, 'order' => $order]);
+                    
+                    $fileName = $this->generateImageName($tourName, $provinceName, $destinationName, $descriptionWords, $order);
+                    $filePath = $this->compressAndStoreImage($image, 'tours', $fileName);
+                    
+                    \Log::info('Additional tour image saved', ['path' => $filePath, 'fileName' => $fileName]);
+                    
+                    // Generar alt_text descriptivo para cada imagen
+                    $imageDescriptions = [
+                        'actividad',
+                        'paisaje',
+                        'aventura',
+                        'vista',
+                        'experiencia',
+                        'destino',
+                        'atracción',
+                        'naturaleza',
+                        'galería'
+                    ];
+                    
+                    $desc = $imageDescriptions[$index % count($imageDescriptions)];
+                    $altText = "$desc - $tourName $destinationName $provinceName - Tour en Costa Rica";
+                    
+                    $images[] = [
+                        'tour_id' => $tour->id,
+                        'url' => $filePath,
+                        'alt_text' => $altText,
+                        'order' => $order++,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+            }
+        }
+
+        // Guardar todas las imágenes
+        if (!empty($images)) {
+            \Log::info('Inserting tour images to database', ['count' => count($images)]);
+            $result = \DB::table('tour_images')->insert($images);
+            \Log::info('Tour images inserted', ['result' => $result, 'count' => count($images)]);
+        } else {
+            \Log::warning('No tour images to save');
+        }
+        
+        \Log::info('=== SAVE TOUR IMAGES END ===');
+    }
+
+    /**
+     * Guardar imágenes del transporte
+     */
+    private function saveTransportImages($transport, $request, $destinationId)
+    {
+        \Log::info('=== SAVE TRANSPORT IMAGES START ===');
+        \Log::info('saveTransportImages called', [
+            'transport_id' => $transport->id,
+            'has_main_image' => $request->hasFile('transport_image'),
+            'has_additional' => $request->hasFile('transport_images'),
+            'additional_count' => count($request->file('transport_images') ?? []),
+        ]);
+
+        $images = [];
+        $order = 1;
+
+        // Obtener datos para construir nombres SEO
+        $destination = \App\Models\Destination::find($destinationId);
+        $province = $destination?->province;
+        
+        $transportName = $transport->name;
+        $provinceName = $province?->name ?? 'Costa Rica';
+        $destinationName = $destination?->name ?? 'General';
+        $type = $request->input('transport_type') ?? 'transporte';
+        
+        // Extraer palabras clave del tipo
+        $descriptionWords = [$type, 'vehiculo', 'servicio'];
+
+        // Imagen principal
+        if ($request->hasFile('transport_image')) {
+            \Log::info('Processing main transport image');
+            $image = $request->file('transport_image');
+            $fileName = $this->generateImageName($transportName, $provinceName, $destinationName, $descriptionWords, 1);
+            $filePath = $this->compressAndStoreImage($image, 'transports', $fileName, isMainImage: true);
+            
+            \Log::info('Main transport image saved', ['path' => $filePath, 'fileName' => $fileName]);
+            
+            $altText = "$transportName en $destinationName, $provinceName - Transporte de Costa Rica";
+            
+            $images[] = [
+                'transport_id' => $transport->id,
+                'url' => $filePath,
+                'alt_text' => $altText,
+                'order' => $order++,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        // Imágenes adicionales
+        if ($request->hasFile('transport_images')) {
+            $additionalImages = $request->file('transport_images');
+            \Log::info('Processing additional transport images', ['count' => count($additionalImages)]);
+            
+            foreach ($additionalImages as $index => $image) {
+                if ($image) {
+                    \Log::info('Processing additional transport image', ['index' => $index, 'order' => $order]);
+                    
+                    $fileName = $this->generateImageName($transportName, $provinceName, $destinationName, $descriptionWords, $order);
+                    $filePath = $this->compressAndStoreImage($image, 'transports', $fileName);
+                    
+                    \Log::info('Additional transport image saved', ['path' => $filePath, 'fileName' => $fileName]);
+                    
+                    // Generar alt_text descriptivo para cada imagen
+                    $imageDescriptions = [
+                        'vehículo',
+                        'interior',
+                        'servicio',
+                        'flota',
+                        'comodidad',
+                        'destino',
+                        'ruta',
+                        'transporte',
+                        'galería'
+                    ];
+                    
+                    $desc = $imageDescriptions[$index % count($imageDescriptions)];
+                    $altText = "$desc - $transportName $destinationName $provinceName - Transporte en Costa Rica";
+                    
+                    $images[] = [
+                        'transport_id' => $transport->id,
+                        'url' => $filePath,
+                        'alt_text' => $altText,
+                        'order' => $order++,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+            }
+        }
+
+        // Guardar todas las imágenes
+        if (!empty($images)) {
+            \Log::info('Inserting transport images to database', ['count' => count($images)]);
+            $result = \DB::table('transport_images')->insert($images);
+            \Log::info('Transport images inserted', ['result' => $result, 'count' => count($images)]);
+        } else {
+            \Log::warning('No transport images to save');
+        }
+        
+        \Log::info('=== SAVE TRANSPORT IMAGES END ===');
     }
 
     /**

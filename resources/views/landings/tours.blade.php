@@ -66,7 +66,7 @@
         <div class="nav-container">
             <a href="/" class="logo">🌴 Costa Rica Trips</a>
             <ul class="nav-menu">
-                <li><a href="/#hotels">Hotels</a></li>
+                <li><a href="/#hotels">Hotels XX</a></li>
                 <li><a href="/#contacto">Contact</a></li>
                 <li><a href="/" class="cta-button" style="font-size: 0.9rem; padding: 0.6rem 1.5rem;">Home</a></li>
             </ul>

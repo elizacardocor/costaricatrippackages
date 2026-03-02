@@ -12,7 +12,17 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // Generate sitemap daily at midnight for SEO optimization
+        $schedule->command('sitemap:generate')
+            ->dailyAt('00:00')
+            ->name('sitemap-generation')
+            ->withoutOverlapping()
+            ->onSuccess(function () {
+                \Log::info('✅ Sitemap generated successfully at ' . now());
+            })
+            ->onFailure(function () {
+                \Log::error('❌ Sitemap generation failed at ' . now());
+            });
     }
 
     /**

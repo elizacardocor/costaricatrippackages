@@ -1,4 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.master')
+
+@section('title', __('Transporte Registrado'))
 
 @section('content')
 <div class="container mt-5">

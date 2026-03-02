@@ -167,6 +167,28 @@
         
         /* CTA */
         .cta-section { background: linear-gradient(135deg, #FF6B35 0%, var(--primary) 40%, #FF6B35 100%); color: white; padding: 4rem 2rem; text-align: center; }
+
+        /* Content Box */
+        @media (min-width: 1024px) {
+            .content-box {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1),
+                            0 2px 8px rgba(0, 0, 0, 0.08);
+                margin: 1rem 20px;
+                width: calc(100% - 40px);
+                overflow: hidden;
+            }
+        }
+
+        @media (max-width: 1023px) {
+            .content-box {
+                box-shadow: none;
+                border-radius: 0;
+                margin: 0;
+                width: 100%;
+            }
+        }
         
         /* Footer */
         footer { background: var(--dark); color: white; padding: 2rem; text-align: center; }
@@ -208,6 +230,8 @@
             </ul>
         </div>
     </nav>
+
+    <div class="content-box">
 
     <!-- Hero Section -->
     <section class="hero">
@@ -350,6 +374,8 @@
             <a href="#hotels" class="cta-button">{{ __('landings.book_now') }}</a>
         </div>
     </section>
+
+    </div><!-- End Content Box -->
 
     <!-- Footer -->
     <footer>
