@@ -50,8 +50,12 @@
     <!-- Font Awesome - Optimized Local Version -->
     <link rel="stylesheet" href="{{ asset('fonts/fontawesome-custom.css') }}">
     
-    <!-- Layout CSS compilado con Vite -->
-    @vite(['resources/css/layout.css'])
+    <!-- Layout CSS -->
+    @if(config('app.env') === 'production')
+        <link rel="stylesheet" href="{{ asset('build/assets/layout-BOPydklY.css') }}">
+    @else
+        @vite(['resources/css/layout.css'])
+    @endif
     
     <!-- WhatsApp Float Button Styles -->
     <style>
