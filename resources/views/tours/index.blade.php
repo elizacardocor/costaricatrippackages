@@ -523,16 +523,16 @@
 </section>
 
 <!-- CTA Section for Service Providers -->
-<section style="background: linear-gradient(135deg, #FF6B35 0%, #FF9500 100%); color: white; padding: 4rem 2rem; text-align: center; margin-top: 3rem;">
+<section style="background: linear-gradient(135deg, #FF6B35 0%, #FF9500 100%); color: white; padding: 5rem 2rem; text-align: center; margin-top: 3rem; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
     <div class="container">
-        <h2 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1.5rem;">
+        <h2 style="font-size: 3rem; font-weight: 700; margin-bottom: 1.5rem; text-shadow: 2px 2px 8px rgba(0,0,0,0.3);">
             {{ app()->getLocale() === 'es' ? '¿Eres un Operador de Tours?' : 'Are you a Tour Operator?' }}
         </h2>
-        <p style="font-size: 1.2rem; opacity: 0.95; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+        <p style="font-size: 1.3rem; line-height: 1.6; opacity: 0.95; margin-bottom: 2rem; max-width: 700px; margin-left: auto; margin-right: auto; text-shadow: 1px 1px 4px rgba(0,0,0,0.2);">
             {{ app()->getLocale() === 'es' ? '¡Registra tus tours en nuestra plataforma! Alcanza a miles de viajeros que buscan experiencias únicas en Costa Rica' : 'Register your tours on our platform! Reach thousands of travelers looking for unique experiences in Costa Rica' }}
         </p>
         <a href="{{ app()->getLocale() === 'es' ? '/es/registrar_servicio' : '/en/register_service' }}" 
-           style="display: inline-block; background: white; color: #FF6B35; padding: 1rem 2.5rem; border-radius: 50px; font-weight: 700; text-decoration: none; transition: all 0.3s;">
+           style="display: inline-block; background: white; color: #FF6B35; padding: 1rem 2.5rem; border-radius: 50px; font-weight: 700; font-size: 1.1rem; text-decoration: none; transition: all 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
             {{ app()->getLocale() === 'es' ? '➕ Registra tu Tour' : '➕ Register Your Tour' }}
         </a>
     </div>

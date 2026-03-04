@@ -52,7 +52,7 @@
     
     <!-- Layout CSS -->
     @if(config('app.env') === 'production')
-        <link rel="stylesheet" href="{{ asset('build/assets/layout-BOPydklY.css') }}">
+        <link rel="stylesheet" href="{{ asset('build/assets/layout-Bi0gS0Tz.css') }}">
     @else
         @vite(['resources/css/layout.css'])
     @endif
@@ -131,10 +131,12 @@
                     <i class="fas fa-dollar-sign"></i>
                     <span>Exchange Rate: ₡497.72</span>
                 </div>
+                {{--
                 <a href="/dashboard" class="top-header-item agency-login">
                     <i class="fas fa-user-lock"></i>
                     <span>AGENCY LOGIN</span>
                 </a>
+                --}}
             </div>
         </div>
     </div>

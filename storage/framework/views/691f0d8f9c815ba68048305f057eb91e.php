@@ -41,6 +41,32 @@
 </script>
 <?php $__env->stopSection(); ?>
 
+<?php $__env->startSection('extra_styles'); ?>
+<style>
+    .tour-image-wrapper {
+        position: relative;
+        height: 240px;
+        overflow: hidden;
+        transition: transform 0.3s;
+    }
+
+    .tour-image-wrapper:hover {
+        transform: scale(1.05);
+    }
+
+    .tour-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s;
+    }
+
+    .tour-image-wrapper:hover .tour-image {
+        transform: scale(1.1);
+    }
+</style>
+<?php $__env->stopSection(); ?>
+
 <?php $__env->startSection('content'); ?>
 <div class="content-box">
 <!-- Mensaje de Éxito -->
@@ -131,13 +157,10 @@
                         <div class="row g-3">
                             <?php $__currentLoopData = $tour->images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <div class="col-md-6 col-lg-4">
-                                    <div style="position: relative; height: 240px; overflow: hidden; border-radius: 12px; cursor: pointer; transition: transform 0.3s;"
-                                         onmouseover="this.style.transform='scale(1.05)'" 
-                                         onmouseout="this.style.transform='scale(1)'">
+                                    <div class="tour-image-wrapper" style="border-radius: 12px; cursor: pointer;">
                                         <img src="<?php echo e(asset('storage/' . $image->url)); ?>" 
                                              alt="<?php echo e($tour->name); ?>" 
-                                             class="img-fluid" 
-                                             style="width: 100%; height: 100%; object-fit: cover;">
+                                             class="tour-image">
                                     </div>
                                 </div>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

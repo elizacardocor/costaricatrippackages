@@ -50,8 +50,12 @@
     <!-- Font Awesome - Optimized Local Version -->
     <link rel="stylesheet" href="<?php echo e(asset('fonts/fontawesome-custom.css')); ?>">
     
-    <!-- Layout CSS compilado con Vite -->
-    <?php echo app('Illuminate\Foundation\Vite')(['resources/css/layout.css']); ?>
+    <!-- Layout CSS -->
+    <?php if(config('app.env') === 'production'): ?>
+        <link rel="stylesheet" href="<?php echo e(asset('build/assets/layout-Bi0gS0Tz.css')); ?>">
+    <?php else: ?>
+        <?php echo app('Illuminate\Foundation\Vite')(['resources/css/layout.css']); ?>
+    <?php endif; ?>
     
     <!-- WhatsApp Float Button Styles -->
     <style>
@@ -127,10 +131,7 @@
                     <i class="fas fa-dollar-sign"></i>
                     <span>Exchange Rate: ₡497.72</span>
                 </div>
-                <a href="/dashboard" class="top-header-item agency-login">
-                    <i class="fas fa-user-lock"></i>
-                    <span>AGENCY LOGIN</span>
-                </a>
+                
             </div>
         </div>
     </div>
