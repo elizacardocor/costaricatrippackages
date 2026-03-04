@@ -45,6 +45,16 @@
 
 @section('extra_styles')
 <style>
+    .tour-gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1rem;
+    }
+
+    .tour-gallery-item {
+        min-width: 0;
+    }
+
     .tour-image-wrapper {
         position: relative;
         height: 240px;
@@ -65,6 +75,12 @@
 
     .tour-image-wrapper:hover .tour-image {
         transform: scale(1.1);
+    }
+
+    @media (max-width: 576px) {
+        .tour-gallery-grid {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 @endsection
@@ -155,9 +171,9 @@
                 <div class="mb-5">
                     <h3 class="mb-4">Galería</h3>
                     @if($tour->images->count() > 0)
-                        <div class="row g-3">
+                        <div class="tour-gallery-grid">
                             @foreach ($tour->images as $image)
-                                <div class="col-md-6 col-lg-4">
+                                <div class="tour-gallery-item">
                                     <div class="tour-image-wrapper" style="border-radius: 12px; cursor: pointer;">
                                         <img src="{{ asset('storage/' . $image->url) }}" 
                                              alt="{{ $tour->name }}" 
