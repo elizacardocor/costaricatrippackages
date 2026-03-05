@@ -52,7 +52,7 @@
     
     <!-- Layout CSS -->
     @if(config('app.env') === 'production')
-        <link rel="stylesheet" href="{{ asset('build/assets/layout-Bi0gS0Tz.css') }}">
+        <link rel="stylesheet" href="{{ asset('build/assets/layout-CTBZkxW4.css') }}">
     @else
         @vite(['resources/css/layout.css'])
     @endif
@@ -157,9 +157,14 @@
                 <!-- <li><a href="/dashboard" style="color: #8B0000;">Dashboard</a></li> -->
                 <li>
                     @php
-                        $currentPath = request()->path();
-                        
-                        // Mapeo de rutas ES -> EN
+                        $currentPath = trim(request()->path(), '/');
+
+                        // Home routes
+                        if ($currentPath === '' || $currentPath === 'es' || $currentPath === 'en') {
+                            $newPath = app()->getLocale() === 'es' ? 'en/' : 'es/';
+                        }
+
+                        // Mapeo de rutas ES <-> EN
                         $routeMap = [
                             'es/contacto' => 'en/contact',
                             'en/contact' => 'es/contacto',
@@ -168,15 +173,30 @@
                             // 'es/transporte' => 'en/transport', // Comentado para usar en futuro
                             // 'en/transport' => 'es/transporte', // Comentado para usar en futuro
                         ];
-                        
-                        // Verificar si hay un mapeo específico
-                        if (isset($routeMap[$currentPath])) {
+
+                        if (!isset($newPath) && isset($routeMap[$currentPath])) {
                             $newPath = $routeMap[$currentPath];
-                        } else {
-                            // Para otras rutas, simplemente cambiar el idioma
-                            $newPath = app()->getLocale() === 'es' 
-                                ? str_replace('es/', 'en/', $currentPath)
-                                : str_replace('en/', 'es/', $currentPath);
+                        }
+
+                        // Para otras rutas, cambiar prefijo de idioma
+                        if (!isset($newPath)) {
+                            if (app()->getLocale() === 'es') {
+                                if ($currentPath === 'es') {
+                                    $newPath = 'en/';
+                                } elseif (str_starts_with($currentPath, 'es/')) {
+                                    $newPath = 'en/' . substr($currentPath, 3);
+                                } else {
+                                    $newPath = 'en/' . ltrim($currentPath, '/');
+                                }
+                            } else {
+                                if ($currentPath === 'en') {
+                                    $newPath = 'es/';
+                                } elseif (str_starts_with($currentPath, 'en/')) {
+                                    $newPath = 'es/' . substr($currentPath, 3);
+                                } else {
+                                    $newPath = 'es/' . ltrim($currentPath, '/');
+                                }
+                            }
                         }
                     @endphp
                     <a href="{{ '/' . $newPath }}" style="color: #8B0000; font-weight: 600;">
@@ -198,28 +218,25 @@
             <div class="footer-section">
                 <h3>{{ app()->getLocale() === 'es' ? 'Síguenos' : 'Follow Us' }}</h3>
                 <div class="social-links">
-                    <a href="https://facebook.com/costaricatrips" target="_blank" class="social-icon facebook">
+                    <a href="https://www.facebook.com/share/188Va9sso4/" target="_blank" class="social-icon facebook">
                         <i class="fab fa-facebook-f"></i>
                     </a>
-                    <a href="https://instagram.com/costaricatrips" target="_blank" class="social-icon instagram">
+                    <a href="https://www.instagram.com/costarica_.trip?igsh=MXF0eHBlcWFndzZlZA==" target="_blank" class="social-icon instagram">
                         <i class="fab fa-instagram"></i>
                     </a>
-                    <a href="https://youtube.com/@costaricatrips" target="_blank" class="social-icon youtube">
-                        <i class="fab fa-youtube"></i>
-                    </a>
-                    <a href="https://twitter.com/costaricatrips" target="_blank" class="social-icon twitter">
-                        <i class="fab fa-twitter"></i>
+                    <a href="https://tiktok.com/@costa.rica.trip4" target="_blank" class="social-icon tiktok">
+                        <i class="fab fa-tiktok"></i>
                     </a>
                 </div>
             </div>
             <div class="footer-section">
                 <h3>{{ app()->getLocale() === 'es' ? 'Contáctanos' : 'Contact Us' }}</h3>
                 <div class="contact-icons">
-                    <a href="https://wa.me/50624790020" target="_blank" class="contact-icon whatsapp" title="WhatsApp">
+                    <a href="https://wa.me/50670579814?text=Hello%2C%20I%20would%20like%20more%20information%20about%20your%20personalized%20tours%20in%20Costa%20Rica" target="_blank" class="contact-icon whatsapp" title="WhatsApp">
                         <i class="fab fa-whatsapp"></i>
                     </a>
-                    <a href="https://m.me/costaricatrips" target="_blank" class="contact-icon messenger" title="Messenger">
-                        <i class="fab fa-facebook-messenger"></i>
+                    <a href="https://tiktok.com/@costa.rica.trip4" target="_blank" class="contact-icon tiktok" title="TikTok">
+                        <i class="fab fa-tiktok"></i>
                     </a>
                     <a href="tel:+50624790020" class="contact-icon phone" title="{{ app()->getLocale() === 'es' ? 'Llamar' : 'Call' }}">
                         <i class="fas fa-phone"></i>
@@ -249,7 +266,7 @@
     </footer>
 
     <!-- WhatsApp Floating Button -->
-    <a href="https://wa.me/50624790020" target="_blank" class="whatsapp-float" title="WhatsApp">
+    <a href="https://wa.me/50670579814?text=Hello%2C%20I%20would%20like%20more%20information%20about%20your%20personalized%20tours%20in%20Costa%20Rica" target="_blank" class="whatsapp-float" title="WhatsApp">
         <i class="fab fa-whatsapp"></i>
     </a>
 

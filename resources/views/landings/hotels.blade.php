@@ -166,7 +166,7 @@
         .testimonial-text { font-style: italic; color: var(--gray); margin-bottom: 1rem; }
         
         /* CTA */
-        .cta-section { background: linear-gradient(135deg, #FF6B35 0%, var(--primary) 40%, #FF6B35 100%); color: white; padding: 4rem 2rem; text-align: center; }
+        .cta-section { background: linear-gradient(135deg, #4a0000 0%, #6b0000 50%, #8B0000 100%); color: white; padding: 4rem 2rem; text-align: center; }
 
         /* Content Box */
         @media (min-width: 1024px) {

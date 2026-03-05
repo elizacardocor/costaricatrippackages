@@ -53,7 +53,7 @@
         .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem; }
         .testimonial { background: white; padding: 2rem; border-radius: 10px; border-left: 4px solid var(--primary); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .testimonial-text { font-style: italic; color: var(--gray); margin-bottom: 1rem; }
-        .cta-section { background: linear-gradient(135deg, #FF6B35 0%, var(--primary) 40%, #FF6B35 100%); color: white; padding: 4rem 2rem; text-align: center; }
+        .cta-section { background: linear-gradient(135deg, #4a0000 0%, #6b0000 50%, #8B0000 100%); color: white; padding: 4rem 2rem; text-align: center; }
 
         /* Content Box */
         @media (min-width: 1024px) {
@@ -223,7 +223,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
             <div>
                 <p>&copy; 2025 Costa Rica Trip Packages. All rights reserved.</p>
-                <p>WhatsApp: <a href="https://wa.me/506" style="color: var(--primary); text-decoration: none;">+506 1234-5678</a></p>
+                <p>WhatsApp: <a href="https://wa.me/50670579814?text=Hello%2C%20I%20would%20like%20more%20information%20about%20your%20personalized%20tours%20in%20Costa%20Rica" style="color: var(--primary); text-decoration: none;">+506 7057-9814</a></p>
             </div>
             <div style="display: flex; gap: 1rem;">
                 @if(app()->getLocale() === 'es')

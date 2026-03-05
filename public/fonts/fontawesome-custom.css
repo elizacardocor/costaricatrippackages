@@ -47,6 +47,7 @@
 /* Brand Icons */
 .fa-facebook-f::before { content: "\f39e"; }
 .fa-instagram::before { content: "\f16d"; }
+.fa-tiktok::before { content: "\e07b"; }
 .fa-youtube::before { content: "\f167"; }
 .fa-twitter::before { content: "\f099"; }
 .fa-whatsapp::before { content: "\f232"; }

@@ -370,35 +370,8 @@
 </script>
 
 <script>
-    const allTours = {!! json_encode(\App\Models\Tour::get()->map(function($tour) {
-        return [
-            'id' => $tour->id,
-            'title' => $tour->name,
-            'slug' => $tour->slug,
-            'category' => $tour->category ?? 'Tour',
-            'price' => $tour->price ?? 99,
-            'duration' => $tour->duration ?? '4 horas',
-            'people' => $tour->people ?? '6-8',
-            'description' => $tour->description ?? 'Explora Costa Rica con nosotros',
-            'image' => $tour->image ?? 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&q=80',
-            'destinations' => $tour->destinations->pluck('id')->toArray()
-        ];
-    })->toArray()) !!};
-
-    const filteredTours = {!! json_encode($tours->map(function($tour) {
-        return [
-            'id' => $tour->id,
-            'title' => $tour->name,
-            'slug' => $tour->slug,
-            'category' => $tour->category ?? 'Tour',
-            'price' => $tour->price ?? 99,
-            'duration' => $tour->duration ?? '4 horas',
-            'people' => $tour->people ?? '6-8',
-            'description' => $tour->description ?? 'Explora Costa Rica con nosotros',
-            'image' => $tour->image ?? 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&q=80',
-            'destinations' => $tour->destinations->pluck('id')->toArray()
-        ];
-    })->toArray()) !!};
+    const allTours = {!! json_encode($allToursData) !!};
+    const filteredTours = {!! json_encode($filteredToursData) !!};
 
     const urlParams = new URLSearchParams(window.location.search);
     const destinationId = urlParams.get('destination_id');
@@ -435,7 +408,7 @@
                                 $${tour.price}
                                 <small>{{ app()->getLocale() === "es" ? "por persona" : "per person" }}</small>
                             </div>` : ''}
-                            <a href="/{{ app()->getLocale() }}/provincia/guanacaste/destino/arenal/tour/${tour.slug}" class="tour-button">{{ app()->getLocale() === "es" ? "Ver Tour" : "View Tour" }}</a>
+                            <a href="${tour.url}" class="tour-button">{{ app()->getLocale() === "es" ? "Ver Tour" : "View Tour" }}</a>
                         </div>
                     </div>
                 </div>
@@ -523,7 +496,7 @@
 </section>
 
 <!-- CTA Section for Service Providers -->
-<section style="background: linear-gradient(135deg, #FF6B35 0%, #FF9500 100%); color: white; padding: 5rem 2rem; text-align: center; margin-top: 3rem; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+<section style="background: linear-gradient(135deg, #4a0000 0%, #6b0000 50%, #8B0000 100%); color: white; padding: 5rem 2rem; text-align: center; margin-top: 3rem; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
     <div class="container">
         <h2 style="font-size: 3rem; font-weight: 700; margin-bottom: 1.5rem; text-shadow: 2px 2px 8px rgba(0,0,0,0.3);">
             {{ app()->getLocale() === 'es' ? '¿Eres un Operador de Tours?' : 'Are you a Tour Operator?' }}
@@ -532,7 +505,7 @@
             {{ app()->getLocale() === 'es' ? '¡Registra tus tours en nuestra plataforma! Alcanza a miles de viajeros que buscan experiencias únicas en Costa Rica' : 'Register your tours on our platform! Reach thousands of travelers looking for unique experiences in Costa Rica' }}
         </p>
         <a href="{{ app()->getLocale() === 'es' ? '/es/registrar_servicio' : '/en/register_service' }}" 
-           style="display: inline-block; background: white; color: #FF6B35; padding: 1rem 2.5rem; border-radius: 50px; font-weight: 700; font-size: 1.1rem; text-decoration: none; transition: all 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+           style="display: inline-block; background: white; color: #8B0000; padding: 1rem 2.5rem; border-radius: 50px; font-weight: 700; font-size: 1.1rem; text-decoration: none; transition: all 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
             {{ app()->getLocale() === 'es' ? '➕ Registra tu Tour' : '➕ Register Your Tour' }}
         </a>
     </div>

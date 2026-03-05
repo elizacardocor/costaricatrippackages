@@ -41,6 +41,16 @@ body {
     z-index: 1001;
 }
 
+.top-header::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(135deg, #4a0000 0%, #6b0000 50%, #8B0000 100%);
+}
+
 .top-header-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -120,12 +130,12 @@ body {
 }
 
 .nav-container {
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: none;
+    margin: 0 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem;
+    padding: 1rem 0;
     gap: 3rem;
 }
 
@@ -140,7 +150,8 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-left: 0.5rem;
+    margin-left: 0;
+    padding-left: 0;
     flex-shrink: 0;
 }
 
@@ -336,6 +347,15 @@ main {
     opacity: 0.8;
 }
 
+.social-icon.tiktok {
+    background: #111;
+    color: white;
+}
+
+.social-icon.tiktok:hover {
+    background: #000;
+}
+
 .social-icon.youtube {
     background: #FF0000;
     color: white;
@@ -391,6 +411,14 @@ main {
 
 .contact-icon.messenger:hover {
     opacity: 0.8;
+}
+
+.contact-icon.tiktok {
+    background: #111;
+}
+
+.contact-icon.tiktok:hover {
+    background: #000;
 }
 
 .contact-icon.phone {

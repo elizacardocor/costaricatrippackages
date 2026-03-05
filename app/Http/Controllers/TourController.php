@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tour;
+use App\Models\RateTypeSeason;
 use App\Helpers\UrlHelper;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class TourController extends Controller
 {
@@ -13,7 +15,15 @@ class TourController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Tour::query();
+        $baseQuery = Tour::with([
+            'destinations.province',
+            'tourImages' => function ($query) {
+                $query->orderBy('order');
+            },
+            'pricing',
+        ]);
+
+        $query = clone $baseQuery;
         
         // Filter by destination if provided
         if ($request->has('destination_id')) {
@@ -24,9 +34,54 @@ class TourController extends Controller
         }
         
         $tours = $query->get();
+        $allTours = (clone $baseQuery)->get();
+
+        $currentRateType = RateTypeSeason::getRateTypeForDate(now());
+
+        $transformTour = function (Tour $tour) use ($currentRateType) {
+            $currentPricing = null;
+
+            if ($currentRateType) {
+                $currentPricing = $tour->pricing
+                    ->where('rate_type_id', $currentRateType->id)
+                    ->where('active', true)
+                    ->first();
+            }
+
+            if (!$currentPricing) {
+                $currentPricing = $tour->pricing
+                    ->where('active', true)
+                    ->sortBy('price')
+                    ->first();
+            }
+
+            $mainImage = $tour->tourImages->first();
+
+            return [
+                'id' => $tour->id,
+                'title' => $tour->name,
+                'slug' => $tour->slug,
+                'category' => $tour->difficulty ?: 'Tour',
+                'price' => $currentPricing ? (float) $currentPricing->price : null,
+                'duration' => $tour->duration_hours ? $tour->duration_hours . ' horas' : null,
+                'people' => $tour->max_capacity ? ('Hasta ' . $tour->max_capacity) : null,
+                'description' => $tour->description ? Str::limit(strip_tags($tour->description), 160) : '',
+                'image' => $mainImage
+                    ? asset('storage/' . ltrim($mainImage->url, '/'))
+                    : asset('images/default-tour.jpg'),
+                'destinations' => $tour->destinations->pluck('id')->toArray(),
+                'url' => UrlHelper::tourUrl($tour, app()->getLocale()),
+                'badge' => $currentRateType ? $currentRateType->name : null,
+            ];
+        };
+
+        $allToursData = $allTours->map($transformTour)->values();
+        $filteredToursData = $tours->map($transformTour)->values();
         
         return view('tours.index', [
             'tours' => $tours,
+            'allToursData' => $allToursData,
+            'filteredToursData' => $filteredToursData,
         ]);
     }
 

@@ -382,7 +382,7 @@
 -->
 
 <!-- CTA Section for Tourists -->
-<section style="background: linear-gradient(135deg, #00A86B 0%, #0066CC 100%); color: white; padding: 4rem 2rem; text-align: center;">
+<section style="background: linear-gradient(135deg, #4a0000 0%, #6b0000 50%, #8B0000 100%); color: white; padding: 4rem 2rem; text-align: center;">
     <div class="container">
         <h2 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1.5rem;">
             {{ app()->getLocale() === 'es' ? '¿Listo para tu aventura?' : 'Ready for your adventure?' }}
@@ -390,14 +390,14 @@
         <p style="font-size: 1.2rem; opacity: 0.95; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
             {{ app()->getLocale() === 'es' ? 'Contáctanos hoy y comienza a planificar el viaje de tus sueños en Costa Rica' : 'Contact us today and start planning your dream trip to Costa Rica' }}
         </p>
-        <a href="{{ app()->getLocale() === 'es' ? '/es/contacto' : '/en/contact' }}" 
-           style="display: inline-block; background: white; color: #00A86B; padding: 1rem 2.5rem; border-radius: 50px; font-weight: 700; text-decoration: none; transition: all 0.3s;">
+          <a href="{{ app()->getLocale() === 'es' ? '/es/contacto' : '/en/contact' }}" 
+              style="display: inline-block; background: white; color: #8B0000; padding: 1rem 2.5rem; border-radius: 50px; font-weight: 700; text-decoration: none; transition: all 0.3s;">
             {{ app()->getLocale() === 'es' ? '📞 Contactar Ahora' : '📞 Contact Now' }}
         </a>
     </div>
 </section>
 
-<!-- CTA Section for Service Providers -->
+<!-- CTA Section for Service Providers 
 <section style="background: linear-gradient(135deg, #FF6B35 0%, #FF9500 100%); color: white; padding: 4rem 2rem; text-align: center;">
     <div class="container">
         <h2 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1.5rem;">
@@ -411,7 +411,7 @@
             {{ app()->getLocale() === 'es' ? '➕ Registrar Servicio' : '➕ Register Service' }}
         </a>
     </div>
-</section>
+</section> -->
 </div><!-- End Content Box -->
 @endsection
 

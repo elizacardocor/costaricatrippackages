@@ -147,6 +147,10 @@
         background: linear-gradient(135deg, #833AB4 0%, #FD1D1D 50%, #FCAF45 100%);
     }
 
+    .social-link.tiktok {
+        background: #111;
+    }
+
     .social-link.youtube {
         background: #FF0000;
     }
@@ -446,18 +450,18 @@
                     <div class="info-content">
                         <h3>WhatsApp</h3>
                         <p>{{ app()->getLocale() === 'es' ? 'Chatea con nosotros' : 'Chat with us' }}</p>
-                        <a href="https://wa.me/50624790020" target="_blank">+506 2479-0020</a>
+                        <a href="https://wa.me/50670579814?text=Hello%2C%20I%20would%20like%20more%20information%20about%20your%20personalized%20tours%20in%20Costa%20Rica" target="_blank">+506 7057-9814</a>
                     </div>
                 </div>
 
                 <div class="info-card">
                     <div class="info-icon messenger">
-                        <i class="fab fa-facebook-messenger"></i>
+                        <i class="fab fa-tiktok"></i>
                     </div>
                     <div class="info-content">
-                        <h3>Messenger</h3>
-                        <p>{{ app()->getLocale() === 'es' ? 'Escríbenos por Facebook' : 'Message us on Facebook' }}</p>
-                        <a href="https://m.me/costaricatrips" target="_blank">{{ app()->getLocale() === 'es' ? 'Enviar mensaje' : 'Send message' }}</a>
+                        <h3>TikTok</h3>
+                        <p>{{ app()->getLocale() === 'es' ? 'Síguenos en TikTok' : 'Follow us on TikTok' }}</p>
+                        <a href="https://tiktok.com/@costa.rica.trip4" target="_blank">@costa.rica.trip4</a>
                     </div>
                 </div>
 
@@ -479,17 +483,14 @@
                         <h3>{{ __('contact.contact_social') }}</h3>
                         <p>{{ __('contact.contact_social_text') }}</p>
                         <div class="social-links">
-                            <a href="https://facebook.com/costaricatrips" target="_blank" class="social-link facebook" title="Facebook">
+                            <a href="https://www.facebook.com/share/188Va9sso4/" target="_blank" class="social-link facebook" title="Facebook">
                                 <i class="fab fa-facebook-f"></i>
                             </a>
-                            <a href="https://instagram.com/costaricatrips" target="_blank" class="social-link instagram" title="Instagram">
+                            <a href="https://www.instagram.com/costarica_.trip?igsh=MXF0eHBlcWFndzZlZA==" target="_blank" class="social-link instagram" title="Instagram">
                                 <i class="fab fa-instagram"></i>
                             </a>
-                            <a href="https://youtube.com/@costaricatrips" target="_blank" class="social-link youtube" title="YouTube">
-                                <i class="fab fa-youtube"></i>
-                            </a>
-                            <a href="https://twitter.com/costaricatrips" target="_blank" class="social-link twitter" title="Twitter">
-                                <i class="fab fa-twitter"></i>
+                            <a href="https://tiktok.com/@costa.rica.trip4" target="_blank" class="social-link tiktok" title="TikTok">
+                                <i class="fab fa-tiktok"></i>
                             </a>
                         </div>
                     </div>
