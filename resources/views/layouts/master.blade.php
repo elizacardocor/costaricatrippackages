@@ -51,11 +51,7 @@
     <link rel="stylesheet" href="{{ asset('fonts/fontawesome-custom.css') }}">
     
     <!-- Layout CSS -->
-    @if(config('app.env') === 'production')
-        <link rel="stylesheet" href="{{ asset('build/assets/layout-CTBZkxW4.css') }}">
-    @else
-        @vite(['resources/css/layout.css'])
-    @endif
+    @vite(['resources/css/layout.css'])
     
     <!-- WhatsApp Float Button Styles -->
     <style>
@@ -117,9 +113,9 @@
     <div class="top-header">
         <div class="top-header-container">
             <div class="top-header-left">
-                <a href="tel:+50624790020" class="top-header-item">
+                <a href="tel:+50670579814" class="top-header-item">
                     <i class="fas fa-phone"></i>
-                    <span>+506 2479-0020</span>
+                    <span>+506 7057-9814</span>
                 </a>
                 <a href="mailto:info@costaricatrips.com" class="top-header-item">
                     <i class="fas fa-envelope"></i>
@@ -221,7 +217,7 @@
                     <a href="https://www.facebook.com/share/188Va9sso4/" target="_blank" class="social-icon facebook">
                         <i class="fab fa-facebook-f"></i>
                     </a>
-                    <a href="https://www.instagram.com/costarica_.trip?igsh=MXF0eHBlcWFndzZlZA==" target="_blank" class="social-icon instagram">
+                    <a href="https://www.instagram.com/costarica_.trip/" target="_blank" class="social-icon instagram">
                         <i class="fab fa-instagram"></i>
                     </a>
                     <a href="https://tiktok.com/@costa.rica.trip4" target="_blank" class="social-icon tiktok">
@@ -238,7 +234,7 @@
                     <a href="https://tiktok.com/@costa.rica.trip4" target="_blank" class="contact-icon tiktok" title="TikTok">
                         <i class="fab fa-tiktok"></i>
                     </a>
-                    <a href="tel:+50624790020" class="contact-icon phone" title="{{ app()->getLocale() === 'es' ? 'Llamar' : 'Call' }}">
+                    <a href="tel:+50670579814" class="contact-icon phone" title="{{ app()->getLocale() === 'es' ? 'Llamar' : 'Call' }}">
                         <i class="fas fa-phone"></i>
                     </a>
                     <a href="mailto:info@costaricatrips.com" class="contact-icon email" title="Email">

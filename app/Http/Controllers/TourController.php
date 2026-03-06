@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SlugRedirect;
 use App\Models\Tour;
 use App\Models\RateTypeSeason;
 use App\Helpers\UrlHelper;
@@ -98,7 +99,24 @@ class TourController extends Controller
      */
     public function show($slug)
     {
-        $tour = Tour::where('slug', $slug)->firstOrFail();
+        $tour = Tour::where('slug', $slug)->first();
+
+        if (!$tour) {
+            $redirect = SlugRedirect::where('service_type', 'tour')
+                ->where('old_slug', $slug)
+                ->latest('id')
+                ->first();
+
+            if ($redirect) {
+                $redirectTour = Tour::find($redirect->service_id);
+                if ($redirectTour) {
+                    return redirect(UrlHelper::tourUrl($redirectTour, app()->getLocale()), 301);
+                }
+            }
+
+            abort(404);
+        }
+
         $canonicalUrl = UrlHelper::tourUrl($tour, app()->getLocale());
         
         return view('tours.show', [

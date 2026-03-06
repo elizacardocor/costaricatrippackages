@@ -334,7 +334,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">{{ app()->getLocale() === 'es' ? 'Teléfono' : 'Phone' }}</label>
-                        <input type="tel" class="form-control" placeholder="+506 1234-5678">
+                        <input type="tel" class="form-control" placeholder="+506 7057-9814">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">{{ app()->getLocale() === 'es' ? 'Mensaje' : 'Message' }}</label>

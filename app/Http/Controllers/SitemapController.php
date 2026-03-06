@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Hotel;
 use App\Models\Tour;
-use App\Models\Destination;
 use App\Helpers\UrlHelper;
 use Illuminate\Support\Facades\Response;
 
@@ -86,23 +85,6 @@ class SitemapController extends Controller
                 'lastmod' => $hotel->updated_at->toAtomString(),
                 'changefreq' => 'monthly',
                 'priority' => '0.8'
-            ];
-        }
-
-        // Destinations
-        $destinations = Destination::with('province')->get();
-        foreach ($destinations as $destination) {
-            $urls[] = [
-                'loc' => url("/es/destino/{$destination->slug}"),
-                'lastmod' => $destination->updated_at->toAtomString(),
-                'changefreq' => 'monthly',
-                'priority' => '0.7'
-            ];
-            $urls[] = [
-                'loc' => url("/en/destination/{$destination->slug}"),
-                'lastmod' => $destination->updated_at->toAtomString(),
-                'changefreq' => 'monthly',
-                'priority' => '0.7'
             ];
         }
 

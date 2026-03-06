@@ -382,7 +382,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
             <div>
                 <p>&copy; 2025 Costa Rica Trip Packages. All rights reserved.</p>
-                <p>WhatsApp: <a href="https://wa.me/506" style="color: var(--primary); text-decoration: none;">+506 1234-5678</a></p>
+                <p>WhatsApp: <a href="https://wa.me/50670579814?text=Hello%2C%20I%20would%20like%20more%20information%20about%20your%20personalized%20tours%20in%20Costa%20Rica" style="color: var(--primary); text-decoration: none;">+506 7057-9814</a></p>
             </div>
             <div style="display: flex; gap: 1rem;">
                 @if(app()->getLocale() === 'es')

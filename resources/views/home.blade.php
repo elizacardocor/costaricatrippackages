@@ -22,7 +22,7 @@
 <style>
     .hero-section {
         position: relative;
-        height: 400px;
+        height: 360px;
         overflow: hidden;
         margin-top: 0;
     }
@@ -48,7 +48,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        opacity: 0;
+        opacity: 1;
         transition: opacity 0.5s ease;
     }
 
@@ -59,25 +59,25 @@
     .hero-content {
         text-align: center;
         color: white;
-        padding: 2rem;
-        transform: translateY(20px);
+        padding: 1.5rem;
+        transform: none;
         transition: transform 0.5s ease;
     }
 
     .hero-section:hover .hero-content {
-        transform: translateY(0);
+        transform: none;
     }
 
     .hero-content h1 {
-        font-size: 3.5rem;
+        font-size: 2.6rem;
         font-weight: 700;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
         text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
     }
 
     .hero-content p {
-        font-size: 1.5rem;
-        margin-bottom: 2rem;
+        font-size: 1.15rem;
+        margin-bottom: 1.25rem;
         max-width: 800px;
         margin-left: auto;
         margin-right: auto;
@@ -86,14 +86,14 @@
 
     .hero-buttons {
         display: flex;
-        gap: 1rem;
+        gap: 0.75rem;
         justify-content: center;
         flex-wrap: wrap;
     }
 
     .hero-btn {
-        padding: 1rem 2.5rem;
-        font-size: 1.1rem;
+        padding: 0.75rem 1.6rem;
+        font-size: 0.95rem;
         font-weight: 600;
         border-radius: 50px;
         text-decoration: none;
@@ -276,15 +276,25 @@
 
     @media (max-width: 768px) {
         .hero-section {
-            height: 350px;
+            height: 320px;
         }
 
         .hero-content h1 {
-            font-size: 2.5rem;
+            font-size: 1.9rem;
         }
 
         .hero-content p {
-            font-size: 1.2rem;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-content {
+            padding: 1rem;
+        }
+
+        .hero-btn {
+            padding: 0.65rem 1.15rem;
+            font-size: 0.9rem;
         }
 
         .features-grid,

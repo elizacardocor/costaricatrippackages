@@ -46,7 +46,7 @@
     /* Contact Info */
     .contact-info {
         display: grid;
-        grid-template-columns: 1fr 1.5fr 1fr;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1fr);
         gap: 1.5rem;
         max-width: 100%;
     }
@@ -59,6 +59,11 @@
         align-items: start;
         gap: 1.5rem;
         transition: all 0.3s;
+        min-width: 0;
+    }
+
+    .info-content {
+        min-width: 0;
     }
 
     .info-card:hover {
@@ -112,18 +117,24 @@
     .info-content p {
         color: var(--gray);
         line-height: 1.8;
+        overflow-wrap: anywhere;
+        word-break: break-word;
     }
 
     .info-content a {
         color: var(--secondary-color);
         text-decoration: none;
         font-weight: 500;
+        overflow-wrap: anywhere;
+        word-break: break-word;
     }
 
     .social-links {
         display: flex;
         gap: 1rem;
         margin-top: 1rem;
+        flex-wrap: nowrap;
+        align-items: center;
     }
 
     .social-link {
@@ -439,7 +450,7 @@
                     <div class="info-content">
                         <h3>{{ __('contact.contact_phone') }}</h3>
                         <p>{{ __('contact.contact_phone_hours') }}</p>
-                        <a href="tel:+50624790020">+506 2479-0020</a>
+                        <a href="tel:+50670579814">+506 7057-9814</a>
                     </div>
                 </div>
 
@@ -465,6 +476,7 @@
                     </div>
                 </div>
 
+                {{--
                 <div class="info-card">
                     <div class="info-icon location">
                         <i class="fas fa-map-marker-alt"></i>
@@ -474,32 +486,15 @@
                         <p>{{ __('contact.contact_office_address') }}</p>
                     </div>
                 </div>
+                --}}
 
-                <div class="info-card">
-                    <div class="info-icon location">
-                        <i class="fas fa-share-alt"></i>
-                    </div>
-                    <div class="info-content">
-                        <h3>{{ __('contact.contact_social') }}</h3>
-                        <p>{{ __('contact.contact_social_text') }}</p>
-                        <div class="social-links">
-                            <a href="https://www.facebook.com/share/188Va9sso4/" target="_blank" class="social-link facebook" title="Facebook">
-                                <i class="fab fa-facebook-f"></i>
-                            </a>
-                            <a href="https://www.instagram.com/costarica_.trip?igsh=MXF0eHBlcWFndzZlZA==" target="_blank" class="social-link instagram" title="Instagram">
-                                <i class="fab fa-instagram"></i>
-                            </a>
-                            <a href="https://tiktok.com/@costa.rica.trip4" target="_blank" class="social-link tiktok" title="TikTok">
-                                <i class="fab fa-tiktok"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>
 </section>
 
+{{--
 <!-- Map Section -->
 <section class="map-section">
     <div class="container">
@@ -514,6 +509,7 @@
         </div>
     </div>
 </section>
+--}}
 
 <!-- FAQ Section -->
 <section class="faq-section">

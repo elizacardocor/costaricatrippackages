@@ -99,7 +99,7 @@
             <p>Nos responderemos en el menor tiempo posible, generalmente dentro de 24 horas. Si tu consulta es urgente, también puedes contactarnos directamente:</p>
 
             <p style="margin: 20px 0;">
-                📞 <strong>WhatsApp:</strong> <a href="https://wa.me/50612345678" style="color: #00A86B; text-decoration: none;">+506 1234-5678</a><br>
+                📞 <strong>WhatsApp:</strong> <a href="https://wa.me/50670579814?text=Hello%2C%20I%20would%20like%20more%20information%20about%20your%20personalized%20tours%20in%20Costa%20Rica" style="color: #00A86B; text-decoration: none;">+506 7057-9814</a><br>
                 📧 <strong>Email:</strong> <a href="mailto:info@costaricatrips.com" style="color: #00A86B; text-decoration: none;">info@costaricatrips.com</a>
             </p>
 

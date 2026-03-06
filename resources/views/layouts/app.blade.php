@@ -220,7 +220,7 @@
                 <div class="col-md-4">
                     <h5>{{ app()->getLocale() === 'es' ? 'Contacto' : 'Contact' }}</h5>
                     <p>{{ app()->getLocale() === 'es' ? 'Email: info@costaricatrips.com' : 'Email: info@costaricatrips.com' }}</p>
-                    <p>{{ app()->getLocale() === 'es' ? 'Tel: +506 2234-5678' : 'Phone: +506 2234-5678' }}</p>
+                    <p>{{ app()->getLocale() === 'es' ? 'Tel: +506 7057-9814' : 'Phone: +506 7057-9814' }}</p>
                 </div>
             </div>
             <div class="footer-bottom">
