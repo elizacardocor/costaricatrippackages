@@ -98,33 +98,19 @@
 @endif
 
 <div class="container-fluid p-0">
-    <!-- Hero Image Section -->
-    <div class="position-relative" style="height: 300px; overflow: hidden;">
-        <img src="{{ $tour->images->first() ? asset('storage/' . $tour->images->first()->url) : 'https://via.placeholder.com/1200x500' }}" 
-             alt="{{ $tour->name }}" 
-             class="w-100 h-100 object-fit-cover"
-             style="object-fit: cover;">
-        <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark" style="opacity: 0.3;"></div>
-        
-        <!-- Back Button -->
-        <div class="position-absolute top-3 start-3">
-            <a href="javascript:history.back()" class="btn btn-light rounded-circle" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
-                <i class="bi bi-arrow-left"></i>
-            </a>
-        </div>
-
-        <!-- Title on Image -->
-        <div class="position-absolute bottom-0 start-0 w-100 p-4" style="background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
-            <h1 class="text-white mb-2">{{ $tour->name }}</h1>
-            <p class="text-light mb-0">{{ $tour->destinations->first()?->name ?? 'Costa Rica' }}, {{ $tour->destinations->first()?->province->name ?? 'N/A' }}</p>
-        </div>
-    </div>
-
     <!-- Content Section -->
     <div class="container py-5">
         <div class="row">
             <!-- Main Content -->
             <div class="col-lg-8">
+                <div class="mb-4">
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm mb-3">
+                        <i class="bi bi-arrow-left"></i> Volver
+                    </a>
+                    <h1 class="mb-2">{{ $tour->name }}</h1>
+                    <p class="text-muted mb-0">{{ $tour->destinations->first()?->name ?? 'Costa Rica' }}, {{ $tour->destinations->first()?->province->name ?? 'N/A' }}</p>
+                </div>
+
                 <!-- Rating and Reviews -->
                 <div class="mb-4">
                     <div class="d-flex align-items-center gap-2">
@@ -139,12 +125,6 @@
                         <span class="badge bg-success">{{ $tour->rating }}</span>
                         <small class="text-muted">({{ $tour->reviews->count() }} reseñas)</small>
                     </div>
-                </div>
-
-                <!-- Description -->
-                <div class="mb-5">
-                    <h3>Descripción</h3>
-                    <p class="lead">{{ $tour->description }}</p>
                 </div>
 
                 <!-- Tour Info Grid -->
@@ -185,6 +165,12 @@
                     @else
                         <p class="text-muted">{{ __('No hay imágenes disponibles') }}</p>
                     @endif
+                </div>
+
+                <!-- Description -->
+                <div class="mb-5">
+                    <h3>Descripción</h3>
+                    <p class="lead">{{ $tour->description }}</p>
                 </div>
 
                 <!-- What's Included -->

@@ -184,8 +184,10 @@
     /* Contact Form */
     .contact-form {
         background: white;
+        border: 2px solid #8B0000;
+        margin-top: 5.5rem;
         padding: 2.5rem;
-        border-radius: 15px;
+        border-radius: 8px;
         box-shadow: 0 10px 40px rgba(0,0,0,0.1);
     }
 
@@ -363,6 +365,10 @@
     @media (max-width: 968px) {
         .page-header h1 {
             font-size: 2rem;
+        }
+
+        .contact-form {
+            border: none;
         }
 
         .form-row {

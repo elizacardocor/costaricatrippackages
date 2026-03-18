@@ -20,35 +20,30 @@
         border-radius: 8px;
     }
 
-    /* Columnas dentro del formulario - ocupar 80% */
-    #listingForm .col-md-6 {
-        min-width: 40%;
-        max-width: 45%;
-        flex-basis: 45%;
-    }
-
+    /* Grid de 2 columnas en desktop, 1 columna en móvil */
     #listingForm .row {
-        width: 80%;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    /* Label e input en la misma línea */
-    #listingForm .col-md-6 .mb-3 {
         display: flex;
-        flex-direction: column;
+        flex-wrap: wrap;
+        margin-left: -0.75rem;
+        margin-right: -0.75rem;
     }
 
-    #listingForm .col-md-6 .form-label {
-        margin-bottom: 0.5rem;
+    #listingForm .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+        box-sizing: border-box;
     }
 
-    #listingForm .col-md-6 .form-control,
-    #listingForm .col-md-6 .form-select,
-    #listingForm .col-md-6 .input-group {
-        width: 100%;
+    #listingForm .col-12 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+        box-sizing: border-box;
     }
-    
+
     .card-header {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         padding: 2rem;
@@ -82,7 +77,7 @@
     }
     
     .section-title h4 {
-        font-weight: 700;
+        font-weight: 400;
         color: #333;
         font-size: 1.3rem;
         margin-bottom: 0.5rem;
@@ -105,7 +100,12 @@
 
     .form-section {
         margin-bottom: 1.5rem;
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
     }
+
+
 
     .form-section h5 {
         color: #495057;
@@ -148,7 +148,7 @@
         background-image: linear-gradient(#f8f9fa, #f8f9fa), linear-gradient(135deg, #b0b0b0 0%, #d0d0d0 100%);
         background-origin: border-box;
         background-clip: padding-box, border-box;
-        width: 80%;
+        width: 100%;
     }
     
     .form-control:focus, .form-select:focus {
@@ -179,8 +179,16 @@
         border: none;
         color: #495057;
         font-weight: 600;
-        width: 80%;
+        width: auto;
     }
+
+    .form-section .form-control,
+    .form-section .form-select,
+    .form-section .input-group {
+        width: 100%;
+    }
+
+
     
     /* Alertas */
     .alert {
@@ -333,7 +341,7 @@
         cursor: pointer;
         transition: all 0.3s ease;
         font-weight: 500;
-        width: 80%;
+        width: 100%;
     }
 
     .form-control[type="file"]:hover {
@@ -429,6 +437,24 @@
     .btn-lg i {
         margin-right: 0.5rem;
     }
+
+    .form-action-buttons {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .form-action-buttons .btn {
+        display: inline-block;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+        line-height: 1.2;
+    }
+
+    .form-action-buttons .btn i {
+        margin-right: 0.25rem;
+    }
     
     /* Espaciado */
     .mb-3 {
@@ -476,12 +502,47 @@
     
     /* Responsive */
     @media (max-width: 768px) {
+        .form-section {
+            width: 100%;
+        }
+
+        .form-section,
+        .form-section h5 {
+            border: none !important;
+            border-bottom: none !important;
+        }
+
+        .dynamic-fields,
+        .section-title,
+        .section-title hr,
+        .amenities-list,
+        .form-check,
+        .image-input-group {
+            border: none !important;
+            border-top: none !important;
+            border-bottom: none !important;
+            border-left: none !important;
+            border-right: none !important;
+        }
+
+        #listingForm .row {
+            width: 100%;
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        #listingForm .col-md-6 {
+            min-width: 100%;
+            max-width: 100%;
+            flex-basis: 100%;
+        }
+
         .card-body {
-            padding: 1.5rem;
+            padding: 0.75rem;
         }
         
         .card-header {
-            padding: 1.5rem;
+            padding: 1rem;
         }
         
         .card-header h2 {
@@ -498,9 +559,11 @@
         }
 
         #listingForm {
-            padding: 1.5rem;
-            border: 0.5px solid #8B0000;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 6px;
         }
+
     }
 </style>
 @endsection
@@ -508,133 +571,131 @@
 @section('content')
 <div class="content-box">
 <div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="card shadow-lg">
-                <div class="card-header bg-primary text-white">
-                    <h2 class="mb-0">{{ __('Registra tu Servicio') }}</h2>
-                    <p class="small mb-0">{{ app()->getLocale() === 'es' ? 'Hotel, Tour o Transporte' : 'Hotel, Tour or Transport' }}</p>
-                </div>
-                <div class="card-body">
-                    @if ($errors->any())
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <strong>{{ __('Error en el formulario:') }}</strong>
-                            <ul class="mb-0">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
+    <div class="col-md-10">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">{{ __('Registra tu Servicio') }}</h2>
+                <p class="small mb-0">{{ app()->getLocale() === 'es' ? 'Hotel, Tour o Transporte' : 'Hotel, Tour or Transport' }}</p>
+            </div>
+            <div class="card-body">
+                @if ($errors->any())
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>{{ __('Error en el formulario:') }}</strong>
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
+                <form action="{{ app()->getLocale() === 'es' ? route('listings.store.es') : route('listings.store.en') }}" method="POST" enctype="multipart/form-data" id="listingForm">
+                    @csrf
+
+                    <!-- Información de Contacto -->
+                    <div class="section-title mb-4">
+                        <h4>{{ __('Información de Contacto') }}</h4>
+                        <hr>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="contact_name" class="form-label">{{ __('Nombre Completo') }} *</label>
+                            <input type="text" name="contact_name" id="contact_name" class="form-control @error('contact_name') is-invalid @enderror" 
+                                value="{{ old('contact_name') }}" required>
+                            @error('contact_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label for="contact_email" class="form-label">{{ __('Email') }} *</label>
+                            <input type="email" name="contact_email" id="contact_email" class="form-control @error('contact_email') is-invalid @enderror" 
+                                value="{{ old('contact_email') }}" required>
+                            @error('contact_email') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="contact_phone" class="form-label">{{ __('Teléfono') }} *</label>
+                            <input type="tel" name="contact_phone" id="contact_phone" class="form-control @error('contact_phone') is-invalid @enderror" 
+                                value="{{ old('contact_phone') }}" required>
+                            @error('contact_phone') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label for="contact_address" class="form-label">{{ __('Dirección (Opcional)') }}</label>
+                            <input type="text" name="contact_address" id="contact_address" class="form-control" 
+                                value="{{ old('contact_address') }}">
+                        </div>
+                    </div>
+
+                    <!-- Información del Servicio -->
+                    <div class="section-title mb-4">
+                        <h4>{{ __('Información del Servicio') }}</h4>
+                        <hr>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="destination_id" class="form-label">{{ __('Destino') }} *</label>
+                            <select name="destination_id" id="destination_id" class="form-select @error('destination_id') is-invalid @enderror" required>
+                                <option value="">{{ __('Selecciona un destino') }}</option>
+                                @foreach($destinations as $destination)
+                                    <option value="{{ $destination->id }}" @selected(old('destination_id') == $destination->id)>
+                                        {{ $destination->name ?? __('destinations.' . $destination->slug . '.title') }}
+                                    </option>
                                 @endforeach
-                            </ul>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </select>
+                            @error('destination_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
-                    @endif
-
-                    <form action="{{ app()->getLocale() === 'es' ? route('listings.store.es') : route('listings.store.en') }}" method="POST" enctype="multipart/form-data" id="listingForm">
-                        @csrf
-
-                        <!-- Información de Contacto -->
-                        <div class="section-title mb-4">
-                            <h4>{{ __('Información de Contacto') }}</h4>
-                            <hr>
+                        <div class="col-md-6">
+                            <label for="service_type" class="form-label">{{ __('Tipo de Servicio') }} *</label>
+                            <select name="service_type" id="service_type" class="form-select @error('service_type') is-invalid @enderror" required onchange="updateServiceFields()">
+                                <option value="">{{ __('Selecciona un tipo') }}</option>
+                                <option value="hotel" @selected(old('service_type') == 'hotel')>{{ __('Hotel') }}</option>
+                                <option value="tour" @selected(old('service_type') == 'tour')>{{ __('Tour') }}</option>
+                                <option value="transport" @selected(old('service_type') == 'transport')>{{ __('Transporte') }}</option>
+                            </select>
+                            @error('service_type') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
+                    </div>
 
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="contact_name" class="form-label">{{ __('Nombre Completo') }} *</label>
-                                <input type="text" name="contact_name" id="contact_name" class="form-control @error('contact_name') is-invalid @enderror" 
-                                    value="{{ old('contact_name') }}" required>
-                                @error('contact_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                            </div>
-                            <div class="col-md-6">
-                                <label for="contact_email" class="form-label">{{ __('Email') }} *</label>
-                                <input type="email" name="contact_email" id="contact_email" class="form-control @error('contact_email') is-invalid @enderror" 
-                                    value="{{ old('contact_email') }}" required>
-                                @error('contact_email') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                            </div>
-                        </div>
+                    <!-- Campos Dinámicos por Tipo de Servicio -->
+                    <div id="serviceFields" class="dynamic-fields">
+                        <!-- Se llenan dinámicamente -->
+                    </div>
 
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="contact_phone" class="form-label">{{ __('Teléfono') }} *</label>
-                                <input type="tel" name="contact_phone" id="contact_phone" class="form-control @error('contact_phone') is-invalid @enderror" 
-                                    value="{{ old('contact_phone') }}" required>
-                                @error('contact_phone') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                            </div>
-                            <div class="col-md-6">
-                                <label for="contact_address" class="form-label">{{ __('Dirección (Opcional)') }}</label>
-                                <input type="text" name="contact_address" id="contact_address" class="form-control" 
-                                    value="{{ old('contact_address') }}">
-                            </div>
-                        </div>
+                    <!-- Precios por Temporada -->
+                    <div class="section-title mb-4" id="pricesSection" style="display: none;">
+                        <h4>{{ __('Precios por Temporada') }}</h4>
+                        <hr>
+                    </div>
 
-                        <!-- Información del Servicio -->
-                        <div class="section-title mb-4">
-                            <h4>{{ __('Información del Servicio') }}</h4>
-                            <hr>
-                        </div>
+                    <div id="priceFields" class="mb-3">
+                        <!-- Se llenan dinámicamente -->
+                    </div>
 
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="destination_id" class="form-label">{{ __('Destino') }} *</label>
-                                <select name="destination_id" id="destination_id" class="form-select @error('destination_id') is-invalid @enderror" required>
-                                    <option value="">{{ __('Selecciona un destino') }}</option>
-                                    @foreach($destinations as $destination)
-                                        <option value="{{ $destination->id }}" @selected(old('destination_id') == $destination->id)>
-                                            {{ $destination->name ?? __('destinations.' . $destination->slug . '.title') }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('destination_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                            </div>
-                            <div class="col-md-6">
-                                <label for="service_type" class="form-label">{{ __('Tipo de Servicio') }} *</label>
-                                <select name="service_type" id="service_type" class="form-select @error('service_type') is-invalid @enderror" required onchange="updateServiceFields()">
-                                    <option value="">{{ __('Selecciona un tipo') }}</option>
-                                    <option value="hotel" @selected(old('service_type') == 'hotel')>{{ __('Hotel') }}</option>
-                                    <option value="tour" @selected(old('service_type') == 'tour')>{{ __('Tour') }}</option>
-                                    <option value="transport" @selected(old('service_type') == 'transport')>{{ __('Transporte') }}</option>
-                                </select>
-                                @error('service_type') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                            </div>
-                        </div>
-
-                        <!-- Campos Dinámicos por Tipo de Servicio -->
-                        <div id="serviceFields" class="dynamic-fields">
-                            <!-- Se llenan dinámicamente -->
-                        </div>
-
-                        <!-- Precios por Temporada -->
-                        <div class="section-title mb-4" id="pricesSection" style="display: none;">
-                            <h4>{{ __('Precios por Temporada') }}</h4>
-                            <hr>
-                        </div>
-
-                        <div id="priceFields" class="mb-3">
-                            <!-- Se llenan dinámicamente -->
-                        </div>
-
-                        <!-- Botones -->
-                        <div class="d-flex gap-2 mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-check-circle"></i> {{ __('Registrar Servicio') }}
-                            </button>
-                            <a href="{{ app()->getLocale() === 'es' ? '/es/' : '/en/' }}" class="btn btn-secondary btn-lg">
-                                <i class="bi bi-x-circle"></i> {{ __('Cancelar') }}
-                            </a>
-                        </div>
-                    </form>
-                </div>
+                    <!-- Botones -->
+                    <div class="d-flex gap-2 mt-4 form-action-buttons">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-circle"></i> {{ __('Registrar Servicio') }}
+                        </button>
+                        <button type="button" id="cancelFormBtn" class="btn btn-secondary btn-lg" onclick="clearListingForm()">
+                            <i class="bi bi-x-circle"></i> {{ __('Cancelar') }}
+                        </button>
+                    </div>
+                </form>
             </div>
+        </div>
 
-            <!-- Info Box -->
-            <div class="alert alert-info mt-4">
-                <i class="bi bi-info-circle"></i>
-                <strong>{{ __('Información Importante:') }}</strong>
-                <ul class="mb-0 mt-2">
-                    <li>{{ __('Todos los campos marcados con * son obligatorios') }}</li>
-                    <li>{{ app()->getLocale() === 'es' ? 'Sin necesidad de registro o login' : 'No registration or login required' }}</li>
-                    <li>{{ app()->getLocale() === 'es' ? 'Guardamos tus datos de contacto para verificar tu servicio' : 'We save your contact info to verify your service' }}</li>
-                </ul>
-            </div>
+        <!-- Info Box -->
+        <div class="alert alert-info mt-4">
+            <i class="bi bi-info-circle"></i>
+            <strong>{{ __('Información Importante:') }}</strong>
+            <ul class="mb-0 mt-2">
+                <li>{{ __('Todos los campos marcados con * son obligatorios') }}</li>
+                <li>{{ app()->getLocale() === 'es' ? 'Sin necesidad de registro o login' : 'No registration or login required' }}</li>
+                <li>{{ app()->getLocale() === 'es' ? 'Guardamos tus datos de contacto para verificar tu servicio' : 'We save your contact info to verify your service' }}</li>
+            </ul>
         </div>
     </div>
 </div>
@@ -673,17 +734,17 @@
                             <input type="number" name="hotel_stars" id="hotel_stars" class="form-control" min="1" max="5">
                         </div>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 full-width-field">
                         <label for="hotel_description" class="form-label">{{ __('Descripción') }}</label>
                         <textarea name="hotel_description" id="hotel_description" class="form-control" rows="3"></textarea>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 full-width-field">
                         <label for="hotel_image" class="form-label">{{ __('Imagen Principal') }} *</label>
                         <input type="file" name="hotel_image" id="hotel_image" class="form-control" accept="image/*" required>
                         <small class="text-muted">{{ __('Resolución recomendada: 1200x800px. Se comprimirá automáticamente.') }}</small>
                     </div>
                     
-                    <div class="mb-3">
+                    <div class="mb-3 full-width-field">
                         <label class="form-label fw-bold">{{ __('Imágenes Adicionales (Hasta 9)') }}</label>
                         <div class="alert alert-info alert-sm" role="alert">
                             <strong>{{ __('Mismos requisitos que la imagen principal.') }}</strong><br>
@@ -737,7 +798,7 @@
                             <input type="time" name="hotel_checkout" id="hotel_checkout" class="form-control" value="11:00">
                         </div>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 full-width-field">
                         <label class="form-label">{{ __('Amenidades') }}</label>
                         <div class="amenities-list" id="amenitiesList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;">
                             @forelse ($amenities as $amenity)
@@ -760,13 +821,21 @@
             fieldsDiv.innerHTML = `
                 <div class="form-section">
                     <h5>{{ __('Información del Tour') }}</h5>
-                    <div class="mb-3">
-                        <label for="tour_name" class="form-label">{{ __('Nombre del Tour') }} *</label>
-                        <input type="text" name="tour_name" id="tour_name" class="form-control" required>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="tour_name" class="form-label">{{ __('Nombre del Tour') }} *</label>
+                            <input type="text" name="tour_name" id="tour_name" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="tour_capacity" class="form-label">{{ __('Capacidad Máxima') }}</label>
+                            <input type="number" name="tour_capacity" id="tour_capacity" class="form-control">
+                        </div>
                     </div>
-                    <div class="mb-3">
+                    <div class="row">
+                        <div class="col-12 mb-3 full-width-field">
                         <label for="tour_description" class="form-label">{{ __('Descripción') }}</label>
                         <textarea name="tour_description" id="tour_description" class="form-control" rows="3"></textarea>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -782,22 +851,23 @@
                             </select>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="tour_capacity" class="form-label">{{ __('Capacidad Máxima') }}</label>
-                        <input type="number" name="tour_capacity" id="tour_capacity" class="form-control">
-                    </div>
-                    <div class="mb-3">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
                         <label for="tour_commission" class="form-label">{{ __('Comisión (%)') }}</label>
                         <input type="number" name="tour_commission" id="tour_commission" class="form-control" step="0.01" min="0" max="100" placeholder="0.00">
+                        </div>
                     </div>
 
-                    <div class="mb-3">
+                    <div class="row">
+                        <div class="col-12 mb-3 full-width-field">
                         <label for="tour_image" class="form-label">{{ __('Imagen Principal') }} *</label>
                         <input type="file" name="tour_image" id="tour_image" class="form-control" accept="image/*" required>
                         <small class="text-muted">{{ __('Resolución recomendada: 1200x800px. Se comprimirá automáticamente.') }}</small>
+                        </div>
                     </div>
                     
-                    <div class="mb-3">
+                    <div class="row">
+                        <div class="col-12 mb-3 full-width-field">
                         <label class="form-label fw-bold">{{ __('Imágenes Adicionales (Hasta 9)') }}</label>
                         <div class="alert alert-info alert-sm" role="alert">
                             <strong>{{ __('Mismos requisitos que la imagen principal.') }}</strong><br>
@@ -814,10 +884,12 @@
                         <small class="d-block mt-2 text-muted">
                             <i class="bi bi-info-circle"></i> {{ __('Imágenes agregadas:') }} <strong><span class="tourImageCount">0</span>/9</strong>
                         </small>
+                        </div>
                     </div>
 
                     <!-- ¿Eres operador de tours? -->
-                    <div class="mb-3">
+                    <div class="row">
+                        <div class="col-12 mb-3 full-width-field">
                         <label class="form-label">{{ __('¿Eres operador de tours registrado?') }} *</label>
                         <div class="btn-group w-100" role="group">
                             <input type="radio" class="btn-check" name="is_tour_operator" id="operator_yes" value="yes" required onchange="toggleOperatorFields()">
@@ -825,6 +897,7 @@
 
                             <input type="radio" class="btn-check" name="is_tour_operator" id="operator_no" value="no" required onchange="toggleOperatorFields()">
                             <label class="btn btn-outline-primary" for="operator_no">{{ __('No') }}</label>
+                        </div>
                         </div>
                     </div>
 
@@ -859,9 +932,15 @@
             fieldsDiv.innerHTML = `
                 <div class="form-section">
                     <h5>{{ __('Información del Transporte') }}</h5>
-                    <div class="mb-3">
-                        <label for="transport_name" class="form-label">{{ __('Nombre de la Empresa') }} *</label>
-                        <input type="text" name="transport_name" id="transport_name" class="form-control" required>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="transport_name" class="form-label">{{ __('Nombre de la Empresa') }} *</label>
+                            <input type="text" name="transport_name" id="transport_name" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="transport_capacity" class="form-label">{{ __('Capacidad por Vehículo') }}</label>
+                            <input type="number" name="transport_capacity" id="transport_capacity" class="form-control">
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -873,22 +952,23 @@
                             <input type="number" name="transport_vehicles" id="transport_vehicles" class="form-control">
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="transport_capacity" class="form-label">{{ __('Capacidad por Vehículo') }}</label>
-                        <input type="number" name="transport_capacity" id="transport_capacity" class="form-control">
-                    </div>
-                    <div class="mb-3">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
                         <label for="transport_commission" class="form-label">{{ __('Comisión (%)') }}</label>
                         <input type="number" name="transport_commission" id="transport_commission" class="form-control" step="0.01" min="0" max="100" placeholder="0.00">
+                        </div>
                     </div>
 
-                    <div class="mb-3">
+                    <div class="row">
+                        <div class="col-12 mb-3 full-width-field">
                         <label for="transport_image" class="form-label">{{ __('Imagen Principal') }} *</label>
                         <input type="file" name="transport_image" id="transport_image" class="form-control" accept="image/*" required>
                         <small class="text-muted">{{ __('Resolución recomendada: 1200x800px. Se comprimirá automáticamente.') }}</small>
+                        </div>
                     </div>
                     
-                    <div class="mb-3">
+                    <div class="row">
+                        <div class="col-12 mb-3 full-width-field">
                         <label class="form-label fw-bold">{{ __('Imágenes Adicionales (Hasta 9)') }}</label>
                         <div class="alert alert-info alert-sm" role="alert">
                             <strong>{{ __('Mismos requisitos que la imagen principal.') }}</strong><br>
@@ -905,6 +985,7 @@
                         <small class="d-block mt-2 text-muted">
                             <i class="bi bi-info-circle"></i> {{ __('Imágenes agregadas:') }} <strong><span class="transportImageCount">0</span>/9</strong>
                         </small>
+                        </div>
                     </div>
                 </div>
             `;
@@ -1075,6 +1156,42 @@
             const countSpans = document.querySelectorAll('.transportImageCount');
             countSpans.forEach(span => span.textContent = count);
         }
+    }
+
+    function clearListingForm() {
+        const form = document.getElementById('listingForm');
+        if (!form) return;
+
+        form.reset();
+
+        form.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="number"], input[type="time"], input[type="file"], textarea').forEach(input => {
+            input.value = '';
+            input.classList.remove('is-invalid');
+        });
+
+        form.querySelectorAll('select').forEach(select => {
+            select.selectedIndex = 0;
+            select.classList.remove('is-invalid');
+        });
+
+        form.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(input => {
+            input.checked = false;
+        });
+
+        const fieldsDiv = document.getElementById('serviceFields');
+        const priceFields = document.getElementById('priceFields');
+        const pricesSection = document.getElementById('pricesSection');
+
+        if (fieldsDiv) fieldsDiv.innerHTML = '';
+        if (priceFields) priceFields.innerHTML = '';
+        if (pricesSection) pricesSection.style.display = 'none';
+
+        hotelImageCount = 0;
+        tourImageCount = 0;
+        transportImageCount = 0;
+        updateImageCount('hotel');
+        updateImageCount('tour');
+        updateImageCount('transport');
     }
 </script>
         </div><!-- End Content Box -->
