@@ -142,13 +142,14 @@
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         gap: 2rem;
-        max-width: 1200px;
+        max-width: 90vw;
         margin: 0 auto;
+        gap: 1rem;
     }
 
     .feature-card {
         background: white;
-        padding: 2.5rem;
+        padding: 1.1rem;
         border-radius: 15px;
         text-align: center;
         transition: all 0.3s;
@@ -301,6 +302,67 @@
         .services-grid {
             grid-template-columns: 1fr;
         }
+
+        .home-cta {
+            padding: 3rem 1rem;
+        }
+
+        .home-cta-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .home-cta-text {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 1.25rem;
+        }
+
+        .home-cta-button {
+            font-size: 0.95rem;
+            padding: 0.5rem 1.1rem;
+            border-radius: 36px;
+        }
+    }
+
+    .home-cta {
+        background: linear-gradient(135deg, #4a0000 0%, #6b0000 50%, #8B0000 100%);
+        color: white;
+        padding: 4rem 2rem;
+        text-align: center;
+        margin-top: 0;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .home-cta-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .home-cta-text {
+        font-size: 1.2rem;
+        line-height: 1.6;
+        opacity: 0.95;
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        text-shadow: 1px 1px 4px rgba(0,0,0,0.2);
+    }
+
+    .home-cta-button {
+        display: inline-block;
+        background: white;
+        color: #8B0000;
+        padding: 0.5rem 1.2rem;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        text-decoration: none;
+        transition: all 0.3s;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     }
 </style>
 @endsection
@@ -329,7 +391,6 @@
 
     <!-- Features Section -->
     <section class="features-section">
-        <div class="container">
         <h2 class="section-title">{{ app()->getLocale() === 'es' ? '¿Por qué elegirnos?' : 'Why Choose Us?' }}</h2>
         <div class="features-grid">
             <div class="feature-card">
@@ -348,12 +409,10 @@
                 <p>{{ app()->getLocale() === 'es' ? 'Proceso simple y rápido, con confirmación inmediata' : 'Simple and fast process with instant confirmation' }}</p>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Services Section - COMMENTED FOR FUTURE USE
-<section class="services-section">
-    <div class="container">
+    <!-- Services Section - COMMENTED FOR FUTURE USE
+    <section class="services-section">
         <h2 class="section-title">{{ app()->getLocale() === 'es' ? 'Nuestros Servicios' : 'Our Services' }}</h2>
         <div class="services-grid">
             <div class="service-card">
@@ -387,29 +446,27 @@
                 </div>
             </div>
         </div>
-    </div>
-</section>
--->
+    </section>
+    -->
 
-<!-- CTA Section for Tourists -->
-<section style="background: linear-gradient(135deg, #4a0000 0%, #6b0000 50%, #8B0000 100%); color: white; padding: 4rem 2rem; text-align: center;">
-    <div class="container">
-        <h2 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1.5rem;">
-            {{ app()->getLocale() === 'es' ? '¿Listo para tu aventura?' : 'Ready for your adventure?' }}
-        </h2>
-        <p style="font-size: 1.2rem; opacity: 0.95; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
-            {{ app()->getLocale() === 'es' ? 'Contáctanos hoy y comienza a planificar el viaje de tus sueños en Costa Rica' : 'Contact us today and start planning your dream trip to Costa Rica' }}
-        </p>
-          <a href="{{ app()->getLocale() === 'es' ? '/es/contacto' : '/en/contact' }}" 
-              style="display: inline-block; background: white; color: #8B0000; padding: 1rem 2.5rem; border-radius: 50px; font-weight: 700; text-decoration: none; transition: all 0.3s;">
-            {{ app()->getLocale() === 'es' ? '📞 Contactar Ahora' : '📞 Contact Now' }}
-        </a>
-    </div>
-</section>
+    <!-- CTA Section for Tourists -->
+    <section class="providers-cta">
+        <div class="container">
+            <h5 class="providers-cta-title">
+                {{ app()->getLocale() === 'es' ? '¿Listo para tu aventura?' : 'Ready for your adventure?' }}
+            </h5>
+            <p class="providers-cta-text">
+                {{ app()->getLocale() === 'es' ? 'Contáctanos hoy y comienza a planificar el viaje de tus sueños en Costa Rica' : 'Contact us today and start planning your dream trip to Costa Rica' }}
+            </p>
+            <a href="{{ app()->getLocale() === 'es' ? '/es/contacto' : '/en/contact' }}"
+               class="providers-cta-button">
+                {{ app()->getLocale() === 'es' ? '📞 Contactar Ahora' : '📞 Contact Now' }}
+            </a>
+        </div>
+    </section>
 
-<!-- CTA Section for Service Providers 
-<section style="background: linear-gradient(135deg, #FF6B35 0%, #FF9500 100%); color: white; padding: 4rem 2rem; text-align: center;">
-    <div class="container">
+    <!-- CTA Section for Service Providers 
+    <section style="background: linear-gradient(135deg, #FF6B35 0%, #FF9500 100%); color: white; padding: 4rem 2rem; text-align: center;">
         <h2 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1.5rem;">
             {{ app()->getLocale() === 'es' ? '¿Eres un Proveedor de Servicios Turísticos?' : 'Are you a Tourism Service Provider?' }}
         </h2>
@@ -420,8 +477,7 @@
            style="display: inline-block; background: white; color: #FF6B35; padding: 1rem 2.5rem; border-radius: 50px; font-weight: 700; text-decoration: none; transition: all 0.3s;">
             {{ app()->getLocale() === 'es' ? '➕ Registrar Servicio' : '➕ Register Service' }}
         </a>
-    </div>
-</section> -->
+    </section> -->
 </div><!-- End Content Box -->
 @endsection
 

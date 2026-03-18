@@ -320,7 +320,7 @@
     }
 
     .providers-cta-title {
-        font-size: 3rem;
+        font-size: 1.25rem;
         font-weight: 700;
         margin-bottom: 1.5rem;
         text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
@@ -341,7 +341,7 @@
         display: inline-block;
         background: white;
         color: #8B0000;
-        padding: 1rem 2.5rem;
+        padding: 0.5rem 1.2rem;
         border-radius: 50px;
         font-weight: 700;
         font-size: 1.1rem;
@@ -372,7 +372,7 @@
         }
 
         .providers-cta-title {
-            font-size: 2rem;
+            font-size: 1.05rem;
             margin-bottom: 1rem;
         }
 
@@ -384,7 +384,7 @@
 
         .providers-cta-button {
             font-size: 0.95rem;
-            padding: 0.75rem 1.5rem;
+            padding: 0.5rem 1.1rem;
             border-radius: 36px;
         }
     }
@@ -559,9 +559,9 @@
 <!-- CTA Section for Service Providers -->
 <section class="providers-cta">
     <div class="container">
-        <h2 class="providers-cta-title">
+        <h5 class="providers-cta-title">
             {{ app()->getLocale() === 'es' ? '¿Eres un Operador de Tours?' : 'Are you a Tour Operator?' }}
-        </h2>
+        </h5>
         <p class="providers-cta-text">
             {{ app()->getLocale() === 'es' ? '¡Registra tus tours en nuestra plataforma! Alcanza a miles de viajeros que buscan experiencias únicas en Costa Rica' : 'Register your tours on our platform! Reach thousands of travelers looking for unique experiences in Costa Rica' }}
         </p>
