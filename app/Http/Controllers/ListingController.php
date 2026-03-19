@@ -64,6 +64,7 @@ class ListingController extends Controller
             'contact_phone' => 'required|string|max:20',
             'contact_address' => 'nullable|string|max:255',
         ]);
+        \Log::info('¿Hay archivo service_video?', ['hasFile' => $request->hasFile('service_video')]);
         // Procesar video si se subió
         $videoUrl = null;
         if ($request->hasFile('service_video')) {
