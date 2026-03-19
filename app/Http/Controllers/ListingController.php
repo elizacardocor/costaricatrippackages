@@ -87,21 +87,22 @@ class ListingController extends Controller
             $webmName = $serviceSlug . '-' . time() . '.webm';
             $tmpPath = $videoFile->storeAs('tmp', uniqid('video_') . '.' . $originalExt, 'local');
             $tmpFullPath = storage_path('app/' . $tmpPath);
-            $publicVideoDir = public_path($videoDir);
-            \Log::info('Ruta esperada para videos:', ['publicVideoDir' => $publicVideoDir]);
-            if (!file_exists($publicVideoDir)) {
-                $mkdirResult = mkdir($publicVideoDir, 0775, true);
-                \Log::info('Intento de crear directorio videos', ['result' => $mkdirResult, 'dir' => $publicVideoDir]);
+            $storageVideoDir = storage_path('app/public/' . $videoDir);
+            \Log::info('Ruta esperada para videos:', ['storageVideoDir' => $storageVideoDir]);
+            if (!file_exists($storageVideoDir)) {
+                $mkdirResult = mkdir($storageVideoDir, 0775, true);
+                \Log::info('Intento de crear directorio videos', ['result' => $mkdirResult, 'dir' => $storageVideoDir]);
             } else {
-                \Log::info('Directorio videos ya existe', ['dir' => $publicVideoDir]);
+                \Log::info('Directorio videos ya existe', ['dir' => $storageVideoDir]);
             }
-            $publicWebmPath = $publicVideoDir . '/' . $webmName;
+            $storageWebmPath = $storageVideoDir . '/' . $webmName;
 
             // Ejecutar FFmpeg para convertir a WebM
-            $ffmpegCmd = "ffmpeg -i \"$tmpFullPath\" -c:v libvpx-vp9 -b:v 1M -c:a libopus -vf 'scale=trunc(iw/2)*2:trunc(ih/2)*2' -y \"$publicWebmPath\"";
+            $ffmpegCmd = "ffmpeg -i \"$tmpFullPath\" -c:v libvpx-vp9 -b:v 1M -c:a libopus -vf 'scale=trunc(iw/2)*2:trunc(ih/2)*2' -y \"$storageWebmPath\"";
             exec($ffmpegCmd, $output, $returnVar);
-            if ($returnVar === 0 && file_exists($publicWebmPath)) {
-                $videoUrl = $videoDir . '/' . $webmName;
+            if ($returnVar === 0 && file_exists($storageWebmPath)) {
+                // La URL pública será storage/videos/archivo.webm
+                $videoUrl = 'storage/' . $videoDir . '/' . $webmName;
             } else {
                 \Log::error('Error al convertir video a WebM', ['cmd' => $ffmpegCmd, 'output' => $output, 'return' => $returnVar]);
                 $videoUrl = null;
