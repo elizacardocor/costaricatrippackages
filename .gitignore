@@ -17,3 +17,9 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+# Excluir imágenes y videos locales de prueba
+/public/videos/
+/storage/app/public/tours/*.jpg
+/storage/app/public/tours/*.webp
+/storage/app/public/hotels/*.jpg
+/storage/app/public/hotels/*.webp

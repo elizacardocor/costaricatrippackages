@@ -2,6 +2,57 @@
 
 @section('title', app()->getLocale() === 'es' ? 'Servicios de Transporte' : 'Transport Services')
 
+@section('meta_description', __('transports.listing_meta_description') ?? 'Transporte en Costa Rica, traslados, shuttles, buses, privados')
+@section('meta_keywords', 'transporte Costa Rica, traslados, shuttles, buses, privados, transfers')
+@section('og_title', __('transports.listing_og_title', ['default' => __('transports.listing_title')]))
+@section('og_description', __('transports.listing_og_description', ['default' => __('transports.listing_meta_description')]))
+@section('og_image', $transports->first() && $transports->first()->transportImages->first() ? asset('storage/' . $transports->first()->transportImages->first()->url) : asset('images/og-transport.jpg'))
+@section('twitter_title', __('transports.listing_og_title', ['default' => __('transports.listing_title')]))
+@section('twitter_description', __('transports.listing_og_description', ['default' => __('transports.listing_meta_description')]))
+@section('twitter_image', $transports->first() && $transports->first()->transportImages->first() ? asset('storage/' . $transports->first()->transportImages->first()->url) : asset('images/og-transport.jpg'))
+@section('canonical')
+    <link rel="canonical" href="{{ url()->current() }}">
+    <link rel="alternate" hreflang="es" href="{{ route('transport.index.es') }}">
+    <link rel="alternate" hreflang="en" href="{{ route('transport.index.en') }}">
+@endsection
+
+@section('extra_scripts')
+<!-- Schema.org JSON-LD - Transports Collection -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "{{ __('transports.listing_title') ?? 'Transporte en Costa Rica' }}",
+    "description": "{{ __('transports.listing_meta_description') ?? 'Transporte en Costa Rica, traslados, shuttles, buses, privados' }}",
+    "url": "{{ url()->current() }}",
+    "mainEntity": {
+        "@type": "ItemList",
+        "itemListElement": [
+            @foreach($transports as $index => $transport)
+            {
+                "@type": "ListItem",
+                "position": {{ $index + 1 }},
+                "item": {
+                    "@type": "BusTrip",
+                    "@id": "{{ url('/es/transport/' . $transport->slug) }}",
+                    "name": "{{ addslashes($transport->name) }}",
+                    "description": "{{ addslashes(substr($transport->description, 0, 160)) }}",
+                    "image": "{{ $transport->transportImages->first()?->url ? asset('storage/' . $transport->transportImages->first()->url) : asset('images/default-transport.jpg') }}",
+                    "url": "{{ url('/es/transport/' . $transport->slug) }}",
+                    "aggregateRating": {
+                        "@type": "AggregateRating",
+                        "ratingValue": "{{ $transport->rating ?? 4.5 }}",
+                        "reviewCount": "{{ $transport->transportReviews?->count() ?? 0 }}"
+                    }
+                }
+            }{{ $loop->last ? '' : ',' }}
+            @endforeach
+        ]
+    }
+}
+</script>
+@endsection
+
 @section('content')
 <div class="content-box">
     <!-- Header Section -->
@@ -33,9 +84,19 @@
                             
                             <!-- Image -->
                             <div style="height: 220px; overflow: hidden; background: linear-gradient(135deg, #ffd89b, #ffb366);">
-                                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
-                                    <i class="bi bi-car-front" style="font-size: 4rem; color: white; opacity: 0.8;"></i>
-                                </div>
+                                @php $mainImage = $transport->transportImages->first(); @endphp
+                                @if($mainImage)
+                                    <picture>
+                                        <source type="image/webp" srcset="{{ asset('storage/' . str_replace('.jpg', '.webp', ltrim($mainImage->url, '/'))) }}">
+                                        <img src="{{ asset('storage/' . ltrim($mainImage->url, '/')) }}"
+                                             alt="{{ $mainImage->alt_text ?? $transport->name }}"
+                                             style="width: 100%; height: 100%; object-fit: cover;">
+                                    </picture>
+                                @else
+                                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                                        <i class="bi bi-car-front" style="font-size: 4rem; color: white; opacity: 0.8;"></i>
+                                    </div>
+                                @endif
                             </div>
 
                             <!-- Content -->

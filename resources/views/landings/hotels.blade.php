@@ -33,6 +33,29 @@
     
     <!-- Canonical URL -->
     <link rel="canonical" href="{{ url()->current() }}">
+
+        <!-- JSON-LD Schema.org for SEO -->
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Hotel",
+            "name": "{{ __('landings.hotels_title') }} - Costa Rica Trip Packages",
+            "description": "{{ __('hotels.listing_meta_description') }}",
+            "image": [
+                @foreach($hotels as $hotel)
+                    @if($hotel->images && count($hotel->images))
+                        "{{ asset('storage/' . $hotel->images[0]->url) }}"@if(!$loop->last),@endif
+                    @endif
+                @endforeach
+            ],
+            "url": "{{ url()->current() }}",
+            "inLanguage": "{{ app()->getLocale() }}",
+            "brand": {
+                "@type": "Brand",
+                "name": "Costa Rica Trip Packages"
+            }
+        }
+        </script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -188,56 +211,37 @@
         <p class="section-subtitle">{{ __('landings.adventure_description') }}</p>
 
         <div class="hotels-grid">
-            <div class="hotel-card">
-                <img src="https://images.unsplash.com/photo-1693476636761-001418a89d5f?w=500&q=80" alt="Luxury Hotel" class="hotel-image" loading="lazy">
-                <div class="hotel-content">
-                    <div class="hotel-rating">★★★★★ (248 reviews)</div>
-                    <h3 class="hotel-name">Arenal Luxury Resort</h3>
-                    <p class="hotel-location">📍 La Fortuna, Arenal</p>
-                    <p class="hotel-description">Experiencia de lujo con vistas al volcán, piscina infinita y spa de clase mundial.</p>
-                    <div class="hotel-price">
-                        <div>
-                            <div class="price-label">{{ __('landings.price_from') }}</div>
-                            <div class="price-value">$189</div>
+            @foreach($hotels as $hotel)
+                <div class="hotel-card">
+                    @if($hotel->images && count($hotel->images))
+                        <picture>
+                            <source type="image/webp" srcset="{{ asset('storage/' . str_replace('.jpg', '.webp', $hotel->images[0]->url)) }}">
+                            <img src="{{ asset('storage/' . $hotel->images[0]->url) }}"
+                                 alt="{{ $hotel->images[0]->alt_text ?? $hotel->name }}"
+                                 class="hotel-image" loading="lazy">
+                        </picture>
+                    @endif
+                    <div class="hotel-content">
+                        <div class="hotel-rating">@if(isset($hotel->rating)){{ $hotel->rating }}@else★★★★★@endif ({{ $hotel->reviews_count ?? '0' }} reviews)</div>
+                        <h3 class="hotel-name">{{ $hotel->name }}</h3>
+                        <p class="hotel-location">📍 {{ $hotel->location ?? '' }}</p>
+                        <p class="hotel-description">{{ $hotel->description }}</p>
+                        <div class="hotel-price">
+                            <div>
+                                <div class="price-label">{{ __('landings.price_from') }}</div>
+                                <div class="price-value">
+                                    @if(isset($hotel->min_price))
+                                        ${{ $hotel->min_price }}
+                                    @else
+                                        {{ __('Consultar') }}
+                                    @endif
+                                </div>
+                            </div>
+                            <a href="{{ route('hotels.show', $hotel->slug) }}" class="view-btn">{{ app()->getLocale() === 'es' ? 'Ver' : 'View' }}</a>
                         </div>
-                        <a href="{{ app()->getLocale() === 'es' ? '/es/provincia/guanacaste/destino/arenal/hotel/la-fortuna-resort' : '/en/province/guanacaste/destination/arenal/hotel/la-fortuna-resort' }}" class="view-btn">{{ app()->getLocale() === 'es' ? 'Ver' : 'View' }}</a>
                     </div>
                 </div>
-            </div>
-
-            <div class="hotel-card">
-                <img src="https://images.unsplash.com/photo-1745208098930-cf0cf811aa07?w=500&q=80" alt="Boutique Hotel" class="hotel-image" loading="lazy">
-                <div class="hotel-content">
-                    <div class="hotel-rating">★★★★☆ (185 reviews)</div>
-                    <h3 class="hotel-name">Arenal Boutique</h3>
-                    <p class="hotel-location">📍 La Fortuna, Arenal</p>
-                    <p class="hotel-description">Hotel boutique con diseño contemporáneo, ubicación perfecta y atención personalizada.</p>
-                    <div class="hotel-price">
-                        <div>
-                            <div class="price-label">{{ __('landings.price_from') }}</div>
-                            <div class="price-value">$129</div>
-                        </div>
-                        <a href="{{ app()->getLocale() === 'es' ? '/es/provincia/guanacaste/destino/arenal/hotel/arenal-boutique' : '/en/province/guanacaste/destination/arenal/hotel/arenal-boutique' }}" class="view-btn">{{ app()->getLocale() === 'es' ? 'Ver' : 'View' }}</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="hotel-card">
-                <img src="https://images.unsplash.com/photo-1683064772054-d05a05efbed1?w=500&q=80" alt="Adventure Hotel" class="hotel-image" loading="lazy">
-                <div class="hotel-content">
-                    <div class="hotel-rating">★★★★★ (312 reviews)</div>
-                    <h3 class="hotel-name">Arenal Eco Lodge</h3>
-                    <p class="hotel-location">📍 Rainforest, Arenal</p>
-                    <p class="hotel-description">Alojamiento eco-amigable rodeado de naturaleza virgen con tours de aventura incluidos.</p>
-                    <div class="hotel-price">
-                        <div>
-                            <div class="price-label">{{ __('landings.price_from') }}</div>
-                            <div class="price-value">$99</div>
-                        </div>
-                        <a href="{{ app()->getLocale() === 'es' ? '/es/provincia/guanacaste/destino/arenal/hotel/arenal-eco-lodge' : '/en/province/guanacaste/destination/arenal/hotel/arenal-eco-lodge' }}" class="view-btn">{{ app()->getLocale() === 'es' ? 'Ver' : 'View' }}</a>
-                    </div>
-                </div>
-            </div>
+            @endforeach
         </div>
     </section>
 

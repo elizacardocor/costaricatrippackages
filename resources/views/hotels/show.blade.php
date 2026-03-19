@@ -114,6 +114,20 @@
                     @endif
                 </div>
 
+
+                <!-- Video de Presentación (si existe) -->
+                @if($hotel->video_url)
+                <div class="mb-5">
+                    <h3>Video de Presentación</h3>
+                    <div class="ratio ratio-16x9 mb-3">
+                        <video controls preload="none" style="width:100%;border-radius:12px;" poster="{{ $hotel->images->first() ? (\Illuminate\Support\Str::startsWith($hotel->images->first()->url, ['http://','https://','//']) ? $hotel->images->first()->url : asset('storage/' . ltrim($hotel->images->first()->url,'/'))) : asset('images/default-hotel.jpg') }}">
+                            <source src="/{{ ltrim($hotel->video_url, '/') }}" type="video/webm">
+                            {{ __('Tu navegador no soporta la reproducción de video WebM.') }}
+                        </video>
+                    </div>
+                </div>
+                @endif
+
                 <!-- Description -->
                 <div class="mb-5">
                     <h3>Descripción</h3>

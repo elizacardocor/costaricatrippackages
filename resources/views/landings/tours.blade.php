@@ -6,6 +6,30 @@
     <meta name="description" content="{{ __('landings.meta_description') }}">
     <meta name="keywords" content="{{ __('landings.meta_keywords') }}">
     <title>{{ __('landings.tours_title') }} - Costa Rica Trip Packages</title>
+
+        <!-- JSON-LD Schema.org for SEO -->
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "TouristTrip",
+            "name": "{{ __('landings.tours_title') }} - Costa Rica Trip Packages",
+            "description": "{{ __('landings.meta_description') }}",
+            "image": [
+                @foreach($tours as $tour)
+                    @if($tour->images && count($tour->images))
+                        "{{ asset('storage/' . $tour->images[0]->url) }}"@if(!$loop->last),@endif
+                    @endif
+                @endforeach
+            ],
+            "url": "{{ url()->current() }}",
+            "inLanguage": "{{ app()->getLocale() }}",
+            "provider": {
+                "@type": "TravelAgency",
+                "name": "Costa Rica Trip Packages",
+                "url": "{{ url('/') }}"
+            }
+        }
+        </script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -86,53 +110,36 @@
         <p class="section-subtitle">Vive experiencias únicas en la naturaleza más salvaje de Costa Rica</p>
 
         <div class="tours-grid">
-            <div class="tour-card">
-                <img src="https://images.unsplash.com/photo-1651261932254-fd342bc4d999?w=500&q=80" alt="Arenal Volcano Tour" class="tour-image" loading="lazy">
-                <div class="tour-content">
-                    <h3 class="tour-name">Arenal Volcano Adventure</h3>
-                    <p class="tour-duration">⏱️ {{ __('landings.full_day') }}</p>
-                    <p class="tour-description">Senderismo al volcán, vistas espectaculares y baños termales naturales incluidos.</p>
-                    <div class="tour-price">
-                        <div>
-                            <div style="color: var(--gray); font-size: 0.85rem;">{{ __('landings.price_from') }}</div>
-                            <div class="price-value">$89</div>
+            @foreach($tours as $tour)
+                <div class="tour-card">
+                    @if($tour->images && count($tour->images))
+                        <picture>
+                            <source type="image/webp" srcset="{{ asset('storage/' . str_replace('.jpg', '.webp', $tour->images[0]->url)) }}">
+                            <img src="{{ asset('storage/' . $tour->images[0]->url) }}"
+                                 alt="{{ $tour->images[0]->alt_text ?? $tour->name }}"
+                                 class="tour-image" loading="lazy">
+                        </picture>
+                    @endif
+                    <div class="tour-content">
+                        <h3 class="tour-name">{{ $tour->name }}</h3>
+                        <p class="tour-duration">⏱️ {{ $tour->duration ?? __('landings.full_day') }}</p>
+                        <p class="tour-description">{{ $tour->description }}</p>
+                        <div class="tour-price">
+                            <div>
+                                <div style="color: var(--gray); font-size: 0.85rem;">{{ __('landings.price_from') }}</div>
+                                <div class="price-value">
+                                    @if(isset($tour->min_price))
+                                        ${{ $tour->min_price }}
+                                    @else
+                                        {{ __('Consultar') }}
+                                    @endif
+                                </div>
+                            </div>
+                            <a href="{{ route('tours.show', $tour->slug) }}" class="view-btn">{{ app()->getLocale() === 'es' ? 'Ver' : 'View' }}</a>
                         </div>
-                        <a href="{{ app()->getLocale() === 'es' ? '/es/provincia/guanacaste/destino/arenal/tour/arenal-volcano-adventure' : '/en/province/guanacaste/destination/arenal/tour/arenal-volcano-adventure' }}" class="view-btn">{{ app()->getLocale() === 'es' ? 'Ver' : 'View' }}</a>
                     </div>
                 </div>
-            </div>
-
-            <div class="tour-card">
-                <img src="https://images.unsplash.com/photo-1592593210599-492c25d93ef9?w=500&q=80" alt="Rainforest Tour" class="tour-image" loading="lazy">
-                <div class="tour-content">
-                    <h3 class="tour-name">Rainforest Canopy Tour</h3>
-                    <p class="tour-duration">⏱️ {{ __('landings.full_day') }}</p>
-                    <p class="tour-description">Tirolesas sobre el dosel del bosque, fauna exótica y vistas panorámicas únícas.</p>
-                    <div class="tour-price">
-                        <div>
-                            <div style="color: var(--gray); font-size: 0.85rem;">{{ __('landings.price_from') }}</div>
-                            <div class="price-value">$75</div>
-                        </div>
-                        <a href="{{ app()->getLocale() === 'es' ? '/es/provincia/guanacaste/destino/arenal/tour/rainforest-canopy-tour' : '/en/province/guanacaste/destination/arenal/tour/rainforest-canopy-tour' }}" class="view-btn">{{ app()->getLocale() === 'es' ? 'Ver' : 'View' }}</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tour-card">
-                <img src="https://images.unsplash.com/photo-1710383739874-c4384c5f43f2?w=500&q=80" alt="Hot Springs Tour" class="tour-image" loading="lazy">
-                <div class="tour-content">
-                    <h3 class="tour-name">Hot Springs & Spa</h3>
-                    <p class="tour-duration">⏱️ {{ __('landings.half_day') }}</p>
-                    <p class="tour-description">Relájate en aguas termales naturales con tratamientos de spa incluidos.</p>
-                    <div class="tour-price">
-                        <div>
-                            <div style="color: var(--gray); font-size: 0.85rem;">{{ __('landings.price_from') }}</div>
-                            <div class="price-value">$65</div>
-                        </div>
-                        <a href="{{ app()->getLocale() === 'es' ? '/es/provincia/guanacaste/destino/arenal/tour/hot-springs-experience' : '/en/province/guanacaste/destination/arenal/tour/hot-springs-experience' }}" class="view-btn">{{ app()->getLocale() === 'es' ? 'Ver' : 'View' }}</a>
-                    </div>
-                </div>
-            </div>
+            @endforeach
         </div>
     </section>
 

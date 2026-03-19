@@ -2,6 +2,57 @@
 
 @section('title', app()->getLocale() === 'es' ? 'Hoteles en Costa Rica' : 'Hotels in Costa Rica')
 
+@section('meta_description', __('hotels.listing_meta_description'))
+@section('meta_keywords', 'hoteles Costa Rica, alojamiento, resorts, hospedajes, hoteles de lujo')
+@section('og_title', __('hotels.listing_og_title', ['default' => __('hotels.listing_title')]))
+@section('og_description', __('hotels.listing_og_description', ['default' => __('hotels.listing_meta_description')]))
+@section('og_image', $hotels->first() && $hotels->first()->images->first() ? asset('storage/' . $hotels->first()->images->first()->url) : asset('images/og-hotels.jpg'))
+@section('twitter_title', __('hotels.listing_og_title', ['default' => __('hotels.listing_title')]))
+@section('twitter_description', __('hotels.listing_og_description', ['default' => __('hotels.listing_meta_description')]))
+@section('twitter_image', $hotels->first() && $hotels->first()->images->first() ? asset('storage/' . $hotels->first()->images->first()->url) : asset('images/og-hotels.jpg'))
+@section('canonical')
+    <link rel="canonical" href="{{ url()->current() }}">
+    <link rel="alternate" hreflang="es" href="{{ route('hotels.index.es') }}">
+    <link rel="alternate" hreflang="en" href="{{ route('hotels.index.en') }}">
+@endsection
+
+@section('extra_scripts')
+<!-- Schema.org JSON-LD - Hotels Collection -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "{{ __('hotels.listing_title') }}",
+    "description": "{{ __('hotels.listing_meta_description') }}",
+    "url": "{{ url()->current() }}",
+    "mainEntity": {
+        "@type": "ItemList",
+        "itemListElement": [
+            @foreach($hotels as $index => $hotel)
+            {
+                "@type": "ListItem",
+                "position": {{ $index + 1 }},
+                "item": {
+                    "@type": "Hotel",
+                    "@id": "{{ url('/es/hotel/' . $hotel->slug) }}",
+                    "name": "{{ addslashes($hotel->name) }}",
+                    "description": "{{ addslashes(substr($hotel->description, 0, 160)) }}",
+                    "image": "{{ $hotel->images->first()?->url ? asset('storage/' . $hotel->images->first()->url) : asset('images/default-hotel.jpg') }}",
+                    "url": "{{ url('/es/hotel/' . $hotel->slug) }}",
+                    "aggregateRating": {
+                        "@type": "AggregateRating",
+                        "ratingValue": "{{ $hotel->rating ?? 4.5 }}",
+                        "reviewCount": "{{ $hotel->reviews?->count() ?? 0 }}"
+                    }
+                }
+            }{{ $loop->last ? '' : ',' }}
+            @endforeach
+        ]
+    }
+}
+</script>
+@endsection
+
 @section('content')
 <div class="content-box">
     <!-- Header Section -->
@@ -34,10 +85,13 @@
                             <!-- Image -->
                             <div style="height: 220px; overflow: hidden; background: #f0f0f0; position: relative;">
                                 @if($hotel->images->first())
-                                    @php $imgUrl = $hotel->images->first()->url; @endphp
-                                    <img src="{{ \Illuminate\Support\Str::startsWith($imgUrl, ['http://','https://','//']) ? $imgUrl : asset('storage/' . ltrim($imgUrl, '/')) }}" 
-                                         alt="{{ $hotel->name }}" 
-                                         style="width: 100%; height: 100%; object-fit: cover;">
+                                    @php $imgUrl = $hotel->images->first()->url; $altText = $hotel->images->first()->alt_text ?? $hotel->name; @endphp
+                                    <picture>
+                                        <source type="image/webp" srcset="{{ asset('storage/' . str_replace('.jpg', '.webp', ltrim($imgUrl, '/'))) }}">
+                                        <img src="{{ \Illuminate\Support\Str::startsWith($imgUrl, ['http://','https://','//']) ? $imgUrl : asset('storage/' . ltrim($imgUrl, '/')) }}"
+                                             alt="{{ $altText }}"
+                                             style="width: 100%; height: 100%; object-fit: cover;">
+                                    </picture>
                                 @else
                                     <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #999;">
                                         <i class="bi bi-image" style="font-size: 3rem;"></i>

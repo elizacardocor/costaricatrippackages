@@ -64,7 +64,47 @@ class ListingController extends Controller
             'contact_phone' => 'required|string|max:20',
             'contact_address' => 'nullable|string|max:255',
         ]);
+        // Procesar video si se subió
+        $videoUrl = null;
+        if ($request->hasFile('service_video')) {
+            $videoFile = $request->file('service_video');
+            $originalExt = $videoFile->getClientOriginalExtension();
+            $serviceSlug = null;
+            $videoDir = 'videos';
+            $webmName = null;
+            $serviceIdForPath = null;
 
+            // Definir slug y carpeta según tipo
+            if ($serviceType === 'hotel') {
+                $serviceSlug = \Str::slug($request->input('hotel_name'));
+            } elseif ($serviceType === 'tour') {
+                $serviceSlug = \Str::slug($request->input('tour_name'));
+            } elseif ($serviceType === 'transport') {
+                $serviceSlug = \Str::slug($request->input('transport_name'));
+            }
+
+            // Nombre de archivo único
+            $webmName = $serviceSlug . '-' . time() . '.webm';
+            $tmpPath = $videoFile->storeAs('tmp', uniqid('video_') . '.' . $originalExt, 'local');
+            $tmpFullPath = storage_path('app/' . $tmpPath);
+            $publicVideoDir = public_path($videoDir);
+            if (!file_exists($publicVideoDir)) {
+                mkdir($publicVideoDir, 0775, true);
+            }
+            $publicWebmPath = $publicVideoDir . '/' . $webmName;
+
+            // Ejecutar FFmpeg para convertir a WebM
+            $ffmpegCmd = "ffmpeg -i \"$tmpFullPath\" -c:v libvpx-vp9 -b:v 1M -c:a libopus -vf 'scale=trunc(iw/2)*2:trunc(ih/2)*2' -y \"$publicWebmPath\"";
+            exec($ffmpegCmd, $output, $returnVar);
+            if ($returnVar === 0 && file_exists($publicWebmPath)) {
+                $videoUrl = $videoDir . '/' . $webmName;
+            } else {
+                \Log::error('Error al convertir video a WebM', ['cmd' => $ffmpegCmd, 'output' => $output, 'return' => $returnVar]);
+                $videoUrl = null;
+            }
+            // Limpiar archivo temporal
+            @unlink($tmpFullPath);
+        }
         // Validación de precios por temporada (requeridos)
         $rateTypes = RateType::all();
         $priceRules = [];
@@ -94,12 +134,24 @@ class ListingController extends Controller
 
             if ($serviceType === 'hotel') {
                 $service = $this->createHotel($request, $destinationId, $user->id);
+                if ($videoUrl) {
+                    $service->video_url = $videoUrl;
+                    $service->save();
+                }
             } 
             elseif ($serviceType === 'tour') {
                 $service = $this->createTour($request, $destinationId, $user->id);
+                if ($videoUrl) {
+                    $service->video_url = $videoUrl;
+                    $service->save();
+                }
             } 
             elseif ($serviceType === 'transport') {
                 $service = $this->createTransport($request, $destinationId, $user->id);
+                if ($videoUrl) {
+                    $service->video_url = $videoUrl;
+                    $service->save();
+                }
             }
 
             if (!$service) {
@@ -801,15 +853,30 @@ class ListingController extends Controller
      */
     private function generateImageName($hotelName, $provinceName, $destinationName, $descriptionWords, $order)
     {
-        $baseName = \Str::slug("$hotelName $provinceName $destinationName");
-        
+        // Añadir año, mes y palabras clave SEO
+        $date = now();
+        $year = $date->year;
+        $month = str_pad($date->month, 2, '0', STR_PAD_LEFT);
+
+        // Detectar tipo de servicio para palabra clave
+        $serviceType = 'servicio';
+        if (stripos($hotelName, 'hotel') !== false) {
+            $serviceType = 'hotel';
+        } elseif (stripos($hotelName, 'tour') !== false) {
+            $serviceType = 'tour';
+        } elseif (stripos($hotelName, 'transporte') !== false) {
+            $serviceType = 'transporte';
+        }
+
+        $baseName = \Str::slug("$hotelName $provinceName $destinationName $serviceType Costa Rica $year $month");
+
         if (!empty($descriptionWords)) {
             $keyword = $descriptionWords[$order % count($descriptionWords)];
             $baseName .= "-$keyword";
         }
-        
+
         $baseName .= "-" . $order;
-        
+
         return $baseName;
     }
 
@@ -950,23 +1017,34 @@ class ListingController extends Controller
                 $image->scaleDown(width: 1200);
             }
             
-            // Comprimir a JPEG con calidad adaptativa
-            // Imagen principal: 80% (mejor calidad para hero)
-            // Otras imágenes: 75% (buen balance)
+            // Comprimir a JPEG y WebP con calidad adaptativa
             $quality = $isMainImage ? 80 : 75;
-            $encoded = $image->toJpeg(quality: $quality);
-            
-            // Nombre del archivo
-            $fileName = $customName . '.jpg';
-            
+            $encodedJpg = $image->toJpeg(quality: $quality);
+            $encodedWebp = null;
+            // WebP solo si Intervention soporta
+            try {
+                $encodedWebp = $image->toWebp(quality: $quality);
+            } catch (\Throwable $e) {
+                \Log::warning('WebP conversion failed or not supported: ' . $e->getMessage());
+            }
+
+            // Nombre de archivos
+            $fileNameJpg = $customName . '.jpg';
+            $fileNameWebp = $customName . '.webp';
+
             // Guardar en storage
-            $path = "public/$directory/$fileName";
-            \Storage::put($path, $encoded);
-            
-            \Log::info('Image compressed and stored', ['path' => $path, 'isMain' => $isMainImage]);
-            
-            // Retornar ruta relativa para guardar en BD
-            return "$directory/$fileName";
+            $pathJpg = "public/$directory/$fileNameJpg";
+            \Storage::put($pathJpg, $encodedJpg);
+            if ($encodedWebp) {
+                $pathWebp = "public/$directory/$fileNameWebp";
+                \Storage::put($pathWebp, $encodedWebp);
+                \Log::info('Image also stored as WebP', ['path' => $pathWebp]);
+            }
+
+            \Log::info('Image compressed and stored', ['path' => $pathJpg, 'isMain' => $isMainImage]);
+
+            // Retornar ruta relativa JPG para guardar en BD
+            return "$directory/$fileNameJpg";
         } catch (\Exception $e) {
             \Log::error('Error compressing image: ' . $e->getMessage());
             throw $e;

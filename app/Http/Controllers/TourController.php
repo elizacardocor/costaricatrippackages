@@ -58,6 +58,14 @@ class TourController extends Controller
 
             $mainImage = $tour->tourImages->first();
 
+            $imageJpg = $mainImage
+                ? asset('storage/' . ltrim($mainImage->url, '/'))
+                : asset('images/default-tour.jpg');
+            $imageWebp = $mainImage && str_ends_with($mainImage->url, '.jpg')
+                ? asset('storage/' . str_replace('.jpg', '.webp', ltrim($mainImage->url, '/')))
+                : null;
+            $altText = $mainImage->alt_text ?? $tour->name;
+
             return [
                 'id' => $tour->id,
                 'title' => $tour->name,
@@ -67,9 +75,9 @@ class TourController extends Controller
                 'duration' => $tour->duration_hours ? $tour->duration_hours . ' horas' : null,
                 'people' => $tour->max_capacity ? ('Hasta ' . $tour->max_capacity) : null,
                 'description' => $tour->description ? Str::limit(strip_tags($tour->description), 160) : '',
-                'image' => $mainImage
-                    ? asset('storage/' . ltrim($mainImage->url, '/'))
-                    : asset('images/default-tour.jpg'),
+                'image_jpg' => $imageJpg,
+                'image_webp' => $imageWebp,
+                'alt_text' => $altText,
                 'destinations' => $tour->destinations->pluck('id')->toArray(),
                 'url' => UrlHelper::tourUrl($tour, app()->getLocale()),
                 'badge' => $currentRateType ? $currentRateType->name : null,

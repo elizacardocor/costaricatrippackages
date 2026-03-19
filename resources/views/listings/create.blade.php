@@ -674,6 +674,15 @@
                         <!-- Se llenan dinámicamente -->
                     </div>
 
+                    <!-- Video Opcional -->
+                    <div class="mb-3 full-width-field">
+                        <label for="service_video" class="form-label fw-bold">{{ __('Video de Presentación (Opcional)') }}</label>
+                        <input type="file" name="service_video" id="service_video" class="form-control" accept="video/*">
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle"></i> {{ __('Puedes subir un video corto de tu servicio (máx. 60MB, idealmente en formato MP4, MOV, AVI, o WebM). El video será convertido a WebM para optimizar la visualización.') }}
+                        </small>
+                    </div>
+
                     <!-- Botones -->
                     <div class="d-flex gap-2 mt-4 form-action-buttons">
                         <button type="submit" class="btn btn-primary btn-lg">

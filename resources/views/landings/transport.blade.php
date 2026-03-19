@@ -6,6 +6,30 @@
     <meta name="description" content="{{ __('landings.meta_description') }}">
     <meta name="keywords" content="{{ __('landings.meta_keywords') }}">
     <title>{{ __('landings.transport_title') }} - Costa Rica Trip Packages</title>
+
+        <!-- JSON-LD Schema.org for SEO -->
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "BusTrip",
+            "name": "{{ __('landings.transport_title') }} - Costa Rica Trip Packages",
+            "description": "{{ __('landings.meta_description') }}",
+            "image": [
+                @foreach($transports as $transport)
+                    @if($transport->images && count($transport->images))
+                        "{{ asset('storage/' . $transport->images[0]->url) }}"@if(!$loop->last),@endif
+                    @endif
+                @endforeach
+            ],
+            "url": "{{ url()->current() }}",
+            "inLanguage": "{{ app()->getLocale() }}",
+            "provider": {
+                "@type": "TravelAgency",
+                "name": "Costa Rica Trip Packages",
+                "url": "{{ url('/') }}"
+            }
+        }
+        </script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -111,53 +135,36 @@
         <p class="section-subtitle">Servicios de transporte seguros y cómodos para tus viajes en Costa Rica</p>
 
         <div class="transport-grid">
-            <div class="transport-card">
-                <img src="https://images.unsplash.com/photo-1728755291202-2a3d8fe71ac2?w=500&q=80" alt="Private Transport" class="transport-image" loading="lazy">
-                <div class="transport-content">
-                    <h3 class="transport-name">Private Transport</h3>
-                    <p class="transport-capacity">👥 1-4 pasajeros</p>
-                    <p class="transport-description">Transporte privado exclusivo con conductor profesional y vehículo de última generación.</p>
-                    <div class="transport-price">
-                        <div>
-                            <div style="color: var(--gray); font-size: 0.85rem;">{{ __('landings.price_from') }}</div>
-                            <div class="price-value">$120</div>
+            @foreach($transports as $transport)
+                <div class="transport-card">
+                    @if($transport->images && count($transport->images))
+                        <picture>
+                            <source type="image/webp" srcset="{{ asset('storage/' . str_replace('.jpg', '.webp', $transport->images[0]->url)) }}">
+                            <img src="{{ asset('storage/' . $transport->images[0]->url) }}"
+                                 alt="{{ $transport->images[0]->alt_text ?? $transport->name }}"
+                                 class="transport-image" loading="lazy">
+                        </picture>
+                    @endif
+                    <div class="transport-content">
+                        <h3 class="transport-name">{{ $transport->name }}</h3>
+                        <p class="transport-capacity">👥 {{ $transport->capacity ?? '' }}</p>
+                        <p class="transport-description">{{ $transport->description }}</p>
+                        <div class="transport-price">
+                            <div>
+                                <div style="color: var(--gray); font-size: 0.85rem;">{{ __('landings.price_from') }}</div>
+                                <div class="price-value">
+                                    @if(isset($transport->min_price))
+                                        ${{ $transport->min_price }}
+                                    @else
+                                        {{ __('Consultar') }}
+                                    @endif
+                                </div>
+                            </div>
+                            <a href="{{ route('transports.show', $transport->slug) }}" class="view-btn">{{ app()->getLocale() === 'es' ? 'Ver' : 'View' }}</a>
                         </div>
-                        <a href="{{ app()->getLocale() === 'es' ? '/es/provincia/guanacaste/destino/arenal/transport/private-suv' : '/en/province/guanacaste/destination/arenal/transport/private-suv' }}" class="view-btn">{{ app()->getLocale() === 'es' ? 'Ver' : 'View' }}</a>
                     </div>
                 </div>
-            </div>
-
-            <div class="transport-card">
-                <img src="https://images.unsplash.com/photo-1621295095201-e4496abe5a0f?w=500&q=80" alt="Shared Shuttle" class="transport-image" loading="lazy">
-                <div class="transport-content">
-                    <h3 class="transport-name">Shared Shuttle</h3>
-                    <p class="transport-capacity">👥 5-12 pasajeros</p>
-                    <p class="transport-description">Compartir viaje con otros turistas, económico y social. ¡Conoce nuevas amistades!</p>
-                    <div class="transport-price">
-                        <div>
-                            <div style="color: var(--gray); font-size: 0.85rem;">{{ __('landings.price_from') }}</div>
-                            <div class="price-value">$35</div>
-                        </div>
-                        <a href="{{ app()->getLocale() === 'es' ? '/es/provincia/guanacaste/destino/arenal/transport/shared-shuttle' : '/en/province/guanacaste/destination/arenal/transport/shared-shuttle' }}" class="view-btn">{{ app()->getLocale() === 'es' ? 'Ver' : 'View' }}</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="transport-card">
-                <img src="https://images.unsplash.com/photo-1713357021650-3a458fcec762?w=500&q=80" alt="Group Transport" class="transport-image" loading="lazy">
-                <div class="transport-content">
-                    <h3 class="transport-name">Group Transport</h3>
-                    <p class="transport-capacity">👥 15+ pasajeros</p>
-                    <p class="transport-description">Autobús privado para grupos, perfecto para tours y eventos especiales.</p>
-                    <div class="transport-price">
-                        <div>
-                            <div style="color: var(--gray); font-size: 0.85rem;">{{ __('landings.price_from') }}</div>
-                            <div class="price-value">$450</div>
-                        </div>
-                        <a href="{{ app()->getLocale() === 'es' ? '/es/provincia/guanacaste/destino/arenal/transport/group-tour-bus' : '/en/province/guanacaste/destination/arenal/transport/group-tour-bus' }}" class="view-btn">{{ app()->getLocale() === 'es' ? 'Ver' : 'View' }}</a>
-                    </div>
-                </div>
-            </div>
+            @endforeach
         </div>
     </section>
 

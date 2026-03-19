@@ -455,7 +455,10 @@
             const card = `
                 <div class="tour-card">
                     <div class="tour-image-wrapper">
-                        <img src="${tour.image}" alt="${tour.title}" class="tour-image" loading="lazy">
+                        <picture>
+                            ${tour.image_webp ? `<source type='image/webp' srcset='${tour.image_webp}'>` : ''}
+                            <img src="${tour.image_jpg}" alt="${tour.alt_text}" class="tour-image" loading="lazy">
+                        </picture>
                         ${tour.badge ? `<div class="tour-badge">${tour.badge}</div>` : ''}
                     </div>
                     <div class="tour-content">
