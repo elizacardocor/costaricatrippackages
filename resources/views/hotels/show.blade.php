@@ -123,12 +123,14 @@
                         @php
                             $videoUrl = ltrim($hotel->video_url, '/');
                             $videoMp4 = preg_replace('/\.webm$/i', '.mp4', $videoUrl);
+                            $videoTitle = $hotel->name . ' - ' . (\Illuminate\Support\Str::limit($hotel->description, 60));
                         @endphp
-                        <video controls preload="none" style="width:100%;border-radius:12px;" poster="{{ $hotel->images->first() ? (\Illuminate\Support\Str::startsWith($hotel->images->first()->url, ['http://','https://','//']) ? $hotel->images->first()->url : asset('storage/' . ltrim($hotel->images->first()->url,'/'))) : asset('images/default-hotel.jpg') }}">
+                        <video controls preload="none" style="width:100%;border-radius:12px;" poster="{{ $hotel->images->first() ? (\Illuminate\Support\Str::startsWith($hotel->images->first()->url, ['http://','https://','//']) ? $hotel->images->first()->url : asset('storage/' . ltrim($hotel->images->first()->url,'/'))) : asset('images/default-hotel.jpg') }}" title="{{ $videoTitle }}">
                             <source src="/{{ $videoUrl }}" type="video/webm">
                             <source src="/{{ $videoMp4 }}" type="video/mp4">
-                            {{ __('Tu navegador no soporta la reproducción de video.') }}
+                            {{ __('Video de presentación:') }} {{ $videoTitle }}
                         </video>
+                        <p class="text-muted mt-2"><strong>{{ $videoTitle }}</strong></p>
                     </div>
                 </div>
                 @endif

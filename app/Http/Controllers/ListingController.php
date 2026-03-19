@@ -74,7 +74,7 @@ class ListingController extends Controller
             $originalExt = $videoFile->getClientOriginalExtension();
             $serviceSlug = null;
             $videoDir = 'videos';
-            $webmName = null;
+            $videoName = null;
             $serviceIdForPath = null;
 
             // Definir slug y carpeta según tipo
@@ -87,32 +87,20 @@ class ListingController extends Controller
             }
 
             // Nombre de archivo único
-            $webmName = $serviceSlug . '-' . time() . '.webm';
-            $tmpPath = $videoFile->storeAs('tmp', uniqid('video_') . '.' . $originalExt, 'local');
-            $tmpFullPath = storage_path('app/' . $tmpPath);
+            $videoName = $serviceSlug . '-' . time() . '.' . $originalExt;
             $storageVideoDir = storage_path('app/public/' . $videoDir);
             \Log::info('Ruta esperada para videos:', ['storageVideoDir' => $storageVideoDir]);
-            \Log::info('Ruta final archivo WebM:', ['storageWebmPath' => $storageVideoDir . '/' . $webmName]);
+            \Log::info('Ruta final archivo:', ['storageVideoPath' => $storageVideoDir . '/' . $videoName]);
             if (!file_exists($storageVideoDir)) {
                 $mkdirResult = mkdir($storageVideoDir, 0775, true);
                 \Log::info('Intento de crear directorio videos', ['result' => $mkdirResult, 'dir' => $storageVideoDir]);
             } else {
                 \Log::info('Directorio videos ya existe', ['dir' => $storageVideoDir]);
             }
-            $storageWebmPath = $storageVideoDir . '/' . $webmName;
-
-            // Ejecutar FFmpeg para convertir a WebM
-            $ffmpegCmd = "ffmpeg -i \"$tmpFullPath\" -c:v libvpx-vp9 -b:v 1M -c:a libopus -vf 'scale=trunc(iw/2)*2:trunc(ih/2)*2' -y \"$storageWebmPath\"";
-            exec($ffmpegCmd, $output, $returnVar);
-            if ($returnVar === 0 && file_exists($storageWebmPath)) {
-                // La URL pública será siempre storage/videos/archivo.webm
-                $videoUrl = 'storage/videos/' . $webmName;
-            } else {
-                \Log::error('Error al convertir video a WebM', ['cmd' => $ffmpegCmd, 'output' => $output, 'return' => $returnVar]);
-                $videoUrl = null;
-            }
-            // Limpiar archivo temporal
-            @unlink($tmpFullPath);
+            // Mover el archivo subido al directorio final
+            $videoFile->move($storageVideoDir, $videoName);
+            // Guardar la ruta pública
+            $videoUrl = 'storage/videos/' . $videoName;
         }
         // Validación de precios por temporada (requeridos)
         $rateTypes = RateType::all();

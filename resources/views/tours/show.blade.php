@@ -231,12 +231,14 @@
                         @php
                             $videoUrl = ltrim($tour->video_url, '/');
                             $videoMp4 = preg_replace('/\.webm$/i', '.mp4', $videoUrl);
+                            $videoTitle = $tour->name . ' - ' . (\Illuminate\Support\Str::limit($tour->description, 60));
                         @endphp
-                        <video controls preload="none" style="width:100%;border-radius:12px;" poster="{{ $tour->images->first() ? asset('storage/' . ltrim($tour->images->first()->url,'/')) : asset('images/default-tour.jpg') }}">
+                        <video controls preload="none" style="width:100%;border-radius:12px;" poster="{{ $tour->images->first() ? asset('storage/' . ltrim($tour->images->first()->url,'/')) : asset('images/default-tour.jpg') }}" title="{{ $videoTitle }}">
                             <source src="/{{ $videoUrl }}" type="video/webm">
                             <source src="/{{ $videoMp4 }}" type="video/mp4">
-                            {{ __('Tu navegador no soporta la reproducción de video.') }}
+                            {{ __('Video de presentación:') }} {{ $videoTitle }}
                         </video>
+                        <p class="text-muted mt-2"><strong>{{ $videoTitle }}</strong></p>
                     </div>
                 </div>
                 @endif

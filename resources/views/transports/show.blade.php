@@ -25,14 +25,15 @@
                     @php
                         $videoUrl = ltrim($transport->video_url, '/');
                         $videoMp4 = preg_replace('/\.webm$/i', '.mp4', $videoUrl);
+                        $videoTitle = $transport->name . ' - ' . (\Illuminate\Support\Str::limit($transport->description ?? '', 60));
                     @endphp
-                    <video controls preload="none" style="width:100%;border-radius:12px;" poster="{{ $transport->images->first() ? asset('storage/' . ltrim($transport->images->first()->url,'/')) : asset('images/default-transport.jpg') }}">
+                    <video controls preload="none" style="width:100%;border-radius:12px;" poster="{{ $transport->images->first() ? asset('storage/' . ltrim($transport->images->first()->url,'/')) : asset('images/default-transport.jpg') }}" title="{{ $videoTitle }}">
                         <source src="/{{ $videoUrl }}" type="video/webm">
                         <source src="/{{ $videoMp4 }}" type="video/mp4">
-                        {{ __('Tu navegador no soporta la reproducción de video.') }}
+                        {{ __('Video de presentación:') }} {{ $videoTitle }}
                     </video>
+                    <p class="text-muted mt-2"><strong>{{ $videoTitle }}</strong></p>
                 </div>
-            </div>
             @endif
 
             <a href="{{ app()->getLocale() === 'es' ? '/es/' : '/en/' }}" class="btn btn-primary">
