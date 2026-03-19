@@ -228,9 +228,14 @@
                 <div class="mb-5">
                     <h3>Video de Presentación</h3>
                     <div class="ratio ratio-16x9 mb-3">
+                        @php
+                            $videoUrl = ltrim($tour->video_url, '/');
+                            $videoMp4 = preg_replace('/\.webm$/i', '.mp4', $videoUrl);
+                        @endphp
                         <video controls preload="none" style="width:100%;border-radius:12px;" poster="{{ $tour->images->first() ? asset('storage/' . ltrim($tour->images->first()->url,'/')) : asset('images/default-tour.jpg') }}">
-                            <source src="/{{ ltrim($tour->video_url, '/') }}" type="video/webm">
-                            {{ __('Tu navegador no soporta la reproducción de video WebM.') }}
+                            <source src="/{{ $videoUrl }}" type="video/webm">
+                            <source src="/{{ $videoMp4 }}" type="video/mp4">
+                            {{ __('Tu navegador no soporta la reproducción de video.') }}
                         </video>
                     </div>
                 </div>

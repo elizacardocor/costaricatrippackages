@@ -67,6 +67,8 @@ class ListingController extends Controller
         \Log::info('¿Hay archivo service_video?', ['hasFile' => $request->hasFile('service_video')]);
         // Procesar video si se subió
         $videoUrl = null;
+        // Log para depuración de video
+        \Log::info('--- INICIO PROCESO VIDEO ---');
         if ($request->hasFile('service_video')) {
             $videoFile = $request->file('service_video');
             $originalExt = $videoFile->getClientOriginalExtension();
@@ -90,6 +92,7 @@ class ListingController extends Controller
             $tmpFullPath = storage_path('app/' . $tmpPath);
             $storageVideoDir = storage_path('app/public/' . $videoDir);
             \Log::info('Ruta esperada para videos:', ['storageVideoDir' => $storageVideoDir]);
+            \Log::info('Ruta final archivo WebM:', ['storageWebmPath' => $storageVideoDir . '/' . $webmName]);
             if (!file_exists($storageVideoDir)) {
                 $mkdirResult = mkdir($storageVideoDir, 0775, true);
                 \Log::info('Intento de crear directorio videos', ['result' => $mkdirResult, 'dir' => $storageVideoDir]);
@@ -102,8 +105,8 @@ class ListingController extends Controller
             $ffmpegCmd = "ffmpeg -i \"$tmpFullPath\" -c:v libvpx-vp9 -b:v 1M -c:a libopus -vf 'scale=trunc(iw/2)*2:trunc(ih/2)*2' -y \"$storageWebmPath\"";
             exec($ffmpegCmd, $output, $returnVar);
             if ($returnVar === 0 && file_exists($storageWebmPath)) {
-                // La URL pública será storage/videos/archivo.webm
-                $videoUrl = 'storage/' . $videoDir . '/' . $webmName;
+                // La URL pública será siempre storage/videos/archivo.webm
+                $videoUrl = 'storage/videos/' . $webmName;
             } else {
                 \Log::error('Error al convertir video a WebM', ['cmd' => $ffmpegCmd, 'output' => $output, 'return' => $returnVar]);
                 $videoUrl = null;
