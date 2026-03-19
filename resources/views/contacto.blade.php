@@ -471,17 +471,6 @@
                     </div>
                 </div>
 
-                <div class="info-card">
-                    <div class="info-icon messenger">
-                        <i class="fab fa-tiktok"></i>
-                    </div>
-                    <div class="info-content">
-                        <h3>TikTok</h3>
-                        <p>{{ app()->getLocale() === 'es' ? 'Síguenos en TikTok' : 'Follow us on TikTok' }}</p>
-                        <a href="https://tiktok.com/@costa.rica.trip4" target="_blank">@costa.rica.trip4</a>
-                    </div>
-                </div>
-
                 {{--
                 <div class="info-card">
                     <div class="info-icon location">

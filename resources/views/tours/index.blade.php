@@ -193,17 +193,19 @@
         transform: scale(1.1);
     }
 
+    /*
     .tour-badge {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        background: var(--accent-color);
+        background: #25D366;
         color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
+        font-weight: 700;
+        padding: 0.35rem 0.9rem;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        display: inline-block;
+        margin-bottom: 0.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
+    */
 
     .tour-content {
         padding: 1.5rem;

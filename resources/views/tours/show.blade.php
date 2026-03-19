@@ -87,6 +87,55 @@
 
 @section('content')
 <div class="content-box">
+    <style>
+        .tour-header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 200px;
+            position: relative;
+        }
+        @media (max-width: 991.98px) {
+            .tour-header-bar {
+                margin-top: 120px;
+            }
+        }
+        .tour-header-bar h1 {
+            color: #8B0000;
+            display: inline-block;
+            margin: 0 auto;
+            text-align: center;
+            flex: 0 1 auto;
+        }
+        .tour-header-bar .back-btn {
+            color: #fff;
+            background: #8B0000;
+            border: none;
+            padding: 0.15em 0.7em;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-block;
+            height: 2em;
+            width: auto;
+            min-width: 60px;
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+        @media (max-width: 991.98px) {
+            .tour-header-bar .back-btn {
+                display: none;
+            }
+        }
+        .tour-header-bar .back-btn:hover {
+            background: #a80000;
+            color: #fff;
+        }
+    </style>
 <!-- Mensaje de Éxito -->
 @if(session('success'))
     <div class="container mt-3">
@@ -104,11 +153,13 @@
             <!-- Main Content -->
             <div class="col-lg-8">
                 <div class="mb-4">
-                    <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm mb-3">
-                        <i class="bi bi-arrow-left"></i> Volver
-                    </a>
-                    <h1 class="mb-2">{{ $tour->name }}</h1>
-                    <p class="text-muted mb-0">{{ $tour->destinations->first()?->name ?? 'Costa Rica' }}, {{ $tour->destinations->first()?->province->name ?? 'N/A' }}</p>
+                    <div class="tour-header-bar">
+                        <a href="javascript:history.back()" class="back-btn">
+                            <i class="bi bi-arrow-left"></i> Volver
+                        </a>
+                        <h1>{{ $tour->name }}</h1>
+                    </div>
+                    <p class="text-muted mb-0" style="text-align:center;">{{ $tour->destinations->first()?->name ?? 'Costa Rica' }}, {{ $tour->destinations->first()?->province->name ?? 'N/A' }}</p>
                 </div>
 
                 <!-- Rating and Reviews -->
@@ -128,28 +179,29 @@
                 </div>
 
                 <!-- Tour Info Grid -->
-                <div class="row g-3 mb-5">
+                <div class="row g-3 mb-5" style="margin-top: 2.5rem; margin-bottom: 2.5rem;">
                     <div class="col-md-6">
                         <div class="card border-0 bg-light p-3">
-                            <small class="text-muted">
-                                <i class="bi bi-clock"></i> Duración
-                            </small>
-                            <h5 class="mb-0">{{ $tour->duration }} horas</h5>
+                            <h5 class="mb-0">
+                                <i class="bi bi-clock"></i>
+                                <span style="color:#8B0000; font-weight: bold;">Duración:</span>
+                                {{ $tour->duration_hours ? rtrim(rtrim(number_format($tour->duration_hours,2), '0'), '.') : 'N/D' }} horas
+                            </h5>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="card border-0 bg-light p-3">
-                            <small class="text-muted">
-                                <i class="bi bi-people"></i> Grupo
-                            </small>
-                            <h5 class="mb-0">{{ $tour->group_size ?? '6-8' }} personas</h5>
+                            <h5 class="mb-0">
+                                <i class="bi bi-people"></i>
+                                <span style="color:#8B0000; font-weight: bold;">Capacidad máxima:</span>
+                                {{ $tour->max_capacity > 0 ? $tour->max_capacity : 'N/D' }} personas
+                            </h5>
                         </div>
                     </div>
                 </div>
 
                 <!-- Image Gallery -->
-                <div class="mb-5">
-                    <h3 class="mb-4">Galería</h3>
+                <div class="mb-5" style="margin-bottom: 2rem;">
                     @if($tour->images->count() > 0)
                         <div class="tour-gallery-grid">
                             @foreach ($tour->images as $image)
@@ -168,13 +220,13 @@
                 </div>
 
                 <!-- Description -->
-                <div class="mb-5">
+                <div class="mb-5" style="margin-top: 2rem; margin-bottom: 2rem;">
                     <h3>Descripción</h3>
                     <p class="lead">{{ $tour->description }}</p>
                 </div>
 
                 <!-- What's Included -->
-                <div class="mb-5">
+                <div class="mb-5" style="margin-top: 2rem; margin-bottom: 2rem;">
                     <h3>¿Qué está Incluido?</h3>
                     <div class="row g-3">
                         @foreach ($tour->includes as $item)
@@ -188,18 +240,7 @@
                     </div>
                 </div>
 
-                <!-- Important Info -->
-                <div class="alert alert-info">
-                    <h5 class="alert-heading">
-                        <i class="bi bi-info-circle"></i> Información Importante
-                    </h5>
-                    <ul class="mb-0">
-                        <li>Los horarios están sujetos a cambios según el clima</li>
-                        <li>Se recomienda llevar ropa cómoda y zapatos de senderismo</li>
-                        <li>Cancelación gratuita hasta 24 horas antes</li>
-                        <li>Confirmación instantánea al reservar</li>
-                    </ul>
-                </div>
+               
             </div>
 
             <!-- Sidebar -->
@@ -282,6 +323,12 @@
                                 <div style="font-size: 2rem; font-weight: 700; color: {{ $seasonColor }}; margin-bottom: 0.25rem;">
                                     ${{ number_format($priceAmount, 0) }}
                                 </div>
+                                <div style="font-size: 1rem; color: #333; font-weight: 500; margin-bottom: 0.25rem;">
+                                    por Persona
+                                    <span style="color: #888; font-weight: 400;">
+                                        {{ $tour->duration_hours ? rtrim(rtrim(number_format($tour->duration_hours,2), '0'), '.') : 'N/D' }} horas
+                                    </span>
+                                </div>
                                 @if($dateRange)
                                     <div style="font-size: 0.75rem; color: #666;">
                                         {{ $dateRange }}
@@ -293,71 +340,89 @@
                             </div>
                         </div>
                         
-                        <div class="mb-4">
-                            <small class="text-muted">por Persona</small>
-                            <small class="text-muted d-block">{{ $tour->duration }} horas</small>
-                        </div>
-
-                        <!-- Booking Button -->
-                        <button class="btn w-100 mb-2" style="background: linear-gradient(135deg, #1eaa60, #15c25a); color: white; font-weight: 600;">
-                            <i class="bi bi-calendar-check"></i> Reservar Ahora
-                        </button>
-
-                        <!-- Add to Plan Button -->
-                        <button class="btn btn-outline-secondary w-100 mb-3">
-                            <i class="bi bi-plus"></i> Agregar a Mi Plan
-                        </button>
-
-                        <!-- Contact Button -->
-                        <button class="btn btn-light w-100">
-                            <i class="bi bi-telephone"></i> Contactar
-                        </button>
-
-                        <!-- Info Box -->
+                       
+                        <!-- Info Box 
                         <div class="alert alert-info mt-3 small">
                             <i class="bi bi-info-circle"></i> 
                             Disponibilidad en tiempo real. Confirmación instantánea.
-                        </div>
+                        </div>-->
 
-                        <!-- Quick Info -->
+                        <!-- Quick Info 
                         <div class="border-top pt-3 mt-3">
                             <small class="text-muted d-block mb-2">
                                 <i class="bi bi-geo-alt"></i> {{ $tour->destinations->first()?->name ?? 'Costa Rica' }}
                             </small>
                             <small class="text-muted d-block mb-2">
-                                <i class="bi bi-clock"></i> {{ $tour->duration }} horas
+                                <i class="bi bi-clock"></i> {{ $tour->duration_hours ? rtrim(rtrim(number_format($tour->duration_hours,2), '0'), '.') : 'N/D' }} horas
                             </small>
                             <small class="text-muted d-block">
-                                <i class="bi bi-people"></i> {{ $tour->group_size ?? '6-8' }} personas
+                                <i class="bi bi-people"></i> {{ $tour->max_capacity > 0 ? $tour->max_capacity : 'N/D' }} personas
                             </small>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
 
-                <!-- Similar Tours -->
-                <div class="card mt-3">
-                    <div class="card-header">
-                        <h5 class="mb-0">Tours Similares</h5>
+                <!-- CTA WhatsApp igual que en /tours -->
+                <section class="providers-cta" style="background: #fff7f7; color: #8B0000; padding: 2.5rem 1rem; text-align: center; border-radius: 16px; margin-top: 1.5rem;">
+                    <div class="container">
+                        <h5 class="providers-cta-title">
+                            {{ app()->getLocale() === 'es' ? '¿Listo para tu aventura?' : 'Ready for your adventure?' }}
+                        </h5>
+                        <p class="providers-cta-text">
+                            {{ app()->getLocale() === 'es' ? 'Contáctanos hoy y comienza a planificar el viaje de tus sueños en Costa Rica' : 'Contact us today and start planning your dream trip to Costa Rica' }}
+                        </p>
+                        <a href="https://wa.me/70579814" target="_blank" rel="noopener" class="providers-cta-button">
+                            <span style="display: inline-flex; align-items: center; gap: 0.4rem;">
+                                <span style="font-size: 1.15rem;">💬</span>
+                                {{ app()->getLocale() === 'es' ? 'Contactar Ahora' : 'Contact Now' }}
+                            </span>
+                        </a>
                     </div>
-                    <div class="card-body">
-                        @php
-                            $otherTours = \App\Models\Tour::where('id', '!=', $tour->id)->limit(2)->get();
-                        @endphp
-                        @forelse ($otherTours as $otherTour)
-                            <div class="mb-3">
-                                <h6>{{ $otherTour->name }}</h6>
-                                <small class="text-muted">{{ $otherTour->duration }} horas</small>
-                                <p class="text-success fw-bold">${{ number_format($otherTour->base_price ?? 199, 0) }}</p>
-                                <a href="/{{ app()->getLocale() }}/tour/{{ $otherTour->slug }}" class="btn btn-sm btn-outline-primary">Ver Tour</a>
-                            </div>
-                            @if (!$loop->last)
-                                <hr>
-                            @endif
-                        @empty
-                            <p class="text-muted">No hay otros tours disponibles</p>
-                        @endforelse
+                </section>
+                <style>
+                    .providers-cta {
+                        background: #fff7f7;
+                        color: #8B0000;
+                        padding: 2.5rem 1rem;
+                        text-align: center;
+                        border-radius: 16px;
+                        margin-top: 1.5rem;
+                    }
+                    .providers-cta-title {
+                        font-size: 1.2rem;
+                        font-weight: 700;
+                        margin-bottom: 0.7rem;
+                    }
+                    .providers-cta-text {
+                        font-size: 1rem;
+                        margin-bottom: 1.2rem;
+                    }
+                    .providers-cta-button {
+                        display: inline-block;
+                        background: #8B0000;
+                        color: #fff;
+                        padding: 0.5rem 1.2rem;
+                        border-radius: 50px;
+                        font-weight: 700;
+                        font-size: 1.1rem;
+                        text-decoration: none;
+                        transition: all 0.3s;
+                        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                    }
+                    .providers-cta-button:hover {
+                        background: #a80000;
+                        color: #fff;
+                    }
+                    @media (max-width: 768px) {
+                        .providers-cta-button {
+                            font-size: 0.95rem;
+                        }
+                    }
+                </style>
+                    <div class="mt-2" style="font-size: 0.95rem; color: #e0e0e0;">
+                        Respuesta rápida y atención personalizada
                     </div>
-                </div>
+                </section>
             </div>
         </div>
     </div>

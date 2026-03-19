@@ -196,7 +196,16 @@
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
             <div>
                 <p>&copy; 2025 Costa Rica Trip Packages. All rights reserved.</p>
-                <p>WhatsApp: <a href="https://wa.me/50670579814?text=Hello%2C%20I%20would%20like%20more%20information%20about%20your%20personalized%20tours%20in%20Costa%20Rica" style="color: var(--primary); text-decoration: none;">+506 7057-9814</a></p>
+                <div class="card mt-3">
+                    <div class="card-body text-center">
+                        <a href="https://wa.me/70579814" target="_blank" rel="noopener" class="btn w-100" style="background: linear-gradient(135deg, #1eaa60, #15c25a); color: white; font-weight: 600; font-size: 1.1rem;">
+                            <i class="bi bi-whatsapp" style="font-size: 1.3rem;"></i> Reservar vía WhatsApp
+                        </a>
+                        <div class="mt-2" style="font-size: 0.95rem; color: #666;">
+                            Respuesta rápida y atención personalizada
+                        </div>
+                    </div>
+                </div>
             </div>
             <div style="display: flex; gap: 1rem;">
                 @if(app()->getLocale() === 'es')

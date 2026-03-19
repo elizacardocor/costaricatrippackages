@@ -40,81 +40,21 @@
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --primary: #00A86B;
-            --secondary: #FF6B35;
-            --dark: #1a1a1a;
-            --light: #f8f9fa;
-            --gray: #6c757d;
-        }
+        :root { --primary: #00A86B; --secondary: #FF6B35; --dark: #1a1a1a; --light: #f8f9fa; --gray: #6c757d; }
         body { font-family: 'Poppins', sans-serif; line-height: 1.6; color: var(--dark); background: #fff; }
-        
-        /* Navigation */
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            z-index: 1000;
-            padding: 1rem 2rem;
-        }
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: var(--primary);
-            text-decoration: none;
-        }
+        nav { position: fixed; top: 0; width: 100%; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000; padding: 1rem 2rem; }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.3rem; font-weight: 800; color: var(--primary); text-decoration: none; }
         .nav-menu { display: flex; gap: 2rem; list-style: none; align-items: center; }
         .nav-menu a { text-decoration: none; color: var(--dark); font-weight: 500; transition: color 0.3s; }
         .nav-menu a:hover { color: var(--primary); }
-        
-        /* Hero */
-        .hero {
-            margin-top: 70px;
-            height: 300px;
-            background: linear-gradient(135deg, #FF6B35 0%, #00A86B 40%, #FF6B35 100%);
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-        .hero::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: url('https://images.unsplash.com/photo-1759687161429-95cb98a7cf32?w=1920&q=80') center/cover;
-            opacity: 0.3;
-            z-index: 1;
-        }
+        .hero { margin-top: 70px; height: 300px; background: linear-gradient(135deg, #FF6B35 0%, #FF6B35 50%, #00A86B 100%); position: relative; display: flex; align-items: center; justify-content: center; color: white; }
+        .hero::before { content: ''; position: absolute; inset: 0; background: url('https://images.unsplash.com/photo-1759687161429-95cb98a7cf32?w=1920&q=80') center/cover; opacity: 0.3; z-index: 1; }
         .hero-content { position: relative; z-index: 2; text-align: center; max-width: 800px; padding: 2rem; }
         .hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; margin-bottom: 1rem; text-shadow: 2px 2px 8px rgba(0,0,0,0.3); }
         .hero p { font-size: 1.2rem; margin-bottom: 2rem; text-shadow: 1px 1px 4px rgba(0,0,0,0.3); }
-        
-        .cta-button {
-            display: inline-block;
-            padding: 1rem 2.5rem;
-            background: var(--secondary);
-            color: white;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: 700;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(255,107,53,0.4);
-            border: none;
-            cursor: pointer;
-        }
+        .cta-button { display: inline-block; padding: 1rem 2.5rem; background: var(--secondary); color: white; text-decoration: none; border-radius: 50px; font-weight: 700; transition: all 0.3s; box-shadow: 0 4px 15px rgba(255,107,53,0.4); border: none; cursor: pointer; }
         .cta-button:hover { transform: translateY(-3px); box-shadow: 0 6px 25px rgba(255,107,53,0.6); }
-        
         .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
         section { padding: 5rem 2rem; }
         .section-title { text-align: center; font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; }
@@ -382,7 +322,16 @@
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
             <div>
                 <p>&copy; 2025 Costa Rica Trip Packages. All rights reserved.</p>
-                <p>WhatsApp: <a href="https://wa.me/50670579814?text=Hello%2C%20I%20would%20like%20more%20information%20about%20your%20personalized%20tours%20in%20Costa%20Rica" style="color: var(--primary); text-decoration: none;">+506 7057-9814</a></p>
+                <div class="card mt-3">
+                    <div class="card-body text-center">
+                        <a href="https://wa.me/70579814" target="_blank" rel="noopener" class="btn w-100" style="background: linear-gradient(135deg, #1eaa60, #15c25a); color: white; font-weight: 600; font-size: 1.1rem;">
+                            <i class="bi bi-whatsapp" style="font-size: 1.3rem;"></i> Reservar vía WhatsApp
+                        </a>
+                        <div class="mt-2" style="font-size: 0.95rem; color: #666;">
+                            Respuesta rápida y atención personalizada
+                        </div>
+                    </div>
+                </div>
             </div>
             <div style="display: flex; gap: 1rem;">
                 @if(app()->getLocale() === 'es')
