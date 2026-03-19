@@ -88,8 +88,12 @@ class ListingController extends Controller
             $tmpPath = $videoFile->storeAs('tmp', uniqid('video_') . '.' . $originalExt, 'local');
             $tmpFullPath = storage_path('app/' . $tmpPath);
             $publicVideoDir = public_path($videoDir);
+            \Log::info('Ruta esperada para videos:', ['publicVideoDir' => $publicVideoDir]);
             if (!file_exists($publicVideoDir)) {
-                mkdir($publicVideoDir, 0775, true);
+                $mkdirResult = mkdir($publicVideoDir, 0775, true);
+                \Log::info('Intento de crear directorio videos', ['result' => $mkdirResult, 'dir' => $publicVideoDir]);
+            } else {
+                \Log::info('Directorio videos ya existe', ['dir' => $publicVideoDir]);
             }
             $publicWebmPath = $publicVideoDir . '/' . $webmName;
 
