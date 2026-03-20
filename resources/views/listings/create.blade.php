@@ -6,7 +6,24 @@
 @section('extra_styles')
 <style>
     /* Estilos personalizados para el formulario de registro */
-    .card {
+    .addTourIncludeBtn {
+    background: #10b981;
+    color: #fff;
+    font-size: 0.92rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 6px;
+    font-weight: 600;
+    border: none;
+    box-shadow: none;
+    transition: background 0.2s;
+    line-height: 1.1;
+    margin-top: 0.2rem;
+}
+.addTourIncludeBtn:hover {
+    background: #0e9e6e;
+    color: #fff;
+}
+.card {
         border: none;
         border-radius: 12px;
         overflow: hidden;
@@ -26,6 +43,7 @@
         flex-wrap: wrap;
         margin-left: -0.75rem;
         margin-right: -0.75rem;
+        margin-bottom: 0.7rem; /* Espaciado entre filas del formulario */
     }
 
     #listingForm .col-md-6 {
@@ -765,7 +783,7 @@
                         </div>
                         
                         <button type="button" id="addImageBtn" class="btn btn-primary mt-2">
-                            <i class="bi bi-cloud-upload"></i> {{ __('Agregar más imágenes') }}
+                            <i class="fas fa-plus-circle"></i> {{ __('Agregar más imágenes') }}
                         </button>
                         <small class="d-block mt-2 text-muted">
                             <i class="bi bi-info-circle"></i> {{ __('Imágenes agregadas:') }} <strong><span id="imageCount">0</span>/9</strong>
@@ -864,6 +882,22 @@
                         <div class="col-md-6 mb-3">
                         <label for="tour_commission" class="form-label">{{ __('Comisión (%)') }}</label>
                         <input type="number" name="tour_commission" id="tour_commission" class="form-control" step="0.01" min="0" max="100" placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <!-- Incluye del tour -->
+                    <div class="row">
+                        <div class="col-12 mb-3 full-width-field">
+                            <label class="form-label fw-bold">{{ __('¿Qué está incluido en el tour?') }}</label>
+                            <div id="tourIncludesContainer">
+                                <!-- Los campos de incluye se agregan aquí -->
+                            </div>
+                            <button type="button" class="addTourIncludeBtn btn btn-success mt-2">
+                                <i class="fas fa-plus-circle"></i> {{ __('Agregar Items Incluidos') }}
+                            </button>
+                            <small class="d-block mt-2 text-muted">
+                                <i class="bi bi-info-circle"></i> {{ __('Puedes agregar varios elementos, por ejemplo: transporte, guía, comidas, entradas, etc.') }}
+                            </small>
                         </div>
                     </div>
 
@@ -1139,9 +1173,7 @@
         inputGroup.dataset.serviceType = serviceType;
         inputGroup.innerHTML = `
             <input type="file" name="${inputName}[]" id="${imageId}" class="form-control" accept="image/*">
-            <button type="button" class="btn btn-outline-danger btn-sm remove-image-btn">
-                <i class="bi bi-trash"></i>
-            </button>
+            <button type="button" class="btn btn-danger btn-sm remove-image-btn"><i class="fas fa-trash red"></i></button>
         `;
 
         container.appendChild(inputGroup);
@@ -1203,4 +1235,34 @@
         updateImageCount('transport');
     }
 </script>
-        </div><!-- End Content Box -->
+    <!-- Delegación para agregar tour_includes -->
+    <script>
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.addTourIncludeBtn')) {
+                e.preventDefault();
+                e.stopPropagation();
+                addTourInclude();
+                return false;
+            }
+            if (e.target.closest('.remove-tour-include-btn')) {
+                e.preventDefault();
+                e.stopPropagation();
+                const includeGroup = e.target.closest('.tour-include-group');
+                if (includeGroup) includeGroup.remove();
+                return false;
+            }
+        });
+
+        function addTourInclude() {
+            const container = document.getElementById('tourIncludesContainer');
+            if (!container) return;
+            const index = container.children.length;
+            container.insertAdjacentHTML('beforeend', `
+                <div class="tour-include-group d-flex gap-2 mb-2 align-items-center">
+                    <input type="text" name="tour_includes[${index}][name]" class="form-control" placeholder="Nombre del elemento (ej. Transporte, Guía, Comidas)" required >
+                    <button type="button" class="remove-tour-include-btn btn btn-danger btn-sm remove-image-btn"><i class="fas fa-trash red"></i></button>
+                </div>
+            `);
+        }
+    </script>
+</div><!-- End Content Box -->

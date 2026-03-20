@@ -253,14 +253,18 @@
                 <div class="mb-5" style="margin-top: 2rem; margin-bottom: 2rem;">
                     <h3>¿Qué está Incluido?</h3>
                     <div class="row g-3">
-                        @foreach ($tour->includes as $item)
-                            <div class="col-md-6">
-                                <div class="d-flex gap-2">
-                                    <i class="bi bi-check-circle-fill text-success mt-1"></i>
-                                    <span>{{ $item->name }}</span>
-                                </div>
+                        @forelse ($tour->tourIncludes as $item)
+                            <div class="col-md-6 d-flex align-items-center mb-2">
+                                <span style="font-size:1.5rem;line-height:1;display:inline-block;margin-right:0.5rem;color:#10b981;">
+                                    &#10003;
+                                </span>
+                                <span class="fw-semibold" style="color:#222;font-size:1.08rem;">{{ $item->name }}</span>
                             </div>
-                        @endforeach
+                        @empty
+                            <div class="col-12">
+                                <span class="text-muted">No hay información de incluye para este tour.</span>
+                            </div>
+                        @endforelse
                     </div>
                 </div>
 

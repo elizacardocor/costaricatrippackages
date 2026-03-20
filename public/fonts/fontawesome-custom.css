@@ -1,3 +1,7 @@
+/* Icono de basurero (fa-trash) */
+.fa-trash::before { content: "\f1f8"; }
+/* Icono de eliminar (fa-times-circle) */
+.fa-times-circle::before { content: "\f057"; }
 /* Font Awesome Custom - Only Icons Used */
 
 @font-face {

@@ -167,6 +167,19 @@ class ListingController extends Controller
             // Guardar precios por temporada
             $this->savePrices($serviceType, $service->id, $request);
 
+            // Guardar tour_includes
+            if ($serviceType === 'tour' && $request->has('tour_includes')) {
+                $includes = $request->input('tour_includes');
+                foreach ($includes as $include) {
+                    if (!empty($include['name'])) {
+                        $service->tourIncludes()->create([
+                            'name' => $include['name'],
+                            'icon' => $include['icon'] ?? 'bi-check-circle',
+                        ]);
+                    }
+                }
+            }
+
             // Construir URL de detalle según el tipo de servicio
             $locale = app()->getLocale();
             
