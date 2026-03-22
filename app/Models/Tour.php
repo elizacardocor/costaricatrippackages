@@ -27,6 +27,7 @@ class Tour extends Model
         'rating',
         'status',
         'user_id',
+        'cancellation_policy',
     ];
 
     protected $casts = [

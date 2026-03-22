@@ -26,6 +26,7 @@ class Hotel extends Model
         'checkout_time',
         'status',
         'user_id',
+        'cancellation_policy',
     ];
 
     public function destinations()

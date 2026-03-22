@@ -281,6 +281,7 @@
                     </div>
                 </div>
 
+
                 <!-- Recomendaciones del Tour -->
                 <div class="mb-5" style="margin-top: 2rem; margin-bottom: 2rem;">
                     <h3>Recomendaciones</h3>
@@ -292,6 +293,16 @@
                         </ul>
                     @else
                         <span class="text-muted">No se encontraron recomendaciones disponibles.</span>
+                    @endif
+                </div>
+
+                <!-- Política de Cancelación -->
+                <div class="mb-5" style="margin-top: 2rem; margin-bottom: 2rem;">
+                    <h3>Política de Cancelación</h3>
+                    @if(!empty($tour->cancellation_policy))
+                        <div class="alert alert-info" style="white-space: pre-line;">{{ $tour->cancellation_policy }}</div>
+                    @else
+                        <span class="text-muted">no se encontro informacion</span>
                     @endif
                 </div>
 

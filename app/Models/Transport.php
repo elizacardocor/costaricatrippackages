@@ -20,6 +20,7 @@ class Transport extends Model
         'rating',
         'status',
         'user_id',
+        'cancellation_policy',
     ];
 
     public function destinations()

@@ -762,6 +762,9 @@
                         </div>
                     </div>
                     <div class="mb-3 full-width-field">
+                        <label for="hotel_cancellation_policy" class="form-label">{{ __('Política de Cancelación') }}</label>
+                        <textarea name="hotel_cancellation_policy" id="hotel_cancellation_policy" class="form-control" rows="2" placeholder="Ejemplo: Cancelaciones hasta 48h antes sin costo. Después, se cobra la primera noche."></textarea>
+                    </div>
                         <label for="hotel_description" class="form-label">{{ __('Descripción') }}</label>
                         <textarea name="hotel_description" id="hotel_description" class="form-control" rows="3"></textarea>
                     </div>
@@ -846,6 +849,10 @@
         } 
         else if (serviceType === 'tour') {
             fieldsDiv.innerHTML = `
+                                        <div class="col-12 mb-3 full-width-field">
+                                            <label for="tour_cancellation_policy" class="form-label">{{ __('Política de Cancelación') }}</label>
+                                            <textarea name="tour_cancellation_policy" id="tour_cancellation_policy" class="form-control" rows="2" placeholder="Ejemplo: Cancelaciones hasta 24h antes sin penalización. Después, se cobra el 50%."></textarea>
+                                        </div>
                 <div class="form-section">
                     <h5>{{ __('Información del Tour') }}</h5>
                     <div class="row">
@@ -984,6 +991,10 @@
         } 
         else if (serviceType === 'transport') {
             fieldsDiv.innerHTML = `
+                                        <div class="col-12 mb-3 full-width-field">
+                                            <label for="transport_cancellation_policy" class="form-label">{{ __('Política de Cancelación') }}</label>
+                                            <textarea name="transport_cancellation_policy" id="transport_cancellation_policy" class="form-control" rows="2" placeholder="Ejemplo: Cancelaciones hasta 12h antes sin penalización. Después, se cobra el 100%."></textarea>
+                                        </div>
                 <div class="form-section">
                     <h5>{{ __('Información del Transporte') }}</h5>
                     <div class="row">
@@ -1104,6 +1115,9 @@
     let hotelImageCount = 0;
     let tourImageCount = 0;
     let transportImageCount = 0;
+    const maxHotelImages = 20;
+    const maxTourImages = 20;
+    const maxTransportImages = 20;
 
     // Delegación de eventos para botones "Agregar Imagen"
     document.addEventListener('click', function(e) {
@@ -1167,8 +1181,12 @@
             currentCount = transportImageCount;
         }
 
-        if (currentCount >= 9) {
-            alert('{{ __("Máximo 9 imágenes adicionales permitidas") }}');
+        let maxImages = 9;
+        if (serviceType === 'hotel') maxImages = maxHotelImages;
+        else if (serviceType === 'tour') maxImages = maxTourImages;
+        else if (serviceType === 'transport') maxImages = maxTransportImages;
+        if (currentCount >= maxImages) {
+            alert('Máximo ' + maxImages + ' imágenes adicionales permitidas');
             return false;
         }
 

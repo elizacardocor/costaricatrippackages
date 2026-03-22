@@ -253,7 +253,7 @@ class ListingController extends Controller
             'hotel_checkout' => 'nullable|date_format:H:i',
             // Validación de imágenes: aceptar JPEG/PNG y límite 5MB
             'hotel_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
-            'hotel_images' => 'nullable|array|max:9',
+            'hotel_images' => 'nullable|array|max:20',
             'hotel_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:5120',
             'hotel_amenities' => 'nullable|array',
         ]);
@@ -284,6 +284,7 @@ class ListingController extends Controller
             'checkout_time' => $request->input('hotel_checkout', '11:00:00'),
             'user_id' => $userId,
             'status' => 'pending',
+            'cancellation_policy' => $request->input('hotel_cancellation_policy'),
         ]);
 
         // Guardar imágenes (principal + adicionales)
@@ -395,6 +396,7 @@ class ListingController extends Controller
             'tour_operator_id' => $tourOperator->id,
             'user_id' => $userId,
             'status' => 'pending',
+            'cancellation_policy' => $request->input('tour_cancellation_policy'),
         ]);
 
         // Asociar al destino
@@ -473,6 +475,7 @@ class ListingController extends Controller
             'commission_percentage' => $request->input('transport_commission', 0),
             'user_id' => $userId,
             'status' => 'pending',
+            'cancellation_policy' => $request->input('transport_cancellation_policy'),
         ]);
 
         // Asociar al destino
