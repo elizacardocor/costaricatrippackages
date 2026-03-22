@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('commission_percentage', 5, 2)->default(0);
             $table->decimal('duration_hours', 5, 2)->nullable();
             $table->time('start_time')->nullable();
+            $table->integer('min_capacity')->default(1);
             $table->integer('max_capacity')->default(0);
             $table->enum('difficulty', ['easy', 'moderate', 'hard'])->default('moderate');
             $table->json('languages')->nullable();

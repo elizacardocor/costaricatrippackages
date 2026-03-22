@@ -57,20 +57,25 @@
 
     .tour-image-wrapper {
         position: relative;
-        height: 240px;
+        height: 340px;
         overflow: hidden;
         transition: transform 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #000;
     }
 
     .tour-image-wrapper:hover {
         transform: scale(1.05);
     }
 
-    .tour-image {
+    .tour-image, .tour-image-wrapper video {
         width: 100%;
         height: 100%;
         object-fit: cover;
         transition: transform 0.3s;
+        display: block;
     }
 
     .tour-image-wrapper:hover .tour-image {
@@ -193,6 +198,11 @@
                         <div class="card border-0 bg-light p-3">
                             <h5 class="mb-0">
                                 <i class="bi bi-people"></i>
+                                <span style="color:#8B0000; font-weight: bold;">Capacidad mínima:</span>
+                                {{ $tour->min_capacity > 0 ? $tour->min_capacity : 'N/D' }} personas
+                            </h5>
+                            <h5 class="mb-0 mt-2">
+                                <i class="bi bi-people"></i>
                                 <span style="color:#8B0000; font-weight: bold;">Capacidad máxima:</span>
                                 {{ $tour->max_capacity > 0 ? $tour->max_capacity : 'N/D' }} personas
                             </h5>
@@ -200,54 +210,57 @@
                     </div>
                 </div>
 
-                <!-- Image Gallery -->
+                <!-- Galería de Imágenes y Video -->
                 <div class="mb-5" style="margin-bottom: 2rem;">
-                    @if($tour->images->count() > 0)
-                        <div class="tour-gallery-grid">
-                            @foreach ($tour->images as $image)
-                                <div class="tour-gallery-item">
-                                    <div class="tour-image-wrapper" style="border-radius: 12px; cursor: pointer;">
-                                        <picture>
-                                            <source type="image/webp" srcset="{{ asset('storage/' . str_replace('.jpg', '.webp', $image->url)) }}">
-                                            <img src="{{ asset('storage/' . $image->url) }}" 
-                                                 alt="{{ $image->alt_text ?? $tour->name }}" 
-                                                 class="tour-image">
-                                        </picture>
-                                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3>Galería</h3>
+                            @if($tour->images->count() > 0)
+                                <div class="tour-gallery-grid">
+                                    @foreach ($tour->images as $image)
+                                        <div class="tour-gallery-item">
+                                            <div class="tour-image-wrapper" style="border-radius: 12px; cursor: pointer;">
+                                                <picture>
+                                                    <source type="image/webp" srcset="{{ asset('storage/' . str_replace('.jpg', '.webp', $image->url)) }}">
+                                                    <img src="{{ asset('storage/' . $image->url) }}" 
+                                                         alt="{{ $image->alt_text ?? $tour->name }}" 
+                                                         class="tour-image" style="width:100%;height:340px;object-fit:cover;border-radius:12px;">
+                                                </picture>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                    @if($tour->video_url)
+                                        <div class="tour-gallery-item">
+                                            <div class="tour-image-wrapper" style="border-radius: 12px; cursor: pointer;">
+                                                @php
+                                                    $videoUrl = ltrim($tour->video_url, '/');
+                                                    $videoMp4 = preg_replace('/\.webm$/i', '.mp4', $videoUrl);
+                                                    $videoTitle = $tour->name . ' - ' . (\Illuminate\Support\Str::limit($tour->description, 60));
+                                                @endphp
+                                                <video controls preload="none" style="width:100%;height:340px;object-fit:cover;border-radius:12px;" poster="{{ $tour->images->first() ? asset('storage/' . ltrim($tour->images->first()->url,'/')) : asset('images/default-tour.jpg') }}" title="{{ $videoTitle }}">
+                                                    <source src="/{{ $videoUrl }}" type="video/webm">
+                                                    <source src="/{{ $videoMp4 }}" type="video/mp4">
+                                                    {{ __('Video de presentación:') }} {{ $videoTitle }}
+                                                </video>
+                                            </div>
+                                            <p class="text-muted mt-2"><strong>{{ $videoTitle }}</strong></p>
+                                        </div>
+                                    @endif
                                 </div>
-                            @endforeach
+                            @else
+                                <p class="text-muted">{{ __('No hay imágenes disponibles') }}</p>
+                            @endif
                         </div>
-                    @else
-                        <p class="text-muted">{{ __('No hay imágenes disponibles') }}</p>
-                    @endif
-                </div>
-
-
-                <!-- Video de Presentación (si existe) -->
-                @if($tour->video_url)
-                <div class="mb-5">
-                    <h3>Video de Presentación</h3>
-                    <div class="ratio ratio-16x9 mb-3">
-                        @php
-                            $videoUrl = ltrim($tour->video_url, '/');
-                            $videoMp4 = preg_replace('/\.webm$/i', '.mp4', $videoUrl);
-                            $videoTitle = $tour->name . ' - ' . (\Illuminate\Support\Str::limit($tour->description, 60));
-                        @endphp
-                        <video controls preload="none" style="width:100%;border-radius:12px;" poster="{{ $tour->images->first() ? asset('storage/' . ltrim($tour->images->first()->url,'/')) : asset('images/default-tour.jpg') }}" title="{{ $videoTitle }}">
-                            <source src="/{{ $videoUrl }}" type="video/webm">
-                            <source src="/{{ $videoMp4 }}" type="video/mp4">
-                            {{ __('Video de presentación:') }} {{ $videoTitle }}
-                        </video>
-                        <p class="text-muted mt-2"><strong>{{ $videoTitle }}</strong></p>
+                       
                     </div>
                 </div>
-                @endif
 
                 <!-- Description -->
                 <div class="mb-5" style="margin-top: 2rem; margin-bottom: 2rem;">
                     <h3>Descripción</h3>
                     <p class="lead">{{ $tour->description }}</p>
                 </div>
+
 
                 <!-- What's Included -->
                 <div class="mb-5" style="margin-top: 2rem; margin-bottom: 2rem;">
@@ -266,6 +279,20 @@
                             </div>
                         @endforelse
                     </div>
+                </div>
+
+                <!-- Recomendaciones del Tour -->
+                <div class="mb-5" style="margin-top: 2rem; margin-bottom: 2rem;">
+                    <h3>Recomendaciones</h3>
+                    @if(!empty($tour->recommendations))
+                        <ul>
+                            @foreach(explode(',', $tour->recommendations) as $rec)
+                                <li>{{ trim($rec) }}</li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <span class="text-muted">No se encontraron recomendaciones disponibles.</span>
+                    @endif
                 </div>
 
                

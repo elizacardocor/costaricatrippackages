@@ -853,15 +853,26 @@
                             <label for="tour_name" class="form-label">{{ __('Nombre del Tour') }} *</label>
                             <input type="text" name="tour_name" id="tour_name" class="form-control" required>
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-3 mb-3">
+                            <label for="tour_min_capacity" class="form-label">{{ __('Capacidad Mínima') }}</label>
+                            <input type="number" name="tour_min_capacity" id="tour_min_capacity" class="form-control" min="1">
+                        </div>
+                        <div class="col-md-3 mb-3">
                             <label for="tour_capacity" class="form-label">{{ __('Capacidad Máxima') }}</label>
-                            <input type="number" name="tour_capacity" id="tour_capacity" class="form-control">
+                            <input type="number" name="tour_capacity" id="tour_capacity" class="form-control" min="1">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12 mb-3 full-width-field">
                         <label for="tour_description" class="form-label">{{ __('Descripción') }}</label>
                         <textarea name="tour_description" id="tour_description" class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 mb-3 full-width-field">
+                            <label for="tour_recommendations" class="form-label">{{ __('Recomendaciones para el Tour') }}</label>
+                            <input type="text" name="tour_recommendations" id="tour_recommendations" class="form-control" placeholder="Ejemplo: Ropa y zapatos cómodos, bloqueador solar, agua, etc.">
+                            <small class="form-text text-muted">Separa cada recomendación con una coma.</small>
                         </div>
                     </div>
                     <div class="row">

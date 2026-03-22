@@ -369,7 +369,9 @@ class ListingController extends Controller
             'tour_description' => 'nullable|string',
             'tour_duration' => 'nullable|numeric',
             'tour_difficulty' => 'nullable|in:easy,moderate,hard',
+            'tour_min_capacity' => 'nullable|integer|min:1',
             'tour_capacity' => 'nullable|integer',
+            'tour_recommendations' => 'nullable|string',
             'tour_commission' => 'nullable|numeric|min:0|max:100',
             'is_tour_operator' => 'required|in:yes,no',
             'tour_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
@@ -386,7 +388,9 @@ class ListingController extends Controller
             'description' => $request->input('tour_description'),
             'duration_hours' => $request->input('tour_duration'),
             'difficulty' => $request->input('tour_difficulty', 'moderate'),
+            'min_capacity' => $request->input('tour_min_capacity'),
             'max_capacity' => $request->input('tour_capacity'),
+            'recommendations' => $request->input('tour_recommendations'),
             'commission_percentage' => $request->input('tour_commission', 0),
             'tour_operator_id' => $tourOperator->id,
             'user_id' => $userId,
@@ -886,6 +890,9 @@ class ListingController extends Controller
         }
 
         $baseName .= "-" . $order;
+
+        // Limpieza extra: elimina cualquier carácter no ASCII visible (invisible, raro, unicode)
+        $baseName = preg_replace('/[^\x20-\x7E]/', '', $baseName);
 
         return $baseName;
     }
