@@ -587,7 +587,7 @@
 
 <!-- CTA Section for Service Providers -->
 <section class="providers-cta">
-    <video class="providers-cta-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+    <video class="providers-cta-video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
         <source src="{{ asset('storage/videos/tours_costa_rica_1.mp4') }}" type="video/mp4">
     </video>
     <div class="container providers-cta-content">

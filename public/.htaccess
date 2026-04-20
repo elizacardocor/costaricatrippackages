@@ -5,6 +5,11 @@
 
     RewriteEngine On
 
+    # Allow byte-range requests for video streaming
+    RewriteCond %{HTTP:Range} .
+    RewriteCond %{REQUEST_FILENAME} \.(mp4|webm|ogg)$ [NC]
+    RewriteRule ^ - [L]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]

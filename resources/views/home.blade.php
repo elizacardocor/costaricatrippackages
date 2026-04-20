@@ -495,7 +495,7 @@
 
     <!-- CTA Section for Tourists -->
     <section class="providers-cta providers-cta-home">
-        <video class="providers-cta-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+        <video class="providers-cta-video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
             <source src="{{ asset('storage/videos/tours_costa_rica_1.mp4') }}" type="video/mp4">
         </video>
         <div class="providers-cta-overlay">
