@@ -775,7 +775,7 @@
                     </div>
                     
                     <div class="mb-3 full-width-field">
-                        <label class="form-label fw-bold">{{ __('Imágenes Adicionales (Hasta 9)') }}</label>
+                        <label class="form-label fw-bold">{{ __('Imágenes Adicionales (Hasta 20)') }}</label>
                         <div class="alert alert-info alert-sm" role="alert">
                             <strong>{{ __('Mismos requisitos que la imagen principal.') }}</strong><br>
                             {{ __('Sugerencia: sube fotos de habitaciones, piscina, restaurante, vistas y áreas comunes para mejor presentación.') }}
@@ -789,7 +789,7 @@
                             <i class="fas fa-plus-circle"></i> {{ __('Agregar más imágenes') }}
                         </button>
                         <small class="d-block mt-2 text-muted">
-                            <i class="bi bi-info-circle"></i> {{ __('Imágenes agregadas:') }} <strong><span id="imageCount">0</span>/9</strong>
+                            <i class="bi bi-info-circle"></i> {{ __('Imágenes agregadas:') }} <strong><span id="imageCount">0</span>/20</strong>
                         </small>
                     </div>
                     <div class="row">
@@ -929,7 +929,7 @@
                     
                     <div class="row">
                         <div class="col-12 mb-3 full-width-field">
-                        <label class="form-label fw-bold">{{ __('Imágenes Adicionales (Hasta 9)') }}</label>
+                        <label class="form-label fw-bold">{{ __('Imágenes Adicionales (Hasta 20)') }}</label>
                         <div class="alert alert-info alert-sm" role="alert">
                             <strong>{{ __('Mismos requisitos que la imagen principal.') }}</strong><br>
                             {{ __('Sugerencia: sube fotos de los paisajes, actividades, paradas y puntos de interés para mejor presentación.') }}
@@ -943,7 +943,7 @@
                             <i class="bi bi-cloud-upload"></i> {{ __('Agregar más imágenes') }}
                         </button>
                         <small class="d-block mt-2 text-muted">
-                            <i class="bi bi-info-circle"></i> {{ __('Imágenes agregadas:') }} <strong><span class="tourImageCount">0</span>/9</strong>
+                            <i class="bi bi-info-circle"></i> {{ __('Imágenes agregadas:') }} <strong><span class="tourImageCount">0</span>/20</strong>
                         </small>
                         </div>
                     </div>
@@ -1034,7 +1034,7 @@
                     
                     <div class="row">
                         <div class="col-12 mb-3 full-width-field">
-                        <label class="form-label fw-bold">{{ __('Imágenes Adicionales (Hasta 9)') }}</label>
+                        <label class="form-label fw-bold">{{ __('Imágenes Adicionales (Hasta 20)') }}</label>
                         <div class="alert alert-info alert-sm" role="alert">
                             <strong>{{ __('Mismos requisitos que la imagen principal.') }}</strong><br>
                             {{ __('Sugerencia: sube fotos de los vehículos, interiores, servicio y destinos para mejor presentación.') }}
@@ -1048,7 +1048,7 @@
                             <i class="bi bi-cloud-upload"></i> {{ __('Agregar más imágenes') }}
                         </button>
                         <small class="d-block mt-2 text-muted">
-                            <i class="bi bi-info-circle"></i> {{ __('Imágenes agregadas:') }} <strong><span class="transportImageCount">0</span>/9</strong>
+                            <i class="bi bi-info-circle"></i> {{ __('Imágenes agregadas:') }} <strong><span class="transportImageCount">0</span>/20</strong>
                         </small>
                         </div>
                     </div>
@@ -1181,7 +1181,7 @@
             currentCount = transportImageCount;
         }
 
-        let maxImages = 9;
+        let maxImages = 20;
         if (serviceType === 'hotel') maxImages = maxHotelImages;
         else if (serviceType === 'tour') maxImages = maxTourImages;
         else if (serviceType === 'transport') maxImages = maxTransportImages;

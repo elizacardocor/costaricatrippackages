@@ -43,4 +43,12 @@ class Pricing extends Model
     {
         return $this->morphTo();
     }
+
+    /**
+     * Relación con grupos de precios (precios escalonados por cantidad de personas)
+     */
+    public function pricingGroups()
+    {
+        return $this->hasMany(PricingGroup::class)->where('active', true)->orderBy('group_size');
+    }
 }

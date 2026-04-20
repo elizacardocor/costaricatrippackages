@@ -195,9 +195,15 @@
                             }
                         }
                     @endphp
-                    <a href="{{ '/' . $newPath }}" style="color: #8B0000; font-weight: 600;">
-                        {{ app()->getLocale() === 'es' ? '🇬🇧 EN' : '🇪🇸 ES' }}
-                    </a>
+                    @if(app()->getLocale() === 'en')
+                        {{-- <a href="{{ '/' . $newPath }}" style="color: #8B0000; font-weight: 600;">
+                            {{ '🇪🇸 ES' }}
+                        </a> --}}
+                    @else
+                        <a href="{{ '/' . $newPath }}" style="color: #8B0000; font-weight: 600;">
+                            {{ '🇬🇧 EN' }}
+                        </a>
+                    @endif
                 </li>
             </ul>
         </div>

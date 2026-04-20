@@ -376,7 +376,7 @@ class ListingController extends Controller
             'tour_commission' => 'nullable|numeric|min:0|max:100',
             'is_tour_operator' => 'required|in:yes,no',
             'tour_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
-            'tour_images' => 'nullable|array|max:9',
+            'tour_images' => 'nullable|array|max:20',
             'tour_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
 
@@ -462,7 +462,7 @@ class ListingController extends Controller
             'transport_capacity' => 'nullable|integer',
             'transport_commission' => 'nullable|numeric|min:0|max:100',
             'transport_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
-            'transport_images' => 'nullable|array|max:9',
+            'transport_images' => 'nullable|array|max:20',
             'transport_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
 

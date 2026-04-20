@@ -24,7 +24,7 @@
         position: relative;
         height: 360px;
         overflow: hidden;
-        margin-top: 0;
+        margin-top: 82px;
     }
 
     .hero-image {
@@ -66,6 +66,49 @@
 
     .hero-section:hover .hero-content {
         transform: none;
+    }
+
+    .providers-cta-home {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        padding: 0;
+        height: 360px;
+    }
+
+    .providers-cta-home .providers-cta-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        animation: none;
+        transform: scale(1.1);
+        transition: transform 0.5s ease;
+    }
+
+    .providers-cta-home:hover .providers-cta-video {
+        transform: scale(1.1);
+    }
+
+    .providers-cta-home .providers-cta-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(0, 168, 107, 0.3) 0%, rgba(0, 102, 204, 0.3) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 1;
+        transition: opacity 0.5s ease;
+    }
+
+    .providers-cta-home .providers-cta-content {
+        text-align: center;
+        color: white;
+        padding: 1rem 1.25rem;
+        transform: none;
+        transition: transform 0.5s ease;
     }
 
     .hero-content h1 {
@@ -278,6 +321,7 @@
     @media (max-width: 768px) {
         .hero-section {
             height: 320px;
+            margin-top: 0;
         }
 
         .hero-content h1 {
@@ -326,7 +370,7 @@
     }
 
     .home-cta {
-        background: linear-gradient(135deg, #4a0000 0%, #6b0000 50%, #8B0000 100%);
+        background: transparent;
         color: white;
         padding: 4rem 2rem;
         text-align: center;
@@ -450,18 +494,23 @@
     -->
 
     <!-- CTA Section for Tourists -->
-    <section class="providers-cta">
-        <div class="container">
-            <h5 class="providers-cta-title">
-                {{ app()->getLocale() === 'es' ? '¿Listo para tu aventura?' : 'Ready for your adventure?' }}
-            </h5>
-            <p class="providers-cta-text">
-                {{ app()->getLocale() === 'es' ? 'Contáctanos hoy y comienza a planificar el viaje de tus sueños en Costa Rica' : 'Contact us today and start planning your dream trip to Costa Rica' }}
-            </p>
-            <a href="{{ app()->getLocale() === 'es' ? '/es/contacto' : '/en/contact' }}"
-               class="providers-cta-button">
-                {{ app()->getLocale() === 'es' ? '📞 Contactar Ahora' : '📞 Contact Now' }}
-            </a>
+    <section class="providers-cta providers-cta-home">
+        <video class="providers-cta-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+            <source src="{{ asset('videos/tours_costa_rica_1.mp4') }}" type="video/mp4">
+        </video>
+        <div class="providers-cta-overlay">
+            <div class="container providers-cta-content">
+                <h5 class="providers-cta-title">
+                    {{ app()->getLocale() === 'es' ? '¿Listo para tu aventura?' : 'Ready for your adventure?' }}
+                </h5>
+                <p class="providers-cta-text">
+                    {{ app()->getLocale() === 'es' ? 'Contáctanos hoy y comienza a planificar el viaje de tus sueños en Costa Rica' : 'Contact us today and start planning your dream trip to Costa Rica' }}
+                </p>
+                <a href="{{ app()->getLocale() === 'es' ? '/es/contacto' : '/en/contact' }}"
+                   class="providers-cta-button">
+                    {{ app()->getLocale() === 'es' ? '📞 Contactar Ahora' : '📞 Contact Now' }}
+                </a>
+            </div>
         </div>
     </section>
 

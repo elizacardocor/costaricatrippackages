@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up() {
         Schema::table('hotels', function (Blueprint $table) {
-            $table->text('cancellation_policy')->nullable()->after('hotel_description');
+            $table->text('cancellation_policy')->nullable()->after('description');
         });
     }
     public function down() {

@@ -1,3 +1,37 @@
+
+@php
+// Language switch logic (copied from master layout)
+$currentPath = trim(request()->path(), '/');
+if ($currentPath === '' || $currentPath === 'es' || $currentPath === 'en') {
+    $newPath = app()->getLocale() === 'es' ? 'en/' : 'es/';
+}
+$routeMap = [
+    'es/contacto' => 'en/contact',
+    'en/contact' => 'es/contacto',
+];
+if (!isset($newPath) && isset($routeMap[$currentPath])) {
+    $newPath = $routeMap[$currentPath];
+}
+if (!isset($newPath)) {
+    if (app()->getLocale() === 'es') {
+        if ($currentPath === 'es') {
+            $newPath = 'en/';
+        } elseif (str_starts_with($currentPath, 'es/')) {
+            $newPath = 'en/' . substr($currentPath, 3);
+        } else {
+            $newPath = 'en/' . ltrim($currentPath, '/');
+        }
+    } else {
+        if ($currentPath === 'en') {
+            $newPath = 'es/';
+        } elseif (str_starts_with($currentPath, 'en/')) {
+            $newPath = 'es/' . substr($currentPath, 3);
+        } else {
+            $newPath = 'es/' . ltrim($currentPath, '/');
+        }
+    }
+}
+@endphp
 @extends('layouts.master')
 
 @section('title', $tour->name . ' - Costa Rica Trip Packages')
@@ -82,15 +116,73 @@
         transform: scale(1.1);
     }
 
+    .season-group-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.5rem 0.65rem;
+        border-radius: 8px;
+        background: #fff;
+        gap: 0.5rem;
+    }
+
+    .season-group-cell {
+        font-weight: 600;
+        line-height: 1.2;
+    }
+
+    .season-group-cell.people {
+        flex: 1;
+        text-align: left;
+        color: #333;
+        font-size: 0.86rem;
+    }
+
+    .season-group-cell.price {
+        flex: 1;
+        text-align: center;
+        font-size: 0.92rem;
+        font-weight: 700;
+    }
+
+    .season-group-cell.savings {
+        flex: 0 0 56px;
+        text-align: right;
+        color: #10b981;
+        font-size: 0.82rem;
+        font-weight: 700;
+    }
+
     @media (max-width: 576px) {
         .tour-gallery-grid {
             grid-template-columns: 1fr;
+        }
+
+        .season-group-row {
+            padding: 0.45rem 0.55rem;
+        }
+
+        .season-group-cell.people,
+        .season-group-cell.price,
+        .season-group-cell.savings {
+            font-size: 0.8rem;
+        }
+
+        .season-group-cell.savings {
+            flex-basis: 50px;
         }
     }
 </style>
 @endsection
 
 @section('content')
+    <div style="text-align:right; margin-bottom:10px;">
+        @if(app()->getLocale() === 'en')
+            {{-- <a href="/{{ $newPath }}" style="color: #8B0000; font-weight: 600;">{{ '🇪🇸 ES' }}</a> --}}
+        @else
+            <a href="/{{ $newPath }}" style="color: #8B0000; font-weight: 600;">{{ '🇬🇧 EN' }}</a>
+        @endif
+    </div>
 <div class="content-box">
     <style>
         .tour-header-bar {
@@ -390,20 +482,43 @@
                                     ${{ number_format($priceAmount, 0) }}
                                 </div>
                                 <div style="font-size: 1rem; color: #333; font-weight: 500; margin-bottom: 0.25rem;">
-                                    por Persona
+                                    {{ app()->getLocale() === 'es' ? 'por Persona' : 'per Person' }}
                                     <span style="color: #888; font-weight: 400;">
-                                        {{ $tour->duration_hours ? rtrim(rtrim(number_format($tour->duration_hours,2), '0'), '.') : 'N/D' }} horas
+                                        {{ $tour->duration_hours ? rtrim(rtrim(number_format($tour->duration_hours,2), '0'), '.') : 'N/D' }} {{ app()->getLocale() === 'es' ? 'horas' : 'hours' }}
                                     </span>
                                 </div>
-                                @if($dateRange)
-                                    <div style="font-size: 0.75rem; color: #666;">
-                                        {{ $dateRange }}
-                                    </div>
-                                @endif
                                 <div style="font-size: 0.75rem; color: #999; margin-top: 0.5rem;">
-                                    Precio para {{ $today->format('d M Y') }}
+                                    {{ app()->getLocale() === 'es' ? 'Precio para' : 'Price for' }} {{ $today->format('d M Y') }}
                                 </div>
                             </div>
+                            @if($currentPrice && $currentPrice->pricingGroups()->exists())
+                                <div style="margin-top: 1rem; border-top: 1px solid {{ $seasonColor }}55; padding-top: 0.9rem;">
+                                    <p style="font-size: 0.9rem; color: #555; margin-bottom: 0.6rem; font-weight: 700; text-align: center;">
+                                        {{ app()->getLocale() === 'es' ? 'Precios por tamaño de grupo' : 'Prices by group size' }}
+                                    </p>
+                                    <div style="display: grid; gap: 0.45rem;">
+                                        @foreach($currentPrice->pricingGroups as $group)
+                                            @php
+                                                $savingsPercent = $priceAmount > 0 ? (($priceAmount - $group->price_per_person) / $priceAmount) * 100 : 0;
+                                            @endphp
+                                            <div class="season-group-row" style="border:1px solid {{ $seasonColor }}33;">
+                                                <span class="season-group-cell people">
+                                                    {{ $group->group_size }} {{ app()->getLocale() === 'es' ? 'personas' : 'people' }}
+                                                </span>
+                                                <span class="season-group-cell price" style="color:{{ $seasonColor }};">
+                                                    ${{ number_format($group->price_per_person, 0) }}
+                                                </span>
+                                                <span class="season-group-cell savings">
+                                                    -{{ number_format(max($savingsPercent, 0), 0) }}%
+                                                </span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <div style="font-size: 0.75rem; color: #777; margin-top: 0.65rem; text-align: center;">
+                                        {{ app()->getLocale() === 'es' ? 'Precio por persona al reservar en grupo' : 'Price per person when booking as a group' }}
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                         
                        

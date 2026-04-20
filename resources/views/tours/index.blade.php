@@ -313,12 +313,36 @@
     }
 
     .providers-cta {
-        background: linear-gradient(135deg, #4a0000 0%, #6b0000 50%, #8B0000 100%);
+        position: relative;
+        background: #2a2a2a;
         color: white;
         padding: 5rem 2rem;
         text-align: center;
         margin-top: 3rem;
         box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        overflow: hidden;
+    }
+
+    .providers-cta-video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+    }
+
+    .providers-cta::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(0, 168, 107, 0.30) 0%, rgba(0, 102, 204, 0.30) 100%);
+        z-index: 1;
+    }
+
+    .providers-cta-content {
+        position: relative;
+        z-index: 2;
     }
 
     .providers-cta-title {
@@ -563,7 +587,10 @@
 
 <!-- CTA Section for Service Providers -->
 <section class="providers-cta">
-    <div class="container">
+    <video class="providers-cta-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+        <source src="{{ asset('videos/tours_costa_rica_1.mp4') }}" type="video/mp4">
+    </video>
+    <div class="container providers-cta-content">
         <h5 class="providers-cta-title">
             {{ app()->getLocale() === 'es' ? '¿Eres un Operador de Tours?' : 'Are you a Tour Operator?' }}
         </h5>
