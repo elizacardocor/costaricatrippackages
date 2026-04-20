@@ -275,33 +275,6 @@ if (!isset($newPath)) {
                     </div>
                 </div>
 
-                <!-- Tour Info Grid -->
-                <div class="row g-3 mb-5" style="margin-top: 2.5rem; margin-bottom: 2.5rem;">
-                    <div class="col-md-6">
-                        <div class="card border-0 bg-light p-3">
-                            <h5 class="mb-0">
-                                <i class="bi bi-clock"></i>
-                                <span style="color:#8B0000; font-weight: bold;">Duración:</span>
-                                {{ $tour->duration_hours ? rtrim(rtrim(number_format($tour->duration_hours,2), '0'), '.') : 'N/D' }} horas
-                            </h5>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card border-0 bg-light p-3">
-                            <h5 class="mb-0">
-                                <i class="bi bi-people"></i>
-                                <span style="color:#8B0000; font-weight: bold;">Capacidad mínima:</span>
-                                {{ $tour->min_capacity > 0 ? $tour->min_capacity : 'N/D' }} personas
-                            </h5>
-                            <h5 class="mb-0 mt-2">
-                                <i class="bi bi-people"></i>
-                                <span style="color:#8B0000; font-weight: bold;">Capacidad máxima:</span>
-                                {{ $tour->max_capacity > 0 ? $tour->max_capacity : 'N/D' }} personas
-                            </h5>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Galería de Imágenes y Video -->
                 <div class="mb-5" style="margin-bottom: 2rem;">
                     <div class="row">
@@ -351,6 +324,33 @@ if (!isset($newPath)) {
                 <div class="mb-5" style="margin-top: 2rem; margin-bottom: 2rem;">
                     <h3>Descripción</h3>
                     <p class="lead">{{ $tour->description }}</p>
+                </div>
+
+                <!-- Tour Info Grid -->
+                <div class="row g-3 mb-5" style="margin-top: 2.5rem; margin-bottom: 2.5rem;">
+                    <div class="col-md-6">
+                        <div class="card border-0 bg-light p-3">
+                            <h5 class="mb-0">
+                                <i class="bi bi-clock"></i>
+                                <span style="color:#8B0000; font-weight: bold;">Duración:</span>
+                                {{ $tour->duration_hours ? rtrim(rtrim(number_format($tour->duration_hours,2), '0'), '.') : 'N/D' }} horas
+                            </h5>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-0 bg-light p-3">
+                            <h5 class="mb-0">
+                                <i class="bi bi-people"></i>
+                                <span style="color:#8B0000; font-weight: bold;">Capacidad mínima:</span>
+                                {{ $tour->min_capacity > 0 ? $tour->min_capacity : 'N/D' }} personas
+                            </h5>
+                            <h5 class="mb-0 mt-2">
+                                <i class="bi bi-people"></i>
+                                <span style="color:#8B0000; font-weight: bold;">Capacidad máxima:</span>
+                                {{ $tour->max_capacity > 0 ? $tour->max_capacity : 'N/D' }} personas
+                            </h5>
+                        </div>
+                    </div>
                 </div>
 
 
